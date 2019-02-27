@@ -2,8 +2,10 @@
 
 namespace app\models;
 
+use Codeception\Lib\Generator\Group;
 use Yii;
 use yii\web\IdentityInterface;
+use app\models\Groups;
 
 /**
  * This is the model class for table "user".
@@ -95,6 +97,12 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         return $this->hasMany(UserGroups::className(), ['id_user' => 'id']);
     }
 
+    public function getGroups()
+    {
+        return $this->hasMany(Groups::className(),['id' => 'id_group'])
+            ->viaTable('user_groups', ['id_user' => 'id']);
+    }
+
 
     public static function findIdentity($id)
     {
@@ -133,6 +141,25 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public static function findUserByEmail($email)
     {
         return self::findOne(['email' => $email]);
+    }
+
+    /***
+     * - D- Сохраняем группы пользователей;
+     */
+    public function saveGroups($groups)
+    {
+        if(is_array($groups)){
+            UserGroups::deleteAll(['id_user' => $this->id]);
+            foreach ($groups as $id_group){
+                $group = Groups::findOne($id_group);
+                $this->link('groups', $group);
+            }
+        }
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = Yii::$app->getSecurity()->generatePasswordHash($password);
     }
 
     public function beforeSave($insert)

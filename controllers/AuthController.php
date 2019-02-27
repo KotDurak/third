@@ -52,6 +52,7 @@ class AuthController extends Controller
         }
 
         $model->password = '';
+
         return $this->render('login', [
             'model' => $model
         ]);

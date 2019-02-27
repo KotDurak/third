@@ -44,7 +44,7 @@ AppAsset::register($this);
         'items' => [
             ['label' => 'Сводка', 'url' => ['/site/index']],
             ['label' => 'Проекты', 'url' => ['site/projects']],
-            ['label' => 'Настройки', 'url' => [],  'items' => [
+            ['label' => 'Настройки',   'items' => [
                 ['label' => 'Должности', 'url' => ['/site/index']],
                 ['label' => 'Сотрудники', 'url' => ['/site/index']],
                 ['label' => 'Цепочка этапов', 'url' => ['/site/index']]
