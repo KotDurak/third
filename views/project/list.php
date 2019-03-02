@@ -2,8 +2,9 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\Pjax;
 
-
+Pjax::begin(['id' => 'notes']);
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel'   => $projectSearch,
@@ -43,4 +44,5 @@ echo GridView::widget([
         ]
     ]
 ]);
+Pjax::end();
 ?>

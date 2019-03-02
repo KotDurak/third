@@ -37,6 +37,7 @@ class ProjectController extends Controller
         $projectSearch = new ProjectSearch();
         $dataProvider = $projectSearch->search(\Yii::$app->request->get());
         $dataProvider->setSort(['defaultOrder' => ['id' => SORT_DESC]]);
+
         return $this->renderAjax('list', compact('projectSearch', 'dataProvider'));
     }
 
