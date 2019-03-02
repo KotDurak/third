@@ -17,6 +17,8 @@ $this->registerJsFile('@web/js/project_add.js',
 </div>
 <div class="list-content" url="<?php echo  Yii::$app->urlManager->createUrl('project/list'); ?>">
 <?php
+echo $this->render('/project/list', compact('dataProvider', 'projectSearch'));
+/*
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel'   => $projectSearch,
@@ -55,7 +57,7 @@ echo GridView::widget([
             // вы можете настроить дополнительные свойства здесь.
         ]
     ]
-]);
+]); */
 
 ?>
 </div>
