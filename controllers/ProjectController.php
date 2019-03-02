@@ -74,4 +74,10 @@ class ProjectController extends Controller
        }
        return $this->renderAjax('delete', compact('model'));
     }
+
+    public function actionImport($id)
+    {
+        $model = Project::findOne($id);
+        return $this->renderAjax('import', compact('model'));
+    }
 }

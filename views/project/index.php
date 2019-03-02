@@ -16,17 +16,18 @@ $this->registerJsFile('@web/js/project_add.js',
     <?= Html::a('<i class="glyphicon glyphicon-plus"></i>Создать проект', [ Yii::$app->urlManager->createUrl('project/add')], ['class'=>'btn btn-success', 'id' => 'create-project']) ?>
 </div>
 <div class="list-content" url="<?php echo  Yii::$app->urlManager->createUrl('project/list'); ?>">
-<?php
-echo $this->render('/project/list', compact('dataProvider', 'projectSearch'));
-
-
-?>
+<?php echo $this->render('/project/list', compact('dataProvider', 'projectSearch')); ?>
 </div>
+
+
 <div class="modal inmodal add" id="add" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg"></div>
 </div>
 
-</div>
 <div class="modal inmodal delte" id="delete" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg"></div>
+</div>
+
+<div class="modal inmodal import" id="import" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg"></div>
 </div>

@@ -175,3 +175,7 @@ a.desc:after {
 #create-project i{
     margin-right: 5px;
 }
+
+#import .modal-dialog{
+    width: 90% !important;
+}

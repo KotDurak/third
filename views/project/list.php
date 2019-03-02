@@ -22,8 +22,12 @@ echo GridView::widget([
         ],
         [
             'label'     => 'Импорт',
+            'format'    => 'html',
             'value'     => function($data){
-                return $data['id'];
+                $html = '<a  class="proj-import" href="'.Url::toRoute(['project/import', 'id' => $data['id']]).'" title="Импорт "
+                            aria-label="Импорт" data-pjax="0"><span class="glyphicon glyphicon-indent-left"></span>
+                            </a>';
+                return $html;
             }
         ],
         [
@@ -38,10 +42,6 @@ echo GridView::widget([
                 return $html;
             }
         ],
-        [
-            'class' => 'yii\grid\ActionColumn',
-            // вы можете настроить дополнительные свойства здесь.
-        ]
     ]
 ]);
 Pjax::end();
