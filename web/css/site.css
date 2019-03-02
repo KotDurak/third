@@ -171,3 +171,7 @@ a.desc:after {
     color: #ffffff;
     text-decoration: none;
 }
+
+#create-project i{
+    margin-right: 5px;
+}
