@@ -17,7 +17,9 @@ use yii\web\Response;
 use yii\widgets\ActiveForm;
 use app\models\Import;
 use moonland\phpexcel\Excel;
-
+use app\models\Task;
+use app\models\TaskTable;
+use app\models\TaskTableRows;
 
 class ProjectController extends Controller
 {
@@ -96,9 +98,23 @@ class ProjectController extends Controller
         if(isset($_FILES['Import']['tmp_name'])){
             $fileName = $_FILES['Import']['tmp_name']['file'];
             $tasks = Project::getRowTasks($fileName);
-            print_pre($tasks); die();
-            foreach ($tasks as $task){
-
+            foreach ($tasks as $tsk){
+               $task = new Task();
+                $task->name = $tsk['name'];
+                $task->id_project = $id;
+                $task->save(false);
+                $my_table = new TaskTable();
+                $my_table->id_task = $task->id;
+                $my_table->save(false);
+                foreach ($tsk['table'] as $tbl){
+                    $rows_table = new TaskTableRows();
+                    $rows_table->id_table = $my_table->id;
+                    $rows_table->phrase = $tbl['C'];
+                    $rows_table->base = $tbl['E'];
+                    $rows_table->frequence_e = $tbl['F'];
+                    $rows_table->frequence_f = $tbl['G'];
+                    $rows_table->save();
+                }
             }
             $data =  Json::encode([
                 'count'  => count($tasks)
@@ -106,7 +122,7 @@ class ProjectController extends Controller
         } else{
             $data = Json::encode(['err' => 'no tasks']);
         }
-
+      
         return $this->renderAjax('upload', [
             'data'  => $data
         ]);

@@ -74,4 +74,9 @@ class Project extends \yii\db\ActiveRecord
         }
         return $tasks;
     }
+
+    public function getTasks()
+    {
+        return $this->hasMany(Task::className(), ['id_project' => 'id']);
+    }
 }
