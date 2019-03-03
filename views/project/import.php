@@ -8,9 +8,10 @@ $cb = <<<CB
     function(event, data, previewId, index){
          var form = data.form, files = data.files, extra = data.extra,
         response = data.response, reader = data.reader;
-        console.log(data);
+        console.log(response);
      }
 CB;
+
 ?>
     <div class="modal-content animated bounceInTop" >
         <?php

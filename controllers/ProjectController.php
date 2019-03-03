@@ -92,38 +92,19 @@ class ProjectController extends Controller
     {
         $project = Project::findOne($id);
 
-        $data =  Json::encode([
-            'file'  => 'tiger'
-        ]);
+        $data = [];
         if(isset($_FILES['Import']['tmp_name'])){
-
             $fileName = $_FILES['Import']['tmp_name']['file'];
-
-            $rows_excell = Excel::widget([
-                'mode'  => 'import',
-                'fileName'  => $fileName,
-                'setFirstRecordAsKeys' => false,
-                'setIndexSheetByName' => true,
-            ]);
-            $tasks = [];
-            $table = [];
-            $count = 0;
-            foreach ((array)$rows_excell as $num => $row){
-                $row = (array)$row;
-                if(!empty($row['A']) && !empty($row['E']) && $row['E'] > 0){
-                    $table[] = $row;
-                } else if(!empty($row['A']) && (empty($row['E']) || $row['E'] < 1)){
-                   continue;
-                } else if(empty($row['E']) && empty($row['F']) && !empty($table)){
-                    $tasks[] = $table;
-                    $table = [];
-                    $count++;
-                }
-            }
+            $tasks = Project::getRowTasks($fileName);
+            print_pre($tasks); die();
             foreach ($tasks as $task){
-                print_pre($task);
+
             }
-            die();
+            $data =  Json::encode([
+                'count'  => count($tasks)
+            ]);
+        } else{
+            $data = Json::encode(['err' => 'no tasks']);
         }
 
         return $this->renderAjax('upload', [

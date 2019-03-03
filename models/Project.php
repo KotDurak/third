@@ -3,7 +3,7 @@
 namespace app\models;
 
 use Yii;
-
+use moonland\phpexcel\Excel;
 /**
  * This is the model class for table "project".
  *
@@ -42,5 +42,36 @@ class Project extends \yii\db\ActiveRecord
             'name' => 'Name',
             'url' => 'Url',
         ];
+    }
+
+    public static function getRowTasks($fileName)
+    {
+        $rows_excell = Excel::widget([
+            'mode'  => 'import',
+            'fileName'  => $fileName,
+            'setFirstRecordAsKeys' => false,
+            'setIndexSheetByName' => true,
+        ]);
+        $tasks = [];
+        $table = [];
+        $count = 0;
+        $task_name = '';
+        foreach ((array)$rows_excell as $num => $row){
+            $row = (array)$row;
+            if(!empty($row['A']) && !empty($row['E']) && $row['E'] > 0){
+                $table[] = $row;
+            } else if(!empty($row['A']) && (empty($row['E']) || $row['E'] < 1)){
+                $task_name = $row['A'];
+                continue;
+            } else if(empty($row['E']) && empty($row['F']) && !empty($table)){
+                $tasks[] = [
+                    'name'  => $task_name,
+                    'table' => $table
+                ];
+                $table = [];
+                $count++;
+            }
+        }
+        return $tasks;
     }
 }

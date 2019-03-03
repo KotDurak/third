@@ -63,6 +63,11 @@ class Task extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'id_manager']);
     }
 
+    public function getTables()
+    {
+        return $this->hasMany(TaskTable::className(), ['id_task' => 'id']);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
