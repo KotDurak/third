@@ -9,7 +9,7 @@ require __DIR__ . '/../vendor/yiisoft/yii2/Yii.php';
 
 $config = require __DIR__ . '/../config/web.php';
 
-function debug($arg){
+function print_pre($arg){
     print '<pre>';
     print_r($arg);
     print '</pre>';

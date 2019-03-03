@@ -15,6 +15,8 @@ use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
+use app\models\Import;
+use moonland\phpexcel\Excel;
 
 
 class ProjectController extends Controller
@@ -77,7 +79,55 @@ class ProjectController extends Controller
 
     public function actionImport($id)
     {
-        $model = Project::findOne($id);
-        return $this->renderAjax('import', compact('model'));
+        $project = Project::findOne($id);
+        $import = new Import();
+        return $this->renderAjax('import', compact('project', 'import'));
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    public function actionFileUpload($id)
+    {
+        $project = Project::findOne($id);
+
+        $data =  Json::encode([
+            'file'  => 'tiger'
+        ]);
+        if(isset($_FILES['Import']['tmp_name'])){
+
+            $fileName = $_FILES['Import']['tmp_name']['file'];
+
+            $rows_excell = Excel::widget([
+                'mode'  => 'import',
+                'fileName'  => $fileName,
+                'setFirstRecordAsKeys' => false,
+                'setIndexSheetByName' => true,
+            ]);
+            $tasks = [];
+            $table = [];
+            $count = 0;
+            foreach ((array)$rows_excell as $num => $row){
+                $row = (array)$row;
+                if(!empty($row['A']) && !empty($row['E']) && $row['E'] > 0){
+                    $table[] = $row;
+                } else if(!empty($row['A']) && (empty($row['E']) || $row['E'] < 1)){
+                   continue;
+                } else if(empty($row['E']) && empty($row['F']) && !empty($table)){
+                    $tasks[] = $table;
+                    $table = [];
+                    $count++;
+                }
+            }
+            foreach ($tasks as $task){
+                print_pre($task);
+            }
+            die();
+        }
+
+        return $this->renderAjax('upload', [
+            'data'  => $data
+        ]);
     }
 }

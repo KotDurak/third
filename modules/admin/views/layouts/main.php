@@ -43,8 +43,7 @@ AppAsset::register($this);
             'items' => [
                 ['label' => 'Сотрудники', 'url' => ['/admin/user']],
                 ['label' => 'Группы', 'url' => ['/admin/groups']],
-                ['label' => 'Прокуты', 'url' => ['/admin/project']]
-
+                ['label' => 'Проекты', 'url' => ['/admin/project']]
             ],
 
         ]);
