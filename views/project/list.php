@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 
-Pjax::begin(['id' => 'notes']);
+Pjax::begin(array('id' => 'notes', 'enablePushState' => false));
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel'   => $projectSearch,

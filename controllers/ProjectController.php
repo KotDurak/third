@@ -122,7 +122,7 @@ class ProjectController extends Controller
         } else{
             $data = Json::encode(['err' => 'no tasks']);
         }
-      
+
         return $this->renderAjax('upload', [
             'data'  => $data
         ]);
