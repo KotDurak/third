@@ -54,7 +54,7 @@ AppAsset::register($this);
             ['label' => 'Настройки',   'items' => [
                 ['label' => 'Должности', 'url' => ['/site/index']],
                 ['label' => 'Сотрудники', 'url' => ['/site/index']],
-                ['label' => 'Цепочка этапов', 'url' => ['/site/index']]
+                ['label' => 'Цепочка этапов', 'url' => ['/chain/index']]
             ]],
 
         ],

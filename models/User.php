@@ -160,6 +160,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function setPassword($password)
     {
         $this->password = Yii::$app->getSecurity()->generatePasswordHash($password);
+        $this->save();
     }
 
     public function beforeSave($insert)

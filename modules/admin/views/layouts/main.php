@@ -43,7 +43,13 @@ AppAsset::register($this);
             'items' => [
                 ['label' => 'Сотрудники', 'url' => ['/admin/user']],
                 ['label' => 'Группы', 'url' => ['/admin/groups']],
-                ['label' => 'Проекты', 'url' => ['/admin/project']]
+                ['label' => 'Проекты', 'url' => ['/admin/project']],
+                ['label' => 'Цепочки', 'items' => [
+                    ['label' => 'Цепочки этапов', 'url' => '/admin/chain'],
+                    ['label' => 'Этапы', 'url' => '/admin/steps'],
+                    ['label'    => 'Клоны цепочек', 'url'   => '/admin/chain-clones'],
+                    ['label'    => 'Атрибуты этапов цепочек', 'url' => '/admin/step-attributes']
+                ]]
             ],
 
         ]);
