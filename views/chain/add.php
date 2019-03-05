@@ -4,7 +4,12 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use wbraganca\dynamicform\DynamicFormWidget;
 ?>
-
+<style>
+    .add-item{
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+</style>
 <div class="modal-content animated bounceInTop" >
     <?php
         $form = ActiveForm::begin(['id' => 'form-add-chain']);
@@ -19,36 +24,37 @@ use wbraganca\dynamicform\DynamicFormWidget;
                 <?= $form->field($modelChain, 'name')->textInput()->label('Название цепочки'); ?>
             </div>
         </div>
-
+        <?php
+            DynamicFormWidget::begin([
+                'widgetContainer' => 'dynamicform_wrapper',
+                'widgetBody' => '.container-items',
+                'widgetItem' => '.item',
+                'min' => 0,
+                'limit' => 999,
+                'insertButton' => '.add-item',
+                'deleteButton' => '.remove-item',
+                'model' => $modelSteps[0],
+                'formId'   => 'form-add-chain',
+                'formFields'    => [
+                    'sort',
+                    'name',
+                    'id_group',
+                    'type'
+                ]
+            ]);
+        ?>
         <div class="panel panel-default">
-
+            <div class="panel-heading text-right">
+                <button type="button" class="add-item btn btn-success btn-xs"><i class="fa fa-plus"></i>Добавить этап</button>
+            </div>
             <div class="panel-body">
-                <?php
-                    DynamicFormWidget::begin([
-                        'widgetContainer' => 'dynamicform_wrapper',
-                        'widgetBody' => '.container-items',
-                        'widgetItem' => '.item',
-                        'min' => 0,
-                        'limit' => 999,
-                        'insertButton' => '.add-item',
-                        'deleteButton' => '.remove-item',
-                        'model' => $modelSteps[0],
-                        'formId'   => 'form-add-chain',
-                        'formFields'    => [
-                            'sort',
-                            'name',
-                            'id_group',
-                            'type'
-                        ]
-                    ]);
-                ?>
+
                 <div class="container-items">
                     <?php foreach ($modelSteps as $i => $modelStep): ?>
                     <div class="item panel panel-default">
                         <div class="panel-heading">
                             <div class="pull-right">
-                                <button type="button" class="add-item btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i></button>
-                                <button type="button" class="remove-item btn btn-danger btn-xs"><i class="glyphicon glyphicon-minus"></i></button>
+                                <button type="button" class="remove-item btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i></button>
                             </div>
                             <div class="clearfix"></div>
                         </div>
@@ -82,13 +88,38 @@ use wbraganca\dynamicform\DynamicFormWidget;
                     <?php endforeach; ?>
                 </div>
                 <?php DynamicFormWidget::end(); ?>
+                <div class=" view-btn text-right">
+                    <button  type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
+                    <?= Html::submitButton($modelChain->isNewRecord ? 'Добавить' : 'Сохранить', ['class' => 'btn btn-success', 'id' => 'submit']) ?>
+                </div>
             </div>
-        </div>
-
-        <div class=" view-btn text-right">
-            <button  type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
-
         </div>
     </div>
     <?php ActiveForm::end(); ?>
 </div>
+
+<?php
+$js = <<<JS
+    $(document).ready(function() {
+      $('#submit').on('click', function(e){
+         e.preventDefault(); 
+         var form_data = new FormData($('#form-add-chain')[0]);
+         var url = $('#form-add-chain').attr('action');
+         $.ajax({
+               url: url,
+               dataType: 'JSON',  
+               cache: false,
+               contentType: false,
+               processData: false,
+               data: form_data,                     
+               type: 'post',                        
+               success: function(response){                      
+                 $('#add-chain').modal('hide');
+               }
+         });
+         return false;
+      });
+    });
+JS;
+$this->registerJS($js);
+?>
