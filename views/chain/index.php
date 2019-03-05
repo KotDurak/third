@@ -8,7 +8,7 @@ $this->registerCssFile('/css/chain.css');
 
 <div class="container">
     <div class="row top-button">
-            <?= Html::a('Добавить новую цепочку', ['/controller/action'], ['class'=>'btn btn-default']) ?>
+            <?= Html::a('Добавить новую цепочку', ['/chain/add'], ['class'=>'btn btn-default', 'id' => 'create-chain']) ?>
     </div>
     <div class="row chain-list">
         <?php foreach ($chains as $chain): ?>
