@@ -30,7 +30,7 @@ class Steps extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_chain'], 'integer'],
+            [['id_chain', 'sort'], 'integer'],
             [['type'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['id_chain'], 'exist', 'skipOnError' => true, 'targetClass' => Chain::className(), 'targetAttribute' => ['id_chain' => 'id']],
