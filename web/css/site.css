@@ -179,3 +179,7 @@ a.desc:after {
 #import .modal-dialog{
     width: 90% !important;
 }
+
+.circle-conttrols{
+    border-radius: 20px;
+}

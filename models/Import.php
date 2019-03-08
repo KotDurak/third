@@ -15,6 +15,7 @@ use yii\base\Model;
 class Import extends Model
 {
     public $file;
+    public $id_chain;
 
     public function rules()
     {

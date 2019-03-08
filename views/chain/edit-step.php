@@ -12,11 +12,16 @@ use wbraganca\dynamicform\DynamicFormWidget;
     </style>
     <div class="modal-content animated bounceInTop" >
         <?php
-        $form = ActiveForm::begin(['id' => 'form-edit-step']);
+            $form = ActiveForm::begin(['id' => 'form-edit-step']);
+            if($modelStep->isNewRecord){
+                $header = 'Добавить';
+            } else{
+                $header = 'Редактировать';
+            }
         ?>
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title text-left">Редактировать шаг</h4>
+            <h4 class="modal-title text-left"><?= $header; ?> шаг</h4>
         </div>
         <div class="modal-body">
             <div class="row">

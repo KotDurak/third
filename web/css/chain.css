@@ -10,3 +10,24 @@
     cursor: pointer;
 }
 
+.steps-controls{
+    float: right;
+}
+
+.steps-controls > a{
+    border-radius: 20px;
+}
+
+.add-step{
+    margin-right:10px;
+}
+
+.chain-list .btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+     border-top-right-radius: 20px;
+     border-bottom-right-radius: 20px;
+}
+
+.chain-list .btn-group > .btn:last-child:not(:first-child), .btn-group > .dropdown-toggle:not(:first-child) {
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+}

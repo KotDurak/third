@@ -13,7 +13,7 @@ $this->registerJsFile('@web/js/project_add.js',
 
 ?>
 <div class="col-md-12 text-right">
-    <?= Html::a('<i class="glyphicon glyphicon-plus"></i>Создать проект', [ Yii::$app->urlManager->createUrl('project/add')], ['class'=>'btn btn-success', 'id' => 'create-project']) ?>
+    <?= Html::a('<i class="glyphicon glyphicon-plus"></i>Создать проект', [ Yii::$app->urlManager->createUrl('project/add')], ['class'=>'btn btn-success circle-conttrols', 'id' => 'create-project']) ?>
 </div>
 
 <div class="list-content" url="<?php echo  Yii::$app->urlManager->createUrl('project/list'); ?>">

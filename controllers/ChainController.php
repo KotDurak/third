@@ -151,6 +151,67 @@ class ChainController extends \yii\web\Controller
         ]);
     }
 
+    public function actionAddStep($id_chain)
+    {
+        $modelChain = Chain::findOne($id_chain);
+        $modelStep = new Steps();
+        $modelAttributes = $modelStep->getStepAttributes()->all();
+        if(empty($modelAttributes)){
+            $modelAttributes = [new StepAttributes];
+        }
+        $groups  = ArrayHelper::map(Groups::find()->asArray()->all(), 'id', 'name');
+
+        if(Yii::$app->request->isAjax && $modelStep->load(Yii::$app->request->post())){
+            $modelStep->id_chain = $modelChain->id;
+            $modelStep->save(false);
+            $modelAttributes = ModelMultiple::createMultiple(StepAttributes::className());
+            ModelMultiple::loadMultiple($modelAttributes ,Yii::$app->request->post());
+            $valid = $modelStep->validate();
+            $valid = ModelMultiple::validateMultiple($modelAttributes) && $valid;
+            $transaction = Yii::$app->db->beginTransaction();
+            if($valid){
+                try{
+                    foreach ($modelAttributes as $modelAttribute){
+                        $modelAttribute->id_step = $modelStep->id;
+                        if(!$modelAttribute->save(false)){
+                            $transaction->rollBack();
+                            break;
+                        }
+                    }
+                    $transaction->commit();
+                    return Json::encode(['message' => 'save attributes']);
+                } catch (Exception $exception){
+
+                }
+            }
+        }
+
+        return $this->renderAjax('edit-step', [
+            'modelStep' => $modelStep,
+            'modelAttributes'   => $modelAttributes,
+            'groups'    => $groups
+        ]);
+    }
+
+    /***
+     * Удаляем цепочку по ajax
+     *
+     * @param $id
+     * @return string
+     */
+    public function actionDelete($id)
+    {
+        $chain = Chain::findOne($id);
+        $chain->delete();
+        return Json::encode(['message' => 'chain delete']);
+    }
+
+    /**
+     * Удаляет по ajax
+     *
+     * @param $id
+     * @return string
+     */
     public function actionDeleteStep($id)
     {
         $step = Steps::findOne($id);

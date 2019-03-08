@@ -13,7 +13,7 @@ $this->registerCssFile('/css/chain.css');
 
 <div class="container">
     <div class="row top-button">
-            <?= Html::a('Добавить новую цепочку', ['/chain/add'], ['class'=>'btn btn-default', 'id' => 'create-chain']) ?>
+            <?= Html::a('Добавить новую цепочку', ['/chain/add'], ['class'=>'btn btn-default circle-conttrols', 'id' => 'create-chain']) ?>
     </div>
     <?php
         Pjax::begin([
@@ -25,7 +25,14 @@ $this->registerCssFile('/css/chain.css');
         <?php foreach ($chains as $chain): ?>
             <div class="panel panel-default">
                 <!-- Default panel contents -->
-                <div class="panel-heading"><strong>Цеопчка этапов - <?= $chain->name ?></strong></div>
+                <div class="panel-heading">
+                    <strong>Цеопчка этапов - <?= $chain->name ?></strong>
+                    <div class="text-right btn-group steps-controls">
+                        <?= Html::a('<i class="glyphicon glyphicon-plus"></i> Добавить шаг', ['/chain/add-step?id_chain=' . $chain->id], ['class'=>'btn btn-success add-step', 'id' => 'add-step']) ?>
+                        <?= Html::a('<i class="glyphicon glyphicon-remove"></i> Удалить цепочку', ['/chain/delete?id=' . $chain->id], ['class'=>'btn btn-danger delete-chain', 'id' => 'delete-chain']) ?>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
                 <div class="panel-body">
                     <?php
                         $steps = ($chain->getSteps()->orderBy(['sort' => SORT_ASC]));

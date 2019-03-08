@@ -8,9 +8,11 @@
 
 namespace app\controllers;
 
+use app\models\Chain;
 use app\models\Project;
 use app\models\ProjectSearch;
 use Yii;
+use yii\db\Query;
 use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\Response;
@@ -79,11 +81,21 @@ class ProjectController extends Controller
        return $this->renderAjax('delete', compact('model'));
     }
 
+    /**
+     * Импорт задач в проект
+     *
+     * @param $id
+     * @return string
+     */
     public function actionImport($id)
     {
         $project = Project::findOne($id);
+     //   $chains = Chain::find()->all();
         $import = new Import();
-        return $this->renderAjax('import', compact('project', 'import'));
+        return $this->renderAjax('import', compact(
+            'project',
+            'import'
+        ));
     }
 
     /**
@@ -126,5 +138,36 @@ class ProjectController extends Controller
         return $this->renderAjax('upload', [
             'data'  => $data
         ]);
+    }
+
+    public function actionChainList($q = null, $id = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $out = ['results' => ['id' => '', 'text' => '']];
+        $query = new Query();
+        if(!is_null($q)){
+            $query->select('id, name as text')
+                ->from('chain')
+                ->where(['like', 'name', $q])
+                ->limit(20);
+            $command = $query->createCommand();
+            $data = $command->queryAll();
+            $out['results'] = array_values($data);
+        } else if($id > 0){
+            $out['results'] = ['id' => $id, 'text' => Chain::find($id)->name];
+        } else{
+            $query->select('id, name as text')
+                ->from('chain');
+            $command = $query->createCommand();
+            $data = $command->queryAll();
+            $out['results'] = array_values($data);
+        }
+        return $out;
+    }
+
+
+    public function actionAddFields($id)
+    {
+
     }
 }

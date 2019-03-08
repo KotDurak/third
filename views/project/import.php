@@ -3,6 +3,9 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use kartik\file\FileInput;
 use yii\helpers\Url;
+use kartik\select2\Select2;
+use yii\web\JsExpression;
+use app\models\Chain;
 
 $cb = <<<CB
     function(event, data, previewId, index){
@@ -36,6 +39,37 @@ CB;
                        'fileuploaded' => $cb
                     ]
             ]) ?>
+
+            <?php
+                echo $form->field($import, 'id_chain')->widget(Select2::className(), [
+                    'initValueText' => 'Цепочка этапов',
+                    'options' => ['placeholder' => 'Поиск цеопчки ...', 'id' => 'chain-select'],
+                    'pluginOptions' => [
+                        'allowClear'    => true,
+                        'minimumInputLength' => 0,
+                        'language' => [
+                            'errorLoading' => new JsExpression("function () { return 'Ожидаение результатов..'; }"),
+                        ],
+                        'ajax'  => [
+                            'url'   => \yii\helpers\Url::to(['chain-list']),
+                            'dataType'  => 'json',
+                            'data' => new JsExpression('function(params) { return {q:params.term}; }')
+                        ],
+                        'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+                        'templateResult' => new JsExpression('function(city) { return city.text; }'),
+                        'templateSelection' => new JsExpression('function (city) { return city.text; }'),
+                    ],
+                    'pluginEvents' => [
+                        "change" => "function(e) {
+                           
+                        }"]
+                ])->label('Цепочка этапов');
+            ?>
+
+            <div class="col-md-12" id="chain-options">
+
+            </div>
+
 
             <div class=" view-btn text-right">
                 <button  type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>

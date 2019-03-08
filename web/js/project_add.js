@@ -37,4 +37,20 @@ $(function(){
         var url = D_elem.attr('href');
         $('#import').modal('show').find('.modal-dialog').load(url);
     });
+
+
+    $('body').on('change', '#chain-select', function(e){
+        var D_elem = $(this);
+        var id_chain = D_elem.val();
+        var url = 'add-fields?id=' + id_chain;
+        $.ajax({
+           type:'post',
+           url: url,
+           succes:function (data) {
+                $('#chain-options').html(data);
+            }
+        });
+    });
+
+
 });
