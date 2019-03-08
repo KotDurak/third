@@ -4,14 +4,33 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "64745dc74794050a019b25296627c461",
+    "content-hash": "87b80beef4bdda70c3aa09460bc20e7c",
     "packages": [
+        {
+            "name": "bower-asset/bootbox.js",
+            "version": "v4.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/makeusabrew/bootbox.git",
+                "reference": "cb756203e250ed0ff2539359ff0ad1c3ffb8e8d3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/makeusabrew/bootbox/zipball/cb756203e250ed0ff2539359ff0ad1c3ffb8e8d3",
+                "reference": "cb756203e250ed0ff2539359ff0ad1c3ffb8e8d3",
+                "shasum": null
+            },
+            "require": {
+                "bower-asset/bootstrap": ">=3.0.0"
+            },
+            "type": "bower-asset"
+        },
         {
             "name": "bower-asset/bootstrap",
             "version": "v3.4.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/twbs/bootstrap.git",
+                "url": "git@github.com:twbs/bootstrap.git",
                 "reference": "68b0d231a13201eb14acd3dc84e51543d16e5f7e"
             },
             "dist": {
@@ -74,7 +93,7 @@
             "version": "1.12.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/components/jqueryui.git",
+                "url": "git@github.com:components/jqueryui.git",
                 "reference": "44ecf3794cc56b65954cc19737234a3119d036cc"
             },
             "dist": {
@@ -188,6 +207,52 @@
                 "markdown-extra"
             ],
             "time": "2018-03-26T11:24:36+00:00"
+        },
+        {
+            "name": "d4rkstar/yii2-bootbox-asset",
+            "version": "0.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/d4rkstar/yii2-bootbox-asset.git",
+                "reference": "b8d2fce8b964280ae2c553cbe08ebe196cb98d51"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/d4rkstar/yii2-bootbox-asset/zipball/b8d2fce8b964280ae2c553cbe08ebe196cb98d51",
+                "reference": "b8d2fce8b964280ae2c553cbe08ebe196cb98d51",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/bootbox.js": "4.4.0",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-asset",
+            "autoload": {
+                "psr-4": {
+                    "d4rkstar\\bootbox\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bruno Salzano",
+                    "email": "d4rkstar@gmail.com"
+                },
+                {
+                    "name": "Brusenskiy Dmitry",
+                    "email": "brussens@nativeweb.ru"
+                }
+            ],
+            "description": "Yii2 asset bundle of bootbox plugin (http://bootboxjs.com/)",
+            "keywords": [
+                "asset",
+                "bootbox",
+                "yii"
+            ],
+            "time": "2017-11-08T06:02:55+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",

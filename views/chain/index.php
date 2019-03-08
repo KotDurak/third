@@ -68,10 +68,23 @@ $this->registerCssFile('/css/chain.css');
                                                 '<span class="glyphicon glyphicon-pencil"></span>',
                                                 Url::to(['edit-step', 'id' => $model->id]),[
                                                     'data-toggle' => 'modal',
-                                                    'data-target' => '#add-attr',
+                                                    'data-target' => '#edit-step',
                                                     'onclick'     => '$("#edit-step .modal-dialog").load($(this).attr("href"));'
                                                 ]
                                             );
+                                        },
+                                        'delete'      => function($url, $model, $key){
+                                            $url =  Url::to(['delete-step', 'id' => $model->id]);
+                                            return Html::a('<span class="glyphicon glyphicon-trash"></span>',
+                                                false,
+                                                    [
+                                                        'class' => 'ajaxDelete',
+                                                        'delete-url'    => $url,
+                                                        'pjax-container' => 'chain-pjax',
+                                                        'title'          => Yii::t('app', 'Delete')
+                                                    ]
+                                                );
+
                                         }
                                     ]
                                 ],

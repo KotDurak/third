@@ -35,7 +35,7 @@ class ChainController extends \yii\web\Controller
     {
         $chain = new Chain();
         $steps = [new Steps()];
-        $groups = $groups = ArrayHelper::map(Groups::find()->asArray()->all(), 'id', 'name');
+        $groups  = ArrayHelper::map(Groups::find()->asArray()->all(), 'id', 'name');
 
         if (Yii::$app->request->isAjax && $chain->load(Yii::$app->request->post())) {
             $steps = ModelMultiple::createMultiple(Steps::className());
@@ -77,6 +77,45 @@ class ChainController extends \yii\web\Controller
     {
         $modelStep = Steps::findOne($id);
         $modelAttributes = $modelStep->getStepAttributes()->all();
+        if(empty($modelAttributes)){
+            $modelAttributes = [new StepAttributes];
+        }
+        $groups  = ArrayHelper::map(Groups::find()->asArray()->all(), 'id', 'name');
+
+        if(Yii::$app->request->isAjax && $modelStep->load(Yii::$app->request->post())){
+            $oldIDs = ArrayHelper::map($modelAttributes, 'id', 'id');
+            $modelAttributes = ModelMultiple::createMultiple(StepAttributes::className(),$modelAttributes);
+            ModelMultiple::loadMultiple($modelAttributes ,Yii::$app->request->post());
+            $deleteIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($modelAttributes, 'id', 'id')));
+
+
+
+            $valid = $modelStep->validate();
+            $valid = ModelMultiple::validateMultiple($modelAttributes) && $valid;
+            $transaction = Yii::$app->db->beginTransaction();
+            try{
+                if(!empty($deleteIDs)){
+                    StepAttributes::deleteAll(['id' => $deleteIDs]);
+                }
+                foreach ($modelAttributes as $modelAttribute){
+                    $modelAttribute->id_step = $modelStep->id;
+                    if(!$modelAttribute->save(false)){
+                        $transaction->rollBack();
+                        break;
+                    }
+                }
+                $transaction->commit();
+                return Json::encode(['message' => 'save attributes']);
+            } catch (Exception $e){
+                return Json::encode(['message' => $e->getMessage()]);
+            }
+        }
+
+        return $this->renderAjax('edit-step', [
+            'modelStep' => $modelStep,
+            'modelAttributes'   => $modelAttributes,
+            'groups'    => $groups
+        ]);
 
     }
 
@@ -97,9 +136,9 @@ class ChainController extends \yii\web\Controller
                             $transaction->rollBack();
                             break;
                         }
-                        $transaction->commit();
-                        return Json::encode(['message' => 'save attributes']);
                     }
+                    $transaction->commit();
+                    return Json::encode(['message' => 'save attributes']);
                 } catch (Exception $exception){
 
                 }
@@ -110,6 +149,13 @@ class ChainController extends \yii\web\Controller
            'modelStep' => $modelStep,
             'modelAttributes'   =>  $modelAttributes
         ]);
+    }
+
+    public function actionDeleteStep($id)
+    {
+        $step = Steps::findOne($id);
+        $step->delete();
+        return Json::encode(['message' => 'succes']);
     }
 
 }

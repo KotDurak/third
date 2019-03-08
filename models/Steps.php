@@ -34,6 +34,7 @@ class Steps extends \yii\db\ActiveRecord
             [['type'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['id_chain'], 'exist', 'skipOnError' => true, 'targetClass' => Chain::className(), 'targetAttribute' => ['id_chain' => 'id']],
+            [['id_group'], 'exist', 'skipOnError' => true, 'targetClass' => Groups::className(), 'targetAttribute' => ['id_group' => 'id']]
         ];
     }
 

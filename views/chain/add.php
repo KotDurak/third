@@ -73,8 +73,8 @@ use wbraganca\dynamicform\DynamicFormWidget;
                                 </div>
                                 <div class="col-md-2">
                                     <?= $form->field($modelStep, "[{$i}]type")->label('Тип')->dropDownList([
-                                            'attributes'    => 'Атрибуты',
-                                            'table'         => 'Таблица'
+                                        'attributes'    => 'Атрибуты',
+                                        'table'         => 'Таблица'
                                     ]); ?>
                                 </div>
                                 <div class="col-md-6">

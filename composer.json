@@ -24,7 +24,8 @@
         "moonlandsoft/yii2-phpexcel": "*",
         "symfony/dom-crawler": "2.8",
         "symfony/css-selector": "2.8",
-        "wbraganca/yii2-dynamicform": "2.0.1"
+        "wbraganca/yii2-dynamicform": "2.0.1",
+        "d4rkstar/yii2-bootbox-asset": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
