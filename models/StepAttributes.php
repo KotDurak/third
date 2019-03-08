@@ -35,6 +35,8 @@ class StepAttributes extends \yii\db\ActiveRecord
             [['id_step'], 'integer'],
             [['name', 'index', 'def_value'], 'string', 'max' => 255],
             [['index'], 'unique'],
+            [['index', 'name'], 'required'],
+            [['index'], 'match', 'pattern' => '/^[a-zA-Z0-9]+$/'],
             [['id_step'], 'exist', 'skipOnError' => true, 'targetClass' => Steps::className(), 'targetAttribute' => ['id_step' => 'id']],
         ];
     }

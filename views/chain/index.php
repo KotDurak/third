@@ -1,6 +1,7 @@
 <?php
 use yii\widgets\LinkPager;
 use yii\helpers\Html;
+use Yii\helpers\Url;
 use app\models\Steps;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
@@ -48,7 +49,32 @@ $this->registerCssFile('/css/chain.css');
                                     'attribute'  => 'name',
                                     'label'      => 'Название этапа'
                                 ],
-                                ['class' => 'yii\grid\ActionColumn'],
+                                [
+                                    'class' => 'yii\grid\ActionColumn',
+                                    'template'  => '{add-attr} {update} {delete}',
+                                    'buttons'   => [
+                                        'add-attr'  => function($url, $model){
+                                            return Html::a(
+                                                '<span class="glyphicon glyphicon-list-alt"></span>',
+                                                   $url,[
+                                                      'data-toggle' => 'modal',
+                                                      'data-target' => '#add-attr',
+                                                      'onclick'     => '$("#add-attr .modal-dialog").load($(this).attr("href"));'
+                                                ]
+                                            );
+                                        },
+                                        'update'    => function($url, $model){
+                                            return Html::a(
+                                                '<span class="glyphicon glyphicon-pencil"></span>',
+                                                Url::to(['edit-step', 'id' => $model->id]),[
+                                                    'data-toggle' => 'modal',
+                                                    'data-target' => '#add-attr',
+                                                    'onclick'     => '$("#edit-step .modal-dialog").load($(this).attr("href"));'
+                                                ]
+                                            );
+                                        }
+                                    ]
+                                ],
                             ],
                         ]);
                     ?>
@@ -78,5 +104,13 @@ $this->registerJsFile('@web/js/chain.js',
 ?>
 
 <div class="modal inmodal add-chain" id="add-chain" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg"></div>
+</div>
+
+<div class="modal inmodal add-attr" id="add-attr" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg"></div>
+</div>
+
+<div class="modal inmodal edit-step" id="edit-step" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg"></div>
 </div>
