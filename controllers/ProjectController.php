@@ -14,6 +14,7 @@ use app\models\ModelMultiple;
 use app\models\Project;
 use app\models\ProjectSearch;
 use app\models\Steps;
+use app\models\User;
 use Yii;
 use yii\db\Query;
 use yii\helpers\Json;
@@ -139,7 +140,7 @@ class ProjectController extends Controller
                 $task->save(false);
                 $i++;
             }
-            die();
+           return $this->redirect('index');
         }
         return $this->renderAjax('import', compact(
             'project',
@@ -244,17 +245,34 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function actionUsersList($id_group)
+    public function actionUsersList($id_group, $q = null)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $groups = Groups::findOne($id_group);
-        $users = $groups->getUsers()->asArray()->all();
+        if(!is_null($q)){
+            $users = $groups->getUsers()->where(['like', 'surname', $q])
+                ->orWhere(['like', 'name', $q])
+                ->asArray()->all();
+        } else{
+            $users = $groups->getUsers()->asArray()->all();
+        }
+
+        $add_users = User::find()->where(['is_outer' => 1])->one();
+        $users[] = $add_users;
         $results = [];
         foreach ($users as $user){
-            $results[]  = [
-                'id'    => $user['id'],
-                'text'  => $user['surname']. ' ' . $user['name'] . ' (' . $user['email'] . ')'
-            ];
+            if($user->is_outer == 1){
+                $results[] = [
+                    'id'    => $user['id'],
+                    'text'  => '<strong style="color:red">Внешний сотрудник!</strong>'
+                ];
+            } else{
+                $results[]  = [
+                    'id'    => $user['id'],
+                    'text'  => $user['surname']. ' ' . $user['name'] . ' (' . $user['email'] . ')'
+                ];
+            }
+
         }
        $out['results'] = $results;
         return $out;

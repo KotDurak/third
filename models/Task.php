@@ -3,6 +3,10 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
+use yii\db\ActiveRecord;
+use yii\behaviors\AttributeBehavior;
 
 /**
  * This is the model class for table "task".
@@ -19,6 +23,21 @@ use Yii;
  */
 class Task extends \yii\db\ActiveRecord
 {
+    public function behaviors()
+    {
+       return [
+           [
+               'class' => AttributeBehavior::className(),
+               'attributes' => [
+                   ActiveRecord::EVENT_BEFORE_INSERT => 'created',
+               ],
+               'value' => function ($event) {
+                   return date('Y-m-d H:i:s');
+               },
+           ],
+       ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -35,6 +54,7 @@ class Task extends \yii\db\ActiveRecord
         return [
             [['name', 'description'], 'string'],
             [['status', 'id_user', 'id_manager'], 'integer'],
+            [['created'], 'timestamp'],
             [['id_manager'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_manager' => 'id']],
             [['id_user'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_user' => 'id']],
         ];

@@ -30,7 +30,8 @@ class SelectUserStep extends Model
     public function rules()
     {
         return [
-            [['id_user', 'id_step'], 'integer']
+            [['id_user', 'id_step'], 'integer'],
+            [['id_user'], 'required']
         ];
     }
 }
