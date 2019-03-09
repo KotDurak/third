@@ -10,8 +10,10 @@ namespace app\controllers;
 
 use app\models\Chain;
 use app\models\Groups;
+use app\models\ModelMultiple;
 use app\models\Project;
 use app\models\ProjectSearch;
+use app\models\Steps;
 use Yii;
 use yii\db\Query;
 use yii\helpers\Json;
@@ -25,6 +27,9 @@ use app\models\TaskTable;
 use app\models\TaskTableRows;
 use app\models\SelectUserStep;
 use yii\helpers\ArrayHelper;
+use app\models\ChainClones;
+use app\models\ChainClonesSteps;
+use app\models\AttributesValues;
 
 class ProjectController extends Controller
 {
@@ -94,8 +99,46 @@ class ProjectController extends Controller
     {
         $project = Project::findOne($id);
         $import = new Import();
-        if(!empty(Yii::$app->request->post())){
-            print_pre(Yii::$app->request->post());
+        if(!empty(Yii::$app->request->post()) && $import->load(Yii::$app->request->post())){
+            $deadline = date('Y-m-d H:i:s', strtotime($import->deadline));
+            $tasks = $project->getTasks()->where(['status' => '0'])->all();
+            $modelSteps = ModelMultiple::createMultiple(SelectUserStep::className());
+            ModelMultiple::loadMultiple($modelSteps, Yii::$app->request->post());
+            $i = 1;
+            foreach ($tasks as $task){
+                $chainClone = new ChainClones();
+                $chainClone->id_chain = $import->id_chain;
+                $chainClone->id_task = $task->id;
+                $chainClone->save();
+                foreach ($modelSteps as $step){
+                    $stepClone = new ChainClonesSteps();
+                    $stepClone->id_step = $step->id_step;
+                    $stepClone->id_clone = $chainClone->id;
+                    $stepClone->status = 0;
+                    $stepClone->id_user = $step->id_user;
+                    $stepClone->save(false);
+                    $stepsAttr = Steps::findOne($step->id_step)->getStepAttributes()->all();
+                    if(!empty($stepsAttr)){
+                        foreach ($stepsAttr as $step_attr){
+                            $attr_clone = new AttributesValues();
+                            $attr_clone->id_attribute = $step_attr->id;
+                            $attr_clone->id_step_clone = $stepClone->id;
+                            if(!empty($step_attr['def_value']) && !is_null($step_attr['def_value'])){
+                                $attr_clone->value = $step_attr['def_value'];
+                            }
+                            $attr_clone->save();
+                        }
+                    }
+                }
+
+                if($i % 10 == 0){
+                    $deadline = date('Y-m-d H:i:s', strtotime($deadline.'+5 days'));
+                }
+                $task->deadline = $deadline;
+                $task->status = 1;
+                $task->save(false);
+                $i++;
+            }
             die();
         }
         return $this->renderAjax('import', compact(
@@ -105,6 +148,8 @@ class ProjectController extends Controller
     }
 
     /**
+     * Загрузка задач из Excell файла;
+     *
      * @param $id
      * @return string
      */
@@ -120,6 +165,7 @@ class ProjectController extends Controller
                $task = new Task();
                 $task->name = $tsk['name'];
                 $task->id_project = $id;
+                $task->status = 0;
                 $task->save(false);
                 $my_table = new TaskTable();
                 $my_table->id_task = $task->id;
@@ -202,7 +248,7 @@ class ProjectController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $groups = Groups::findOne($id_group);
-        $users =$groups->getUsers()->asArray()->all();
+        $users = $groups->getUsers()->asArray()->all();
         $results = [];
         foreach ($users as $user){
             $results[]  = [

@@ -2,10 +2,9 @@
 use kartik\select2\Select2;
 use yii\widgets\ActiveForm;
 use yii\web\JsExpression;
+use yii\helpers\Html;
 
-?>
-
-<?php foreach ($modelSteps as $i => $modelStep){
+foreach ($modelSteps as $i => $modelStep){
     echo $form->field($modelStep, "[{$i}]id_user")->widget(Select2::className(),[
         'options' => ['placeholder' => 'Выберите сотрудника ...', 'class' => 'users-select'],
         'pluginOptions' => [
@@ -24,5 +23,7 @@ use yii\web\JsExpression;
             'templateSelection' => new JsExpression('function (city) { return city.text; }'),
         ],
     ])->label($modelStep->label);
+
+    echo Html::activeHiddenInput($modelStep, "[{$i}]id_step");
 }
 ?>

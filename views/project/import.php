@@ -12,7 +12,11 @@ $cb = <<<CB
     function(event, data, previewId, index){
          var form = data.form, files = data.files, extra = data.extra,
         response = data.response, reader = data.reader;
-        console.log(response);
+        var count =  response.count;
+        $('.task-count .count').html(count);
+        if(count > 0){
+            $('#proj-import').removeAttr('disabled');
+        }
      }
 CB;
 
@@ -40,6 +44,10 @@ CB;
                        'fileuploaded' => $cb
                     ]
             ]) ?>
+
+            <div class="col-md-12 task-count text-right">
+                Количество задач <span class="count">0</span>
+            </div>
 
             <?php
                 echo $form->field($import, 'id_chain')->widget(Select2::className(), [
@@ -88,7 +96,7 @@ CB;
             <div class="clearfix"></div>
             <div class=" view-btn text-right">
                 <button  type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
-                <?= Html::submitButton('Импорт', ['class' => 'btn btn-default', 'id' => 'proj=import']) ?>
+                <?= Html::submitButton('Импорт', ['class' => 'btn btn-default', 'id' => 'proj-import', 'disabled' => true]) ?>
             </div>
         </div>
         <?php ActiveForm::end(); ?>

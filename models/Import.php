@@ -23,8 +23,9 @@ class Import extends Model
     public function rules()
     {
         return [
-           [['file'], 'file'],
-           [['deadline'], 'required']
+            [['file'], 'file'],
+            [['deadline'], 'required'],
+            [['id_chain'], 'integer']
         ];
     }
 
