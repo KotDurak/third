@@ -54,7 +54,7 @@ class Task extends \yii\db\ActiveRecord
         return [
             [['name', 'description'], 'string'],
             [['status', 'id_user', 'id_manager'], 'integer'],
-            [['created'], 'timestamp'],
+            [['created'], 'required'],
             [['id_manager'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_manager' => 'id']],
             [['id_user'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_user' => 'id']],
         ];
@@ -88,6 +88,11 @@ class Task extends \yii\db\ActiveRecord
         return $this->hasMany(TaskTable::className(), ['id_task' => 'id']);
     }
 
+    public function getChainClones()
+    {
+        return $this->hasMany(ChainClones::className(), ['id_task' => 'id']);
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -99,5 +104,28 @@ class Task extends \yii\db\ActiveRecord
     public function getProject()
     {
         return $this->hasOne(Project::className(), ['id' => 'id_project']);
+    }
+
+    public static function getStrStatus($status){
+        switch ($status){
+            case 0:
+                return 'Не настроен';
+                break;
+            case 1:
+                return 'В работе';
+                break;
+            case 2:
+                return  'На доработке';
+                break;
+            case 3:
+                return 'Принятые';
+                break;
+            case 4:
+                return 'В архиве';
+                break;
+            default:
+                return 'Не настроен';
+                break;
+        }
     }
 }

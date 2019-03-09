@@ -11,7 +11,12 @@ echo GridView::widget([
     'columns'   => [
         [
             'attribute' => 'name',
-            'label'     => 'Название проекта'
+            'label'     => 'Название проекта',
+            'content'   => function($data, $key, $index, $column){
+                return Html::a($data['name'], Url::toRoute(['task/list', 'id_project' => $data['id']]), [
+                    'target'    => '_blank'
+                ]);
+            }
         ],
         [
             'attribute' => 'url',

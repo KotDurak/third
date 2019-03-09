@@ -47,7 +47,6 @@ class ChainClones extends \yii\db\ActiveRecord
             'id_task' => 'Id Task',
         ];
     }
-
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -62,5 +61,10 @@ class ChainClones extends \yii\db\ActiveRecord
     public function getTask()
     {
         return $this->hasOne(Task::className(), ['id' => 'id_task']);
+    }
+
+    public function getCloneSteps()
+    {
+        return $this->hasMany(ChainClonesSteps::className(), ['id_clone' => 'id']);
     }
 }
