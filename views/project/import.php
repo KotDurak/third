@@ -6,6 +6,7 @@ use yii\helpers\Url;
 use kartik\select2\Select2;
 use yii\web\JsExpression;
 use app\models\Chain;
+use yii\jui\DatePicker;
 
 $cb = <<<CB
     function(event, data, previewId, index){
@@ -66,11 +67,25 @@ CB;
                 ])->label('Цепочка этапов');
             ?>
 
-            <div class="col-md-12" id="chain-options">
+            <div class="col-md-6" id="chain-options">
 
             </div>
+            <div class="clearfix"></div>
+            <div class="col-md-6 deadline">
+                <?php echo $form->field($import, 'deadline')->widget(DatePicker::className(), [
+                    'language'  => 'ru',
+                    'dateFormat' => 'dd.MM.yyyy',
+                    'clientOptions'    => [
+                        'changeYear'    => true,
+                        'changeMonth'    => true,
+                        'showOn' =>'button',
+                        'buttonImageOnly' => true,
+                        'buttonImage'   =>  Yii::getAlias('@images') . '/calendar.png'
+                    ],
 
-
+                ]); ?>
+            </div>
+            <div class="clearfix"></div>
             <div class=" view-btn text-right">
                 <button  type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
                 <?= Html::submitButton('Импорт', ['class' => 'btn btn-default', 'id' => 'proj=import']) ?>

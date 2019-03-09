@@ -11,23 +11,28 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use app\models\SelectUserStep;
 
 class Import extends Model
 {
     public $file;
     public $id_chain;
 
+    public $deadline;
+
     public function rules()
     {
         return [
-           [['file'], 'file']
+           [['file'], 'file'],
+           [['deadline'], 'required']
         ];
     }
 
     public function attributeLabels()
     {
         return [
-            'file'  => 'Импорт файла'
+            'file'  => 'Импорт файла',
+            'deadline'  => 'Срок сдачи задачи'
         ];
     }
 

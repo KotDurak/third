@@ -183,3 +183,23 @@ a.desc:after {
 .circle-conttrols{
     border-radius: 20px;
 }
+
+.deadline input{
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    outline: none;
+    border-width: 1px;
+    border: 1px solid #ccc;
+    color: #555555;
+    border-radius: 4px;
+    background: none;
+    outline: none;
+}
+
+.deadline .ui-datepicker-trigger{
+    height: 26px;
+    position: absolute;
+    right: 20px;
+    top: 27px;
+}

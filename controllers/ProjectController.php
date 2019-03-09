@@ -9,6 +9,7 @@
 namespace app\controllers;
 
 use app\models\Chain;
+use app\models\Groups;
 use app\models\Project;
 use app\models\ProjectSearch;
 use Yii;
@@ -22,6 +23,8 @@ use moonland\phpexcel\Excel;
 use app\models\Task;
 use app\models\TaskTable;
 use app\models\TaskTableRows;
+use app\models\SelectUserStep;
+use yii\helpers\ArrayHelper;
 
 class ProjectController extends Controller
 {
@@ -90,8 +93,11 @@ class ProjectController extends Controller
     public function actionImport($id)
     {
         $project = Project::findOne($id);
-     //   $chains = Chain::find()->all();
         $import = new Import();
+        if(!empty(Yii::$app->request->post())){
+            print_pre(Yii::$app->request->post());
+            die();
+        }
         return $this->renderAjax('import', compact(
             'project',
             'import'
@@ -166,8 +172,45 @@ class ProjectController extends Controller
     }
 
 
+    /**
+     *
+     * Добавляем дополнительные поле в зависимости от выбора цепочки;
+     *
+     * @param $id
+     * @return string
+     */
     public function actionAddFields($id)
     {
+        $form = new ActiveForm();
+        $chain = Chain::findOne($id);
+        $modelSteps = [];
+        foreach ($chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step){
+            $modelSteps[] = new SelectUserStep([
+                'id_step' => $step->id,
+                'label'   => $step->name,
+                'id_group'   => $step->id_group
+            ]);
+        }
+        return $this->renderAjax('add-fields', [
+            'form'  => $form,
+            'chain' => $chain,
+            'modelSteps'   => $modelSteps
+        ]);
+    }
 
+    public function actionUsersList($id_group)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $groups = Groups::findOne($id_group);
+        $users =$groups->getUsers()->asArray()->all();
+        $results = [];
+        foreach ($users as $user){
+            $results[]  = [
+                'id'    => $user['id'],
+                'text'  => $user['surname']. ' ' . $user['name'] . ' (' . $user['email'] . ')'
+            ];
+        }
+       $out['results'] = $results;
+        return $out;
     }
 }

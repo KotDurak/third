@@ -46,7 +46,7 @@ $(function(){
         $.ajax({
            type:'post',
            url: url,
-           succes:function (data) {
+           success:function (data) {
                 $('#chain-options').html(data);
             }
         });
