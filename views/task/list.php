@@ -7,6 +7,7 @@
     use app\models\Project;
     use yii\helpers\ArrayHelper;
     use app\models\Chain;
+    use yii\jui\DatePicker;
 
 
 $this->registerJsFile('@web/js/task.js',
@@ -79,10 +80,47 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                 'label'     => 'Стадния задаиня',
                 'content'    => function($data){
                     $clone = Task::findOne($data['id'])->getChainClones()->one();
-                    $steps = $clone->getCloneSteps()->all();
-                    return $clone->id_task;
+                    $step = $clone->getCloneSteps()->where(['status' => '1'])->one()->step;
+                    if(!empty($step)){
+                        return $step->name;
+                    } else {
+                        return 'Не установлен';
+                    }
                 }
             ],
+            [
+                'attribute' => 'created',
+                'label'     => 'Дата создания',
+                'content'   => function($data){
+                    return date('d.m.Y H:i', strtotime($data['created']));
+                },
+                'filter'    => DatePicker::widget([
+                    'model'=>$taskSearch,
+                    'attribute'=>'created',
+                    'language' => 'ru',
+                    'dateFormat' => 'yyyy-MM-dd',
+                ]),
+                'format'    => 'html'
+            ],
+            [
+                'attribute' => 'deadline',
+                'label'     => 'Дедлайн',
+                'content'   => function($data){
+                    return date('d.m.Y', strtotime($data['deadline']));
+                },
+                'filter'    => DatePicker::widget([
+                    'model' => $taskSearch,
+                    'attribute' => 'deadline',
+                    'language'  => 'ru',
+                    'dateFormat'    => 'yyyy-MM-dd'
+                ]),
+                'format'    => 'html'
+            ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header'    => 'Действия',
+                'template'  => '{update} {delete}'
+            ]
         ]
     ]);
 

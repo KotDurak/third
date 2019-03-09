@@ -32,6 +32,12 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
         ];
     }
 
+
+    public function getStep()
+    {
+        return $this->hasOne(Steps::className(), ['id' => 'id_step']);
+    }
+
     /**
      * {@inheritdoc}
      */

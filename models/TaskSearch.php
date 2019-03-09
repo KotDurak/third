@@ -64,7 +64,7 @@ class TaskSearch extends Task
             'id_manager' => $this->id_manager,
             'id_project' => $this->id_project,
             'deadline' => $this->deadline,
-            'created' => $this->created,
+            'DATE(created)' => $this->created,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
