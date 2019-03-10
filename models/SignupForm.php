@@ -69,6 +69,25 @@ class SignupForm extends Model
         }
     }
 
+    public static function sentEmailToUser(User $user, $password)
+    {
+        $email = $user->email;
+        $sent = Yii::$app->mailer
+            ->compose([
+                'html' => 'layouts/user',
+                'text' => 'layouts/user-text'
+            ], [
+                'user'  => $user,
+                'password'  => $password
+            ])
+            ->setTo($email)
+            ->setFrom(Yii::$app->params['adminEmail'])
+            ->setSubject('Ваши данные от сайте')
+            ->send();
+        if(!$sent)
+            throw new \RuntimeException('Ошииька отправки сообщения');
+    }
+
     public function confirmation($token)
     {
         if(empty($token)){

@@ -11,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\SignupForm;
 
 /**
  * UserController implements the CRUD actions for User model.
@@ -73,7 +74,10 @@ class UserController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $groups = Yii::$app->request->post('groups');
             $model->saveGroups($groups);
+            $passord = $model->password;
+            SignupForm::sentEmailToUser($model, $passord);
             $model->setPassword($model->password);
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

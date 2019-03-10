@@ -96,7 +96,9 @@ AppAsset::register($this);
         <div class="description text-center">
             Система управления созданием контента<br>
             от third-dimension.ru <br>
+            <!--
             <?= Html::a('Регистрация', ['auth/signup'], ['class' => 'auth-links']) ?>
+            -->
             <br>
             <?= Html::a('Вход', ['auth/login'], ['class' => 'auth-links']) ?>
         </div>
