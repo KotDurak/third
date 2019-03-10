@@ -3,8 +3,18 @@
     use yii\helpers\ArrayHelper;
     use yii\jui\DatePicker;
     use kartik\datetime\DateTimePicker;
+    use kartik\select2\Select2;
+    use yii\web\JsExpression;
+
+$this->registerJsFile('@web/js/task/update.js',
+    ['depends' => [\yii\web\JqueryAsset::className()]]);
 
     $projects = ArrayHelper::map($task->getProject()->asArray()->all(), 'id', 'name');
+
+    $current_chain = ($task->getChains()->all());
+    $current_chain = array_shift($current_chain);
+    $modelEdit->id_chain = $current_chain->id;
+    $initChainText = $current_chain->name;
 
 ?>
 
@@ -14,7 +24,7 @@
         'enctype'=>'multipart/form-data'
     ]
 ]); ?>
-<div class="row task-form-shadow">
+<div class="row">
     <div class="col-md-3">
         <?= $form->field($task, 'id_project')->dropDownList($projects, [
             'disabled'  => true
@@ -44,7 +54,6 @@
             echo $form->field($task, 'deadline')->widget(DateTimePicker::className(), [
                 'language'  => 'ru',
                 'options' => ['placeholder' => 'Дедлайн ...'],
-                //  'dateFormat' => 'dd.MM.yyyy',
                 'convertFormat' => true,
                 'value'=> date("d.m.Y h:i"),
                 'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
@@ -52,9 +61,9 @@
                     'format' => 'dd.MM.yyyy hh:i',
                     'showMeridian' => true,
                     'autoclose'=>true,
-                    'weekStart'=>1, //неделя начинается с понедельника
-                    'startDate' => '01.05.2015 00:00', //самая ранняя возможная дата
-                    'todayBtn'=>true, //снизу кнопка "сегодня"
+                    'weekStart'=>1,
+                    'startDate' => '01.05.2015 00:00',
+                    'todayBtn'=>true,
                     'buttonImage'   =>  Yii::getAlias('@images') . '/calendar.png'
                 ],
             ])->label('Срок сдачи задачи');
@@ -62,11 +71,42 @@
     </div>
 </div>
 <div class="row task-for-content">
-    <div class="col-md-9 task-form-shadow">
+    <div class="col-md-9">
         Шаги
     </div>
-    <div class="col-md-3 task-form-shadow">
-        Настройка цепочек
+    <div class="col-md-3">
+        <?php
+
+            echo $form->field($modelEdit, 'id_chain')->widget(Select2::className(), [
+                'initValueText' => $initChainText,
+                'options' => [
+                    'placeholder' => 'Поиск цеопчки ...',
+                    'id' => 'chain-select',
+                ],
+                'pluginOptions' => [
+                    'allowClear'    => true,
+                    'minimumInputLength' => 0,
+                    'language' => [
+                        'errorLoading' => new JsExpression("function () { return 'Ожидаение результатов..'; }"),
+                    ],
+                    'ajax'  => [
+                        'url'   => \yii\helpers\Url::to(['chain-list']),
+                        'dataType'  => 'json',
+                        'data' => new JsExpression('function(params) { return {q:params.term}; }')
+                    ],
+                    'escapeMarkup' => new JsExpression('function (markup) { return markup; }'),
+                    'templateResult' => new JsExpression('function(city) { return city.text; }'),
+                    'templateSelection' => new JsExpression('function (city) { return city.text; }'),
+                ],
+                'pluginEvents' => [
+                    "change" => "function(e) {
+                               
+                            }"]
+            ])->label('Цепочка этапов');
+            ?>
+        <div class="col-md-12" id="chain-options">
+            chain opts
+        </div>
     </div>
 </div>
 <?php ActiveForm::end(); ?>

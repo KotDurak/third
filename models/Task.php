@@ -101,6 +101,12 @@ class Task extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'id_user']);
     }
 
+    public function getChains()
+    {
+        return $this->hasMany(Chain::className(), ['id' => 'id_chain'])
+            ->viaTable('chain_clones', ['id_task' => 'id']);
+    }
+
     public function getProject()
     {
         return $this->hasOne(Project::className(), ['id' => 'id_project']);
