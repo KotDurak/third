@@ -235,9 +235,11 @@ class ProjectController extends Controller
             $modelSteps[] = new SelectUserStep([
                 'id_step' => $step->id,
                 'label'   => $step->name,
-                'id_group'   => $step->id_group
+                'id_group'   => $step->id_group,
             ]);
+
         }
+
         return $this->renderAjax('add-fields', [
             'form'  => $form,
             'chain' => $chain,

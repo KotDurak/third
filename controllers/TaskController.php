@@ -3,9 +3,11 @@
 namespace app\controllers;
 
 use app\models\Chain;
+use app\models\ChainClonesSteps;
 use app\models\Groups;
 use app\models\TaskEdit;
 use app\models\User;
+use Yii;
 use yii\data\ActiveDataProvider;
 use app\models\Task;
 use app\models\TaskSearch;
@@ -44,6 +46,11 @@ class TaskController extends \yii\web\Controller
     {
         $task = Task::findOne($id);
         $modelEdit = new TaskEdit();
+        if(!empty(Yii::$app->request->post())){
+            $task->load(Yii::$app->request->post());
+            $task->save();
+            $this->redirect('/task/list?id_project=' . $task->id_project);
+        }
         return $this->render('update', [
             'task'  => $task,
             'modelEdit' => $modelEdit
@@ -101,6 +108,29 @@ class TaskController extends \yii\web\Controller
             'modelSteps'   => $modelSteps
         ]);
 
+    }
+
+    /**
+     * Вывосдим список для редакрования статуса задачи;
+     *
+     * @param $id_chain
+     */
+    public function actionStepList($id_chain)
+    {
+        $form = new ActiveForm();
+        $chain = Chain::findOne($id_chain);
+        $modelsClonesSteps = [];
+        foreach($chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step){
+            $modelsClonesSteps[] = new ChainClonesSteps([
+                'id_step'   => $step->id,
+                'status'    => 0,
+            ]);
+        }
+
+        return $this->renderAjax('step-list', [
+            'modelsClonesSteps'   => $modelsClonesSteps,
+            'form'              => $form
+        ]);
     }
 
     public function actionUsersList($id_group, $q = null)

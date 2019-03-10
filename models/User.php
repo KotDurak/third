@@ -173,4 +173,13 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
        }
        return false;
     }
+
+    public static function getUserName($id)
+    {
+       $user = User::findOne($id);
+       if($user->is_outer == 1){
+           return  '<strong style="color:red">Внешний сотрудник!</strong>';
+       }
+       return   $user->surname. ' ' . $user->name . ' (' . $user->email .')';
+    }
 }

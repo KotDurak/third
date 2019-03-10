@@ -17,6 +17,24 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
     const STATUS_WORK = 1;
     const STATUS_REWORK = 2;
     const STATUS_DONE = 3;
+
+    public static function getLabel($val)
+    {
+        switch ($val){
+            case self::STATUS_WORK:
+                return 'В работе';
+                break;
+            case  self::STATUS_REWORK:
+                return 'На доработку';
+                break;
+            case  self::STATUS_DONE:
+                return 'Сделано';
+                break;
+            default:
+                return 'Не установлен';
+                break;
+        }
+    }
     /**
      * {@inheritdoc}
      */

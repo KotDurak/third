@@ -7,6 +7,7 @@
     use yii\web\JsExpression;
     use app\models\SelectUserStep;
     use yii\helpers\Html;
+    use app\models\User;
 
 $this->registerJsFile('@web/js/task/update.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
@@ -18,13 +19,23 @@ $this->registerJsFile('@web/js/task/update.js',
     $modelEdit->id_chain = $current_chain->id;
     $initChainText = $current_chain->name;
     $modelSteps = [];
-     foreach ($current_chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step){
-         $modelSteps[] = new SelectUserStep([
+    $clone = $task->getChainClones()->all()[0];
+    $modelsClonesSteps = [];
+
+   /**
+    * Текущие шаги для задачи;
+   */
+   foreach ($current_chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step){
+        $clone_step = $step->getStepClones()->where(['id_clone' => $clone->id])->one();
+        $modelsClonesSteps[] = $clone_step;
+        $modelSteps[] = new SelectUserStep([
              'id_step' => $step->id,
              'label'   => $step->name,
-             'id_group'   => $step->id_group
+             'id_group'   => $step->id_group,
+             'id_user'  => $clone_step->id_user
          ]);
      }
+
 ?>
 
 <?php $form =  ActiveForm::begin([
@@ -80,8 +91,73 @@ $this->registerJsFile('@web/js/task/update.js',
     </div>
 </div>
 <div class="row task-for-content">
-    <div class="col-md-9">
-        Шаги
+    <div class="col-md-9" id="step-cpntainer">
+        <?php foreach ($modelsClonesSteps as $i => $modelsClonesStep): ?>
+            <div class="col-md-12 step-item">
+                <h4 class="text-left"><?php echo  $modelsClonesStep->step->name;?></h4>
+                <br>
+                <?php
+                echo   $form->field($modelsClonesStep, "[{$i}]status")->radioList(array(2 => 2, 1 => 1,3 => 3), [
+                    'class' => 'btn-group radio-colors',
+                    'data-toggle' => 'buttons',
+                    'unselect' => null,
+                    'item'  => function($index,$label,$name,$checked,$value){
+                        switch ($value){
+                            case 1:{
+                                $class = 'btn-warning';
+                                break;
+                            }
+                            case  2:{
+                                $class= 'btn-danger';
+                                break;
+                            }
+                            case 3:{
+                                $class = 'btn-success';
+                                break;
+                            }
+                            default:
+                                $class  = '';
+                                break;
+                        }
+                        return Html::radio($name,
+                            $checked,
+                            [
+                                'label' => \app\models\ChainClonesSteps::getLabel($label),
+                                'value' => $value,
+                                'labelOptions' => ['class' => 'btn  circle-conttrols ' . $class]
+                            ]);
+                    }
+                ])->label(false);
+
+                    /*
+                    echo $form->field($modelsClonesStep, "[{$i}]status")->radio([
+                        'label'  => 'На доработке',
+                        'value' =>  \app\models\ChainClonesSteps::STATUS_REWORK,
+                        'uncheck' => null,
+                        'labelOptions'  => [
+                            'class' => 'btn btn-danger circle-conttrols'
+                        ]
+                    ]);
+                    echo $form->field($modelsClonesStep, "[{$i}]status")->radio([
+                        'label'  => 'На доработке',
+                        'value' =>  \app\models\ChainClonesSteps::STATUS_WORK,
+                        'uncheck' => null,
+                        'labelOptions'  => [
+                            'class' => 'btn btn-warning circle-conttrols'
+                        ]
+                    ]);
+                    echo $form->field($modelsClonesStep, "[{$i}]status")->radio([
+                        'label'  => 'На доработке',
+                        'value' =>  \app\models\ChainClonesSteps::STATUS_DONE,
+                        'uncheck' => null,
+                        'labelOptions'  => [
+                            'class' => 'btn btn-success circle-conttrols'
+                        ]
+                    ]);
+              */  ?>
+
+            </div>
+        <?php endforeach; ?>
     </div>
     <div class="col-md-3">
         <?php
@@ -118,6 +194,7 @@ $this->registerJsFile('@web/js/task/update.js',
                 foreach ($modelSteps as $i => $modelStep){
                     echo $form->field($modelStep, "[{$i}]id_user")->widget(Select2::className(),[
                         'options' => ['placeholder' => 'Выберите сотрудника ...', 'class' => 'users-select'],
+                        'initValueText' => User::getUserName($modelStep->id_user),
                         'pluginOptions' => [
                             'allowClear'    => true,
                             'minimumInputLength' => 0,
@@ -140,5 +217,8 @@ $this->registerJsFile('@web/js/task/update.js',
             ?>
         </div>
     </div>
+</div>
+<div class="row text-right">
+    <?= Html::submitButton('Сохранить', ['class' => 'btn btn-default', 'id' => 'task-save']); ?>
 </div>
 <?php ActiveForm::end(); ?>

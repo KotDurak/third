@@ -10,5 +10,13 @@ $(function(){
                 $('#chain-options').html(data);
             }
         });
+
+        $.ajax({
+           type:'post',
+           url:'step-list?id_chain=' + id_chain,
+           success:function (data) {
+               $('#step-cpntainer').html(data);
+           }
+        });
     });
 });

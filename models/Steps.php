@@ -63,4 +63,9 @@ class Steps extends \yii\db\ActiveRecord
     {
         return $this->hasMany(StepAttributes::className(), ['id_step' => 'id']);
     }
+
+    public function getStepClones()
+    {
+        return $this->hasMany(ChainClonesSteps::className(), ['id_step' => 'id']);
+    }
 }
