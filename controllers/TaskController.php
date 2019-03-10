@@ -3,7 +3,9 @@
 namespace app\controllers;
 
 use app\models\Chain;
+use app\models\Groups;
 use app\models\TaskEdit;
+use app\models\User;
 use yii\data\ActiveDataProvider;
 use app\models\Task;
 use app\models\TaskSearch;
@@ -99,6 +101,39 @@ class TaskController extends \yii\web\Controller
             'modelSteps'   => $modelSteps
         ]);
 
+    }
+
+    public function actionUsersList($id_group, $q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $groups = Groups::findOne($id_group);
+        if(!is_null($q)){
+            $users = $groups->getUsers()->where(['like', 'surname', $q])
+                ->orWhere(['like', 'name', $q])
+                ->asArray()->all();
+        } else{
+            $users = $groups->getUsers()->asArray()->all();
+        }
+
+        $add_users = User::find()->where(['is_outer' => 1])->one();
+        $users[] = $add_users;
+        $results = [];
+        foreach ($users as $user){
+            if($user->is_outer == 1){
+                $results[] = [
+                    'id'    => $user['id'],
+                    'text'  => '<strong style="color:red">Внешний сотрудник!</strong>'
+                ];
+            } else{
+                $results[]  = [
+                    'id'    => $user['id'],
+                    'text'  => $user['surname']. ' ' . $user['name'] . ' (' . $user['email'] . ')'
+                ];
+            }
+
+        }
+        $out['results'] = $results;
+        return $out;
     }
 
 }
