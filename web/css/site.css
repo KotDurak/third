@@ -203,3 +203,13 @@ a.desc:after {
     right: 20px;
     top: 27px;
 }
+
+.task-form-shadow{
+    -webkit-box-shadow: 5px 3px 13px 3px rgba(184,184,184,1);
+    -moz-box-shadow: 5px 3px 13px 3px rgba(184,184,184,1);
+    box-shadow: 5px 3px 13px 3px rgba(184,184,184,1);
+}
+
+.task-for-content{
+    margin-top: 20px;
+}

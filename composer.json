@@ -25,7 +25,8 @@
         "symfony/dom-crawler": "2.8",
         "symfony/css-selector": "2.8",
         "wbraganca/yii2-dynamicform": "2.0.1",
-        "d4rkstar/yii2-bootbox-asset": "*"
+        "d4rkstar/yii2-bootbox-asset": "*",
+        "kartik-v/yii2-widget-datetimepicker": "^1.4"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

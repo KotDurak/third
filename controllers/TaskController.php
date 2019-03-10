@@ -33,4 +33,12 @@ class TaskController extends \yii\web\Controller
         ]);
     }
 
+    public function actionUpdate($id)
+    {
+        $task = Task::findOne($id);
+        return $this->render('update', [
+            'task'  => $task,
+        ]);
+    }
+
 }

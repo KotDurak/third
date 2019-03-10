@@ -7,6 +7,7 @@ use kartik\select2\Select2;
 use yii\web\JsExpression;
 use app\models\Chain;
 use yii\jui\DatePicker;
+use kartik\datetime\DateTimePicker;
 
 $cb = <<<CB
     function(event, data, previewId, index){
@@ -80,14 +81,20 @@ CB;
             </div>
             <div class="clearfix"></div>
             <div class="col-md-6 deadline">
-                <?php echo $form->field($import, 'deadline')->widget(DatePicker::className(), [
+                <?php echo $form->field($import, 'deadline')->widget(DateTimePicker::className(), [
                     'language'  => 'ru',
-                    'dateFormat' => 'dd.MM.yyyy',
-                    'clientOptions'    => [
-                        'changeYear'    => true,
-                        'changeMonth'    => true,
-                        'showOn' =>'button',
-                        'buttonImageOnly' => true,
+                    'options' => ['placeholder' => 'Дедлайн ...'],
+                  //  'dateFormat' => 'dd.MM.yyyy',
+                    'convertFormat' => true,
+                    'value'=> date("d.m.Y h:i"),
+                    'type' => DateTimePicker::TYPE_COMPONENT_APPEND,
+                    'pluginOptions'    => [
+                        'format' => 'dd.MM.yyyy hh:i',
+                        'showMeridian' => true,
+                        'autoclose'=>true,
+                        'weekStart'=>1, //неделя начинается с понедельника
+                        'startDate' => '01.05.2015 00:00', //самая ранняя возможная дата
+                        'todayBtn'=>true, //снизу кнопка "сегодня"
                         'buttonImage'   =>  Yii::getAlias('@images') . '/calendar.png'
                     ],
 
