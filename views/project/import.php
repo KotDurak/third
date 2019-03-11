@@ -21,6 +21,8 @@ $cb = <<<CB
      }
 CB;
 
+
+
 ?>
     <div class="modal-content animated bounceInTop" >
         <?php
@@ -81,7 +83,21 @@ CB;
             </div>
             <div class="clearfix"></div>
             <div class="col-md-6 deadline">
-                <?php echo $form->field($import, 'deadline')->widget(DateTimePicker::className(), [
+                <?php
+
+                echo $form->field($import, 'deadline')->widget(DatePicker::className(), [
+                    'language'  => 'ru',
+                    'dateFormat' => 'dd.MM.yyyy',
+                    'clientOptions'    => [
+                        'changeYear'    => true,
+                        'changeMonth'    => true
+                    ],
+                    'options'  => [
+                        'class' => 'form-control'
+                    ]
+
+                ])->label('Дедлайн');
+                /*echo $form->field($import, 'deadline')->widget(DateTimePicker::className(), [
                     'language'  => 'ru',
                     'options' => ['placeholder' => 'Дедлайн ...'],
                   //  'dateFormat' => 'dd.MM.yyyy',
@@ -92,13 +108,14 @@ CB;
                         'format' => 'dd.MM.yyyy hh:i',
                         'showMeridian' => true,
                         'autoclose'=>true,
+                        'vertical' => 'auto',
                         'weekStart'=>1, //неделя начинается с понедельника
                         'startDate' => '01.05.2015 00:00', //самая ранняя возможная дата
                         'todayBtn'=>true, //снизу кнопка "сегодня"
                         'buttonImage'   =>  Yii::getAlias('@images') . '/calendar.png'
                     ],
 
-                ]); ?>
+                ]); */?>
             </div>
             <div class="clearfix"></div>
             <div class=" view-btn text-right">

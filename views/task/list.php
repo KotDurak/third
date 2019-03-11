@@ -80,12 +80,16 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                 'label'     => 'Стадния задаиня',
                 'content'    => function($data){
                     $clone = Task::findOne($data['id'])->getChainClones()->one();
-                    $step = $clone->getCloneSteps()->where(['status' => '1'])->one()->step;
+                    if(empty($clone)){
+                        return 'Не установлен';
+                    }
+                      $step = $clone->getCloneSteps()->where(['status' => '0'])->one()->step;
                     if(!empty($step)){
                         return $step->name;
                     } else {
                         return 'Не установлен';
                     }
+
                 }
             ],
             [
