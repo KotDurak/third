@@ -10,6 +10,9 @@ echo GridView::widget([
     'filterModel'   => $projectSearch,
     'columns'   => [
         [
+            'class' => 'yii\grid\SerialColumn'
+        ],
+        [
             'attribute' => 'name',
             'label'     => 'Название проекта',
             'content'   => function($data, $key, $index, $column){

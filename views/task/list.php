@@ -1,14 +1,16 @@
 <?php
-    use yii\grid\GridView;
-    use yii\widgets\Pjax;
-    use yii\helpers\Url;
-    use yii\widgets\Menu;
-    use app\models\Task;
-    use app\models\Project;
-    use yii\helpers\ArrayHelper;
-    use app\models\Chain;
-    use yii\jui\DatePicker;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
+use yii\helpers\Url;
+use yii\widgets\Menu;
+use app\models\Task;
+use app\models\Project;
+use yii\helpers\ArrayHelper;
+use app\models\Chain;
+use yii\jui\DatePicker;
+use yii\helpers\Html;
 
+$this->params['breadcrumbs'][] = 'Список задач';
 
 $this->registerJsFile('@web/js/task.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
@@ -45,6 +47,9 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
         'filterModel'   => $taskSearch,
         'columns'   => [
             [
+                'class' => 'yii\grid\SerialColumn'
+            ],
+            [
                 'class' => 'yii\grid\CheckboxColumn',
             ],
             [
@@ -65,7 +70,7 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                 'attribute' => 'name',
                 'label'     => 'Название',
                 'content'   => function($data){
-                    return $data['name'];
+                    return Html::a($data['name'], Url::toRoute(['task/card', 'id' => $data['id']]));
                 }
             ],
             [
@@ -83,7 +88,7 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                     if(empty($clone)){
                         return 'Не установлен';
                     }
-                      $step = $clone->getCloneSteps()->where(['status' => '0'])->one()->step;
+                      $step = $clone->getCloneSteps()->where(['status' => '1'])->one()->step;
                     if(!empty($step)){
                         return $step->name;
                     } else {

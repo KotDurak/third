@@ -67,4 +67,15 @@ class ChainClones extends \yii\db\ActiveRecord
     {
         return $this->hasMany(ChainClonesSteps::className(), ['id_clone' => 'id']);
     }
+
+    /**
+     * Удаляем старый клон задачи;
+     *
+     * @param $id
+     */
+    public static function deleteByTaskId($id)
+    {
+        $old_clone = ChainClones::findOne(['id_task' => $id]);
+        $old_clone->delete();
+    }
 }

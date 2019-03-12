@@ -1,5 +1,5 @@
 <?php
-    use yii\widgets\ActiveForm;
+use yii\widgets\ActiveForm;
     use yii\helpers\ArrayHelper;
     use yii\jui\DatePicker;
     use kartik\datetime\DateTimePicker;
@@ -8,6 +8,9 @@
     use app\models\SelectUserStep;
     use yii\helpers\Html;
     use app\models\User;
+$this->params['breadcrumbs'][] = ['label' => 'Список задач', 'url' => ['/task/list?id_project='.$task->id_project]];
+$this->params['breadcrumbs'][] = 'Редактировать задачу';
+
 
 $this->registerJsFile('@web/js/task/update.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
@@ -97,10 +100,10 @@ $this->registerJsFile('@web/js/task/update.js',
                 <h4 class="text-left"><?php echo  $modelsClonesStep->step->name;?></h4>
                 <br>
                 <?php
-                echo   $form->field($modelsClonesStep, "[{$i}]status")->radioList(array(2 => 2, 1 => 1,3 => 3), [
+                echo   $form->field($modelsClonesStep, "[{$i}]status")->radioList(array(0 => 0,2 => 2, 1 => 1,3 => 3), [
                     'class' => 'btn-group radio-colors',
                     'data-toggle' => 'buttons',
-                    'unselect' => null,
+                    'unselect' => 0,
                     'item'  => function($index,$label,$name,$checked,$value){
                         switch ($value){
                             case 1:{
@@ -115,9 +118,16 @@ $this->registerJsFile('@web/js/task/update.js',
                                 $class = 'btn-success';
                                 break;
                             }
+                            case 0:{
+                                $class = 'btn-default';
+                                break;
+                            }
                             default:
                                 $class  = '';
                                 break;
+                        }
+                        if($checked){
+                            $class .= ' active';
                         }
                         return Html::radio($name,
                             $checked,
@@ -128,33 +138,7 @@ $this->registerJsFile('@web/js/task/update.js',
                             ]);
                     }
                 ])->label(false);
-
-                    /*
-                    echo $form->field($modelsClonesStep, "[{$i}]status")->radio([
-                        'label'  => 'На доработке',
-                        'value' =>  \app\models\ChainClonesSteps::STATUS_REWORK,
-                        'uncheck' => null,
-                        'labelOptions'  => [
-                            'class' => 'btn btn-danger circle-conttrols'
-                        ]
-                    ]);
-                    echo $form->field($modelsClonesStep, "[{$i}]status")->radio([
-                        'label'  => 'На доработке',
-                        'value' =>  \app\models\ChainClonesSteps::STATUS_WORK,
-                        'uncheck' => null,
-                        'labelOptions'  => [
-                            'class' => 'btn btn-warning circle-conttrols'
-                        ]
-                    ]);
-                    echo $form->field($modelsClonesStep, "[{$i}]status")->radio([
-                        'label'  => 'На доработке',
-                        'value' =>  \app\models\ChainClonesSteps::STATUS_DONE,
-                        'uncheck' => null,
-                        'labelOptions'  => [
-                            'class' => 'btn btn-success circle-conttrols'
-                        ]
-                    ]);
-              */  ?>
+              ?>
 
             </div>
         <?php endforeach; ?>

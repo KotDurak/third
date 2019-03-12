@@ -14,6 +14,7 @@ use app\models\TaskSearch;
 use yii\db\Query;
 use app\models\SelectUserStep;
 use yii\widgets\ActiveForm;
+use app\models\ChainClones;
 
 class TaskController extends \yii\web\Controller
 {
@@ -30,6 +31,8 @@ class TaskController extends \yii\web\Controller
         $dataProvider->setPagination([
             'pageSize'  => $page_size
         ]);
+        $dataProvider->query->andFilterWhere(['id_project'  => $id_project]);
+       // $dataProvider->query->where('id_project=' . $id_project);
        /* $dataProvider = new ActiveDataProvider([
             'query' => Task::find()->where(['id_project' => $id_project]),
             'pagination'    => [
@@ -47,7 +50,32 @@ class TaskController extends \yii\web\Controller
         $task = Task::findOne($id);
         $modelEdit = new TaskEdit();
         if(!empty(Yii::$app->request->post())){
+            $post = Yii::$app->request->post();
             $task->load(Yii::$app->request->post());
+            ChainClones::deleteByTaskId($id);
+            $modelEdit->load($post);
+            $clone = new ChainClones();
+            $clone->id_task = $id;
+            $clone->id_chain = $modelEdit->id_chain;
+            $clone->save();
+            foreach ($post['SelectUserStep'] as $i => $step){
+                $post['SelectUserStep'][$i]['status'] = $post['ChainClonesSteps'][$i]['status'];
+            }
+            $is_rework = false;
+            foreach( $post['SelectUserStep'] as $item){
+                $clone_step = new ChainClonesSteps();
+                $clone_step->id_clone = $clone->id;
+                $clone_step->id_step = $item['id_step'];
+                $clone_step->id_user = $item['id_user'];
+                $clone_step->status = $item['status'];
+                if($item['status'] == 2){
+                    $is_rework = true;
+                }
+                $clone_step->save();
+            }
+            if($is_rework){
+                $task->status = 2;
+            }
             $task->save();
             $this->redirect('/task/list?id_project=' . $task->id_project);
         }
@@ -164,6 +192,14 @@ class TaskController extends \yii\web\Controller
         }
         $out['results'] = $results;
         return $out;
+    }
+
+    public function actionCard($id)
+    {
+        $task = Task::findOne($id);
+        return $this->render('card', [
+            'task'  => $task
+        ]);
     }
 
 }

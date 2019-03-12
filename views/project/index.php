@@ -7,7 +7,7 @@ use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\bootstrap\Modal;
 
-
+$this->params['breadcrumbs'][] = 'Проекты';
 $this->registerJsFile('@web/js/project_add.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
 
