@@ -68,6 +68,12 @@ class ChainClones extends \yii\db\ActiveRecord
         return $this->hasMany(ChainClonesSteps::className(), ['id_clone' => 'id']);
     }
 
+    public function getSteps()
+    {
+        return $this->hasMany(Steps::className(),['id' => 'id_step'])
+            ->viaTable('chain_clones_steps', ['id_clone' => 'id']);
+    }
+
     /**
      * Удаляем старый клон задачи;
      *

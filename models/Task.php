@@ -134,4 +134,12 @@ class Task extends \yii\db\ActiveRecord
                 break;
         }
     }
+
+   public static function getRows($id)
+   {
+       $table = TaskTable::findOne(['id_task' => $id]);
+       $rows = $table->getTaskTableRows()->asArray()->all();
+       return $rows;
+   }
+
 }

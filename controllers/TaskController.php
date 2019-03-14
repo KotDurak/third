@@ -52,6 +52,8 @@ class TaskController extends \yii\web\Controller
         if(!empty(Yii::$app->request->post())){
             $post = Yii::$app->request->post();
             $task->load(Yii::$app->request->post());
+            $task->created = date('Y-m-d H:i:s', strtotime($task->created));
+            $task->deadline = date('Y-m-d H:i:s', strtotime($post['Task']['deadline']));
             ChainClones::deleteByTaskId($id);
             $modelEdit->load($post);
             $clone = new ChainClones();
@@ -197,6 +199,7 @@ class TaskController extends \yii\web\Controller
     public function actionCard($id)
     {
         $task = Task::findOne($id);
+
         return $this->render('card', [
             'task'  => $task
         ]);
