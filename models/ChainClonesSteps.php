@@ -76,6 +76,11 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
         return $this->hasMany(AttributesValues::className(), ['id_step_clone' => 'id']);
     }
 
+    public function getComments()
+    {
+        return $this->hasMany(StepClonesComment::className(), ['id_step_clone' => 'id']);
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -15,6 +15,8 @@ use yii\db\Query;
 use app\models\SelectUserStep;
 use yii\widgets\ActiveForm;
 use app\models\ChainClones;
+use app\models\StepClonesComment;
+
 
 class TaskController extends \yii\web\Controller
 {
@@ -218,5 +220,20 @@ class TaskController extends \yii\web\Controller
         $step = ChainClonesSteps::findOne($id_clone);
         $step->changeStatus(ChainClonesSteps::STATUS_DONE);
         $this->redirect(['task/card', 'id' => $id_task]);
+    }
+
+    public function actionComment($id_clone)
+    {
+        $model = new StepClonesComment();
+        if(Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())){
+            $model->save();
+            $step = ChainClonesSteps::findOne($id_clone);
+            $step->changeStatus(ChainClonesSteps::STATUS_REWORK);
+            return true;
+        }
+        return $this->renderAjax('comment',[
+            'model' => $model,
+            'id_clone'  => $id_clone
+        ]);
     }
 }

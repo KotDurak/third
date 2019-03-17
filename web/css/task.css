@@ -13,3 +13,9 @@
 .steps-btn a{
     border-radius: 20px;
 }
+
+.notice-comment{
+    display: block;
+    position: relative;
+    left:-15px;
+}

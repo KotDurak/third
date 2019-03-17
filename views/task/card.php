@@ -8,10 +8,15 @@ $this->params['breadcrumbs'][] = 'Карточка задачи';
 
 $this->registerCssFile('/css/task.css');
 
+$this->registerJsFile('@web/js/task/card.js',
+    ['depends' => [\yii\web\JqueryAsset::className()]]);
+
 $clone_chain = $task->getChainClones()->one();
 $steps = $clone_chain->getSteps()->orderBy(['sort' => SORT_ASC])->all();
 
 $i = 1;
+
+
 ?>
 
 <div class="row top-task-info">
@@ -97,9 +102,21 @@ $i = 1;
                     <?php if ($step == end($steps)): ?>
                         Кнопки админа
                     <?php else: ?>
+                        <?php
+                            $comments = $clone_step->getComments()->all();
+                        ?>
+                        <?php if(!empty($comments) && $clone_step->status == \app\models\ChainClonesSteps::STATUS_REWORK): ?>
+                            <a href="" class="notice-comment">
+                                <?php
+                                    $src = Url::to('@images/notice.png');
+                                    echo \yii\helpers\Html::img($src);
+                                ?>
+                            </a>
+                        <?php endif; ?>
                         <div class="btn-group steps-btn">
                             <a href="<?php echo Url::toRoute(['/task/rework', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
-                               type="button" class="btn btn-danger  rework">На доработку</a>
+                               type="button" class="btn btn-danger  rework" modal-url="<?php echo Url::toRoute(['/task/comment', 'id_clone' => $clone_step->id]); ?>">На доработку
+                            </a>
                             <a type="button" class="btn btn-warning work">В работе</a>
                             <a href="<?php echo Url::toRoute(['/task/done', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
                                type="button" class="btn btn-info done">Сделано</a>
@@ -112,4 +129,9 @@ $i = 1;
     <div class="col-md-3">
         side
     </div>
+</div>
+
+
+<div class="modal inmodal add-comment" id="add-comment" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg"></div>
 </div>
