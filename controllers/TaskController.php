@@ -205,4 +205,18 @@ class TaskController extends \yii\web\Controller
         ]);
     }
 
+
+    public function actionRework($id_clone, $id_task)
+    {
+        $step = ChainClonesSteps::findOne($id_clone);
+        $step->changeStatus(ChainClonesSteps::STATUS_REWORK);
+        $this->redirect(['task/card', 'id' => $id_task]);
+    }
+
+    public function actionDone($id_clone, $id_task)
+    {
+        $step = ChainClonesSteps::findOne($id_clone);
+        $step->changeStatus(ChainClonesSteps::STATUS_DONE);
+        $this->redirect(['task/card', 'id' => $id_task]);
+    }
 }

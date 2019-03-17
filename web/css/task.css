@@ -4,3 +4,12 @@
     -moz-box-shadow: 5px 7px 5px 0px rgba(194,177,194,1);
     box-shadow: 5px 7px 5px 0px rgba(194,177,194,1);
 }
+
+.table-container{
+    max-height: 250px;
+    overflow: auto;
+}
+
+.steps-btn a{
+    border-radius: 20px;
+}

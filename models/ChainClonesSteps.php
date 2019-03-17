@@ -18,6 +18,13 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
     const STATUS_REWORK = 2;
     const STATUS_DONE = 3;
 
+
+    public  function changeStatus($status)
+    {
+        $this->status = $status;
+        $this->save();
+    }
+
     public static function getLabel($val)
     {
         switch ($val){
@@ -62,6 +69,11 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'id_user']);
+    }
+
+    public function getAttributesValues()
+    {
+        return $this->hasMany(AttributesValues::className(), ['id_step_clone' => 'id']);
     }
 
     /**
