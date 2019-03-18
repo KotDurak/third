@@ -68,4 +68,10 @@ class Steps extends \yii\db\ActiveRecord
     {
         return $this->hasMany(ChainClonesSteps::className(), ['id_step' => 'id']);
     }
+
+    public function getFiles()
+    {
+        return $this->hasMany(Files::className(), ['id' => 'id_file'])
+            ->viaTable('step_files', ['id_file' => 'id']);
+    }
 }

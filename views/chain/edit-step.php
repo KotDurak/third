@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use wbraganca\dynamicform\DynamicFormWidget;
+use kartik\file\FileInput;
 ?>
     <style>
         .add-item{
@@ -47,6 +48,21 @@ use wbraganca\dynamicform\DynamicFormWidget;
 
                                 ]
                             ]); ?>
+                    </div>
+
+                    <div class="col-md-12">
+                        <?php
+                            echo FileInput::widget([
+                                'model' => $modelFiles,
+                                'attribute' => 'file[]',
+                                'name'      => 'file[]',
+                                'options'   => [ 'multiple' => true],
+                                'pluginOptions' => [
+                                    'maxFileCount' => 10,
+                                  //  'overwriteInitial' => false,
+                                ]
+                            ]);
+                        ?>
                     </div>
                 </div>
             </div>

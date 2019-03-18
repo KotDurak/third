@@ -9,6 +9,13 @@ $(function(){
 
    $('.notice-comment').on('click', function (e) {
         e.preventDefault();
-
    });
+
+   $('.attr-link').on('click', function(e){
+      e.preventDefault();
+      var D_elem = $(this);
+      var link = D_elem.attr('href');
+      $('#change-attr').modal('show').find('.modal-dialog').load(link);
+   });
+
 });

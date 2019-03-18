@@ -84,6 +84,7 @@ $i = 1;
                                 <tr>
                                     <th>Атрибут</th>
                                     <th>Значение</th>
+                                    <th>Изменить</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -91,6 +92,11 @@ $i = 1;
                                     <tr>
                                         <td><?php echo $value->attribute0->name; ?></td>
                                         <td><?php echo $value->value; ?></td>
+                                        <td>
+                                            <a  class="attr-link" href="<?php echo Url::toRoute(['attributes-values/change', 'id' => $value['id']]) ?>">
+                                                <span class="glyphicon glyphicon-pencil"></span>
+                                            </a>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -133,5 +139,9 @@ $i = 1;
 
 
 <div class="modal inmodal add-comment" id="add-comment" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg"></div>
+</div>
+
+<div class="modal inmodal change-attr" id="change-attr" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg"></div>
 </div>

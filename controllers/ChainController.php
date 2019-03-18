@@ -15,6 +15,9 @@ use yii\helpers\ArrayHelper;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 use app\models\StepAttributes;
+use app\models\Files;
+use app\models\StepFiles;
+use app\models\FileLoad;
 
 class ChainController extends \yii\web\Controller
 {
@@ -77,12 +80,16 @@ class ChainController extends \yii\web\Controller
     {
         $modelStep = Steps::findOne($id);
         $modelAttributes = $modelStep->getStepAttributes()->all();
+      //  $modelFiles = $modelStep->getFiles()->all();
+        $modelFiles = new FileLoad;
         if(empty($modelAttributes)){
             $modelAttributes = [new StepAttributes];
+            $modelFiles = new FileLoad;
         }
         $groups  = ArrayHelper::map(Groups::find()->asArray()->all(), 'id', 'name');
 
         if(Yii::$app->request->isAjax && $modelStep->load(Yii::$app->request->post())){
+            print_pre($_FILES); die();
             $oldIDs = ArrayHelper::map($modelAttributes, 'id', 'id');
             $modelAttributes = ModelMultiple::createMultiple(StepAttributes::className(),$modelAttributes);
             ModelMultiple::loadMultiple($modelAttributes ,Yii::$app->request->post());
@@ -114,7 +121,8 @@ class ChainController extends \yii\web\Controller
         return $this->renderAjax('edit-step', [
             'modelStep' => $modelStep,
             'modelAttributes'   => $modelAttributes,
-            'groups'    => $groups
+            'groups'    => $groups,
+            'modelFiles'    => $modelFiles
         ]);
 
     }
