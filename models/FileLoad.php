@@ -17,6 +17,7 @@ class FileLoad extends  Model
     public $tmp;
     public $name;
 
+
     public function rules()
     {
         return [
@@ -24,5 +25,10 @@ class FileLoad extends  Model
             [['file', 'tmp'], 'safe'],
             [['tmp'], 'string']
         ];
+    }
+
+    public function upload()
+    {
+
     }
 }

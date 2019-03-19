@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use wbraganca\dynamicform\DynamicFormWidget;
 use kartik\file\FileInput;
+use yii\helpers\Url;
 ?>
     <style>
         .add-item{
@@ -13,7 +14,9 @@ use kartik\file\FileInput;
     </style>
     <div class="modal-content animated bounceInTop" >
         <?php
-            $form = ActiveForm::begin(['id' => 'form-edit-step']);
+            $form = ActiveForm::begin(['id' => 'form-edit-step',
+                'options'=>['enctype'=>'multipart/form-data']
+            ]);
             if($modelStep->isNewRecord){
                 $header = 'Добавить';
             } else{
@@ -55,11 +58,14 @@ use kartik\file\FileInput;
                             echo FileInput::widget([
                                 'model' => $modelFiles,
                                 'attribute' => 'file[]',
-                                'name'      => 'file[]',
                                 'options'   => [ 'multiple' => true],
                                 'pluginOptions' => [
+                                    'uploadUrl' => Url::to(['/chain/upload']),
                                     'maxFileCount' => 10,
-                                  //  'overwriteInitial' => false,
+                                     'overwriteInitial' => false,
+                                    'uploadExtraData' => [
+                                        'step_id' => $modelStep->id,
+                                    ],
                                 ]
                             ]);
                         ?>

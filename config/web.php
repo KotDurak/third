@@ -10,7 +10,8 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
-        '@images'   => '/web/uploads/images/'
+        '@images'   => '/web/uploads/images/',
+        '@files'    => '/web/uploads/files/',
     ],
     'components' => [
         'request' => [

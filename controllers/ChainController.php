@@ -13,6 +13,7 @@ use app\models\Groups;
 use app\models\ModelMultiple;
 use yii\helpers\ArrayHelper;
 use yii\web\Response;
+use yii\web\UploadedFile;
 use yii\widgets\ActiveForm;
 use app\models\StepAttributes;
 use app\models\Files;
@@ -225,6 +226,33 @@ class ChainController extends \yii\web\Controller
         $step = Steps::findOne($id);
         $step->delete();
         return Json::encode(['message' => 'succes']);
+    }
+
+    public function actionUpload($id)
+    {
+        $model = Steps::findOne($id);
+        $file = new FileLoad();
+        if(Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())){
+            $file->file = UploadedFile::getInstances($file, 'file');
+            foreach ($file->file as $item){
+                $modelFile = new Files();
+                $modelFile['real-name'] = $item->baseName;
+                $modelFile->name = uniqid();
+                $modelFile->tmp =  Yii::getAlias('@web') . 'uploads/files/' . $modelFile->name . '.' . $item->extension;
+                $item->saveAs($modelFile->tmp);
+                $modelFile->save();
+                $step_file = new StepFiles();
+                $step_file->id_step = $id;
+                $step_file->id_file = $modelFile->id;
+                $step_file->save();
+            }
+            return true;
+
+        }
+        return $this->renderAjax('upload', [
+           'model'  => $model,
+            'file'  => $file
+        ]);
     }
 
 }

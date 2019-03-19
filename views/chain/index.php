@@ -58,7 +58,7 @@ $this->registerCssFile('/css/chain.css');
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'template'  => '{add-attr} {update} {delete}',
+                                    'template'  => '{add-attr} {update} {delete} {upload}',
                                     'buttons'   => [
                                         'add-attr'  => function($url, $model){
                                             return Html::a(
@@ -92,6 +92,15 @@ $this->registerCssFile('/css/chain.css');
                                                     ]
                                                 );
 
+                                        },
+                                        'upload'    => function($url, $model, $key){
+                                            $url = Url::to(['upload', 'id'  => $model->id]);
+                                            return Html::a('<span class="glyphicon glyphicon-paperclip"></span>',
+                                                Url::to(['upload', 'id' => $model->id]),[
+                                                    'data-toggle' => 'modal',
+                                                    'data-target' => '#upload',
+                                                    'onclick'     => '$("#upload .modal-dialog").load($(this).attr("href"));'
+                                                ]);
                                         }
                                     ]
                                 ],
@@ -132,5 +141,9 @@ $this->registerJsFile('@web/js/chain.js',
 </div>
 
 <div class="modal inmodal edit-step" id="edit-step" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg"></div>
+</div>
+
+<div class="modal inmodal upload" id="upload" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg"></div>
 </div>
