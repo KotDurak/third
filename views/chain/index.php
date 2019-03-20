@@ -57,6 +57,26 @@ $this->registerCssFile('/css/chain.css');
                                     'label'      => 'Название этапа'
                                 ],
                                 [
+                                    'attribute' => 'id',
+                                    'label'     => 'Файлы',
+                                    'format'    => 'html',
+                                    'content'     => function($data, $key, $index, $column){
+                                        $model = Steps::findOne($data['id']);
+                                        $files = $model->getFiles()->asArray()->all();
+                                        $html = '<ul>';
+                                        foreach ($files as $file){
+                                            $tmp = $file['tmp'];
+                                            $delete = Url::to(['file/delete', 'id'  => $file['id']]);
+                                             $delete =   Html::a('<span class="glyphicon glyphicon-trash"></span>' , $delete, ['data-pjax' => '0']);
+                                            $url = Url::to(['file/download', 'id' => $file['id'],  ['data-pjax' => '0']]);
+                                            $a = Html::a($file['real-name'], $url);
+                                            $html .= '<li>'.$delete . ' ' .$a.'</li>';
+                                        }
+                                        $html .= '</ul>';
+                                        return  $html;
+                                    }
+                                ],
+                                [
                                     'class' => 'yii\grid\ActionColumn',
                                     'template'  => '{add-attr} {update} {delete} {upload}',
                                     'buttons'   => [

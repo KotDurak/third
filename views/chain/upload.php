@@ -74,7 +74,10 @@ $js = <<<JS
                data: form_data,                     
                type: 'post',                        
                success: function(response){                      
-                 
+                  $('#upload').modal('hide');
+                  $.pjax.reload({
+                          container: "#chain-pjax" 
+                   });
                }
          });
          return false;

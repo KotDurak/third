@@ -54,4 +54,12 @@ class Files extends \yii\db\ActiveRecord
     {
         return $this->hasMany(StepFiles::className(), ['id_file' => 'id']);
     }
+
+    public function deleteFile()
+    {
+        $path = Yii::getAlias('@webroot'). '/uploads/files/' . $this->tmp;
+        if(file_exists($path)){
+            unlink($path);
+        }
+    }
 }

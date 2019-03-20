@@ -238,8 +238,8 @@ class ChainController extends \yii\web\Controller
                 $modelFile = new Files();
                 $modelFile['real-name'] = $item->baseName;
                 $modelFile->name = uniqid();
-                $modelFile->tmp =  Yii::getAlias('@web') . 'uploads/files/' . $modelFile->name . '.' . $item->extension;
-                $item->saveAs($modelFile->tmp);
+                $modelFile->tmp =   $modelFile->name . '.' . $item->extension;
+                $item->saveAs(Yii::getAlias('@web') . 'uploads/files/' . $modelFile->tmp);
                 $modelFile->save();
                 $step_file = new StepFiles();
                 $step_file->id_step = $id;

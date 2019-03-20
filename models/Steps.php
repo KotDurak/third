@@ -72,6 +72,6 @@ class Steps extends \yii\db\ActiveRecord
     public function getFiles()
     {
         return $this->hasMany(Files::className(), ['id' => 'id_file'])
-            ->viaTable('step_files', ['id_file' => 'id']);
+            ->viaTable('step_files', ['id_step' => 'id']);
     }
 }
