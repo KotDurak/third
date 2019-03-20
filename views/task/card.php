@@ -2,6 +2,8 @@
 
 use app\models\Task;
 use yii\helpers\Url;
+use yii\helpers\Html;
+
 
 $this->params['breadcrumbs'][] = ['label' => 'Список задач', 'url' => ['/task/list?id_project=' . $task->id_project]];
 $this->params['breadcrumbs'][] = 'Карточка задачи';
@@ -105,6 +107,27 @@ $i = 1;
                     <?php endif; ?>
                 </div>
                 <div class="col-md-6">
+                    <?php
+                        $files = $step->getFiles()->asArray()->all();
+                    ?>
+                    <?php if(!empty($files)): ?>
+                    <div class="files-block">
+                        <h4>Файлы вводные</h4>
+                        <ul class="files-list list-group">
+                            <?php foreach ($files as $file): ?>
+                                <?php
+                                    $word = Url::to('@images/word.png');
+                                    $url = Url::to(['file/download', 'id' => $file['id'],  ['data-pjax' => '0']]);
+                                    $a = Html::a($file['real-name'], $url);
+                                ?>
+                                <li class="word-item list-group-item">
+                                   <?php echo \yii\helpers\Html::img($word, ['width' => '20']) ?>
+                                   <?php echo $a; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                    <?php endif; ?>
                     <?php if ($step == end($steps)): ?>
                         Кнопки админа
                     <?php else: ?>
