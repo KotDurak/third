@@ -74,4 +74,28 @@ class Steps extends \yii\db\ActiveRecord
         return $this->hasMany(Files::className(), ['id' => 'id_file'])
             ->viaTable('step_files', ['id_step' => 'id']);
     }
+
+    public function getTaskFiles()
+    {
+        return $this->hasMany(Files::className(), ['id' => 'id_file'])
+            ->viaTable('files_task_steps', ['id_step' => 'id']);
+    }
+
+
+    /**
+     * Получает список файлов по задаче
+     *
+     * @param $id_task
+     * @return array|\yii\db\ActiveRecord[]
+     */
+    public function showTaskFiles($id_task)
+    {
+        $task_files = FilesTaskSteps::find()->where(['id_task' => $id_task, 'id_step' => $this->id])->asArray()->all();
+        $ids = [];
+        foreach($task_files as $task_file){
+            $ids[] = $task_file['id_file'];
+        }
+        return Files::find()->where(['in', 'id', $ids])->asArray()->all();
+    }
+
 }

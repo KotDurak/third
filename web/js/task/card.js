@@ -18,4 +18,10 @@ $(function(){
       $('#change-attr').modal('show').find('.modal-dialog').load(link);
    });
 
+   $('.upload-task').on('click', function(e){
+      e.preventDefault();
+      var D_elem = $(this);
+      var link = D_elem.attr('href');
+      $('#upload').modal('show').find('.modal-dialog').load(link);
+   });
 });

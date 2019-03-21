@@ -4,7 +4,12 @@ namespace app\controllers;
 
 use app\models\Chain;
 use app\models\ChainClonesSteps;
+use app\models\FileLoad;
+use app\models\Files;
+use app\models\FilesTaskSteps;
 use app\models\Groups;
+use app\models\StepFiles;
+use app\models\Steps;
 use app\models\TaskEdit;
 use app\models\User;
 use Yii;
@@ -16,6 +21,7 @@ use app\models\SelectUserStep;
 use yii\widgets\ActiveForm;
 use app\models\ChainClones;
 use app\models\StepClonesComment;
+use yii\web\UploadedFile;
 
 
 class TaskController extends \yii\web\Controller
@@ -235,6 +241,35 @@ class TaskController extends \yii\web\Controller
         return $this->renderAjax('comment',[
             'model' => $model,
             'id_clone'  => $id_clone
+        ]);
+    }
+
+    public function actionUpload($id_task, $id_step)
+    {
+        $model = Steps::findOne($id_step);
+        $file = new FileLoad();
+
+        if(Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())){
+            $file->file = UploadedFile::getInstances($file, 'file');
+            foreach ($file->file as $item){
+                $modelFile = new Files();
+                $modelFile['real-name'] = $item->baseName;
+                $modelFile->name = uniqid();
+                $modelFile->tmp =   $modelFile->name . '.' . $item->extension;
+                $item->saveAs(Yii::getAlias('@web') . 'uploads/files/' . $modelFile->tmp);
+                $modelFile->save();
+                $files_steps = new FilesTaskSteps();
+                $files_steps->id_step = $id_step;
+                $files_steps->id_task = $id_task;
+                $files_steps->id_file = $modelFile->id;
+                $files_steps->save();
+            }
+            return true;
+        }
+
+        return $this->renderAjax('upload', [
+           'file'   => $file,
+            'model' => $model
         ]);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Task;
+use yii\helpers\FileHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
 
@@ -108,6 +109,7 @@ $i = 1;
                 </div>
                 <div class="col-md-6">
                     <?php
+
                         $files = $step->getFiles()->asArray()->all();
                     ?>
                     <?php if(!empty($files)): ?>
@@ -128,6 +130,31 @@ $i = 1;
                         </ul>
                     </div>
                     <?php endif; ?>
+                    <div class="results-files">
+                        <h4>Файлы результата
+                            <?php echo Html::a('Загрузить' ,Url::toRoute(['task/upload', 'id_task' => $task->id, 'id_step' => $step->id]), [
+                                'class' => 'upload-task'
+                            ]);?>
+                        </h4>
+                        <?php
+                            $result_files = $step->showTaskFiles($task->id);
+                        ?>
+                        <ul class="files-list list-group">
+                            <?php foreach ($result_files as $file): ?>
+                                <?php
+                                $word = Url::to('@images/word.png');
+                                $url = Url::to(['file/download', 'id' => $file['id'],  ['data-pjax' => '0']]);
+                                $path = Yii::getAlias('@webroot') . '/uploads/files/' . $file['tmp'];
+                                $type = FileHelper::getMimeType($path);
+                                $a = Html::a($file['real-name'], $url);
+                                ?>
+                                <li class="word-item list-group-item">
+                                 <!--   <?php echo \yii\helpers\Html::img($word, ['width' => '20']) ?> -->
+                                    <?php echo $a; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
                     <?php if ($step == end($steps)): ?>
                         Кнопки админа
                     <?php else: ?>
@@ -166,5 +193,9 @@ $i = 1;
 </div>
 
 <div class="modal inmodal change-attr" id="change-attr" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg"></div>
+</div>
+
+<div class="modal inmodal upload" id="upload" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg"></div>
 </div>
