@@ -53,23 +53,6 @@ use yii\helpers\Url;
                             ]); ?>
                     </div>
 
-                    <div class="col-md-12">
-                        <?php
-                            echo FileInput::widget([
-                                'model' => $modelFiles,
-                                'attribute' => 'file[]',
-                                'options'   => [ 'multiple' => true],
-                                'pluginOptions' => [
-                                    'uploadUrl' => Url::to(['/chain/upload']),
-                                    'maxFileCount' => 10,
-                                     'overwriteInitial' => false,
-                                    'uploadExtraData' => [
-                                        'step_id' => $modelStep->id,
-                                    ],
-                                ]
-                            ]);
-                        ?>
-                    </div>
                 </div>
             </div>
             <?php

@@ -50,6 +50,7 @@ class TaskController extends \yii\web\Controller
     public function actionUpdate($id)
     {
         $task = Task::findOne($id);
+
         $modelEdit = new TaskEdit();
         if(!empty(Yii::$app->request->post())){
             $post = Yii::$app->request->post();

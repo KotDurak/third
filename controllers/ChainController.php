@@ -81,26 +81,24 @@ class ChainController extends \yii\web\Controller
     {
         $modelStep = Steps::findOne($id);
         $modelAttributes = $modelStep->getStepAttributes()->all();
-      //  $modelFiles = $modelStep->getFiles()->all();
-        $modelFiles = new FileLoad;
+
+
         if(empty($modelAttributes)){
             $modelAttributes = [new StepAttributes];
-            $modelFiles = new FileLoad;
+
         }
         $groups  = ArrayHelper::map(Groups::find()->asArray()->all(), 'id', 'name');
 
         if(Yii::$app->request->isAjax && $modelStep->load(Yii::$app->request->post())){
-            print_pre($_FILES); die();
             $oldIDs = ArrayHelper::map($modelAttributes, 'id', 'id');
             $modelAttributes = ModelMultiple::createMultiple(StepAttributes::className(),$modelAttributes);
             ModelMultiple::loadMultiple($modelAttributes ,Yii::$app->request->post());
             $deleteIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($modelAttributes, 'id', 'id')));
 
-
-
             $valid = $modelStep->validate();
             $valid = ModelMultiple::validateMultiple($modelAttributes) && $valid;
             $transaction = Yii::$app->db->beginTransaction();
+            $modelStep->save(false);
             try{
                 if(!empty($deleteIDs)){
                     StepAttributes::deleteAll(['id' => $deleteIDs]);
@@ -123,7 +121,6 @@ class ChainController extends \yii\web\Controller
             'modelStep' => $modelStep,
             'modelAttributes'   => $modelAttributes,
             'groups'    => $groups,
-            'modelFiles'    => $modelFiles
         ]);
 
     }
@@ -164,6 +161,7 @@ class ChainController extends \yii\web\Controller
     {
         $modelChain = Chain::findOne($id_chain);
         $modelStep = new Steps();
+
         $modelAttributes = $modelStep->getStepAttributes()->all();
         if(empty($modelAttributes)){
             $modelAttributes = [new StepAttributes];

@@ -11,7 +11,6 @@ use yii\widgets\ActiveForm;
 $this->params['breadcrumbs'][] = ['label' => 'Список задач', 'url' => ['/task/list?id_project='.$task->id_project]];
 $this->params['breadcrumbs'][] = 'Редактировать задачу';
 
-
 $this->registerJsFile('@web/js/task/update.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
 
@@ -30,6 +29,9 @@ $this->registerJsFile('@web/js/task/update.js',
    */
    foreach ($current_chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step){
         $clone_step = $step->getStepClones()->where(['id_clone' => $clone->id])->one();
+        if(empty($clone_step)){
+           $clone_step = new \app\models\ChainClonesSteps();
+        }
         $modelsClonesSteps[] = $clone_step;
         $modelSteps[] = new SelectUserStep([
              'id_step' => $step->id,
@@ -38,6 +40,9 @@ $this->registerJsFile('@web/js/task/update.js',
              'id_user'  => $clone_step->id_user
          ]);
      }
+
+    
+
 
 ?>
 

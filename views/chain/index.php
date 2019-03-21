@@ -68,8 +68,8 @@ $this->registerCssFile('/css/chain.css');
                                             $tmp = $file['tmp'];
                                             $delete = Url::to(['file/delete', 'id'  => $file['id']]);
                                              $delete =   Html::a('<span class="glyphicon glyphicon-trash"></span>' , $delete, ['data-pjax' => '0']);
-                                            $url = Url::to(['file/download', 'id' => $file['id'],  ['data-pjax' => '0']]);
-                                            $a = Html::a($file['real-name'], $url);
+                                             $url = Url::to(['file/download', 'id' => $file['id']]);
+                                             $a = Html::a($file['real-name'], $url, ['data-pjax' => '0']);
                                             $html .= '<li>'.$delete . ' ' .$a.'</li>';
                                         }
                                         $html .= '</ul>';
