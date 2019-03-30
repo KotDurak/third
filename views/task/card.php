@@ -4,7 +4,7 @@ use app\models\Task;
 use yii\helpers\FileHelper;
 use yii\helpers\Url;
 use yii\helpers\Html;
-
+use app\models\ChainClonesSteps;
 
 $this->params['breadcrumbs'][] = ['label' => 'Список задач', 'url' => ['/task/list?id_project=' . $task->id_project]];
 $this->params['breadcrumbs'][] = 'Карточка задачи';
@@ -19,7 +19,8 @@ $steps = $clone_chain->getSteps()->orderBy(['sort' => SORT_ASC])->all();
 
 $i = 1;
 
-
+$access_step = true;
+$fake_buttons = $this->render('fake-buttons');
 ?>
 
 <div class="row top-task-info">
@@ -49,10 +50,20 @@ $i = 1;
                 </div>
                 <div class="col-md-6">
                     <?php
-                    $clone_step = $step->getStepClones()->where(['id_clone' => $clone_chain['id']])->one();
-                    if ($step->type == 'table') {
-                        $rows = Task::getRows($task['id']);
-                    }
+                        $clone_step = $step->getStepClones()->where(['id_clone' => $clone_chain['id']])->one();
+                        $is_self =  ($clone_step->user->id == Yii::$app->user->id);
+
+                        if((isset($next_access) && !$next_access) || $clone_step->status == ChainClonesSteps::STATUS_DONE){
+                            $access_step = false;
+                        } else{
+                            $access_step = ($is_self );
+                        }
+                        $access_step = ($access_step ||  Yii::$app->user->identity->is_admin());
+                        $next_access = ($clone_step->status == ChainClonesSteps::STATUS_DONE);
+                        if ($step->type == 'table') {
+                            $rows = Task::getRows($task['id']);
+                        }
+
                     ?>
                     <?php if ($step->type == 'table'): ?>
                         <div class="table-container">
@@ -155,14 +166,32 @@ $i = 1;
                             <?php endforeach; ?>
                         </ul>
                     </div>
-                    <?php if ($step == end($steps)): ?>
-                        Кнопки админа
+                    <?php if ($step == end($steps) && (Yii::$app->user->identity->is_admin())): ?>
+                        <?php if(!empty($comments) && $clone_step->status == \app\models\ChainClonesSteps::STATUS_REWORK): ?>
+                            <a href="<?php echo Url::toRoute(['task/step-comments', 'id_clone' => $clone_step->id]); ?>" class="notice-comment">
+                                <?php
+                                $src = Url::to('@images/notice.png');
+                                echo \yii\helpers\Html::img($src);
+                                ?>
+                            </a>
+                        <?php endif; ?>
+
+                       <div class="btn-group steps-btn">
+                           <a type="button"  class="btn btn-default" href="<?php echo Url::toRoute(['task/archive', 'id' => $task->id]); ?>">Архивировать</a>
+                           <a href="<?php echo Url::toRoute(['/task/rework', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
+                              type="button" class="btn btn-danger  rework" modal-url="<?php echo Url::toRoute(['/task/comment', 'id_clone' => $clone_step->id]); ?>">На доработку
+                           </a>
+                           <a type="button" href="<?php echo Url::toRoute(['/task/working', 'id_clone' => $clone_step->id, 'id_task' => $task->id]); ?>" class="btn btn-warning work">В работе</a>
+                           <a href="<?php echo Url::toRoute(['/task/complete', 'id' => $task->id]) ?>"
+                              type="button" class="btn btn-info done">Принять</a>
+
+                       </div>
                     <?php else: ?>
                         <?php
                             $comments = $clone_step->getComments()->all();
                         ?>
                         <?php if(!empty($comments) && $clone_step->status == \app\models\ChainClonesSteps::STATUS_REWORK): ?>
-                            <a href="" class="notice-comment">
+                            <a href="<?php echo Url::toRoute(['task/step-comments', 'id_clone' => $clone_step->id]); ?>" class="notice-comment">
                                 <?php
                                     $src = Url::to('@images/notice.png');
                                     echo \yii\helpers\Html::img($src);
@@ -170,12 +199,16 @@ $i = 1;
                             </a>
                         <?php endif; ?>
                         <div class="btn-group steps-btn">
-                            <a href="<?php echo Url::toRoute(['/task/rework', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
-                               type="button" class="btn btn-danger  rework" modal-url="<?php echo Url::toRoute(['/task/comment', 'id_clone' => $clone_step->id]); ?>">На доработку
-                            </a>
-                            <a type="button" class="btn btn-warning work">В работе</a>
-                            <a href="<?php echo Url::toRoute(['/task/done', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
-                               type="button" class="btn btn-info done">Сделано</a>
+                            <?php if(!$access_step): ?>
+                                <?php echo $fake_buttons; ?>
+                            <?php else: ?>
+                                <a href="<?php echo Url::toRoute(['/task/rework', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
+                                   type="button" class="btn btn-danger  rework" modal-url="<?php echo Url::toRoute(['/task/comment', 'id_clone' => $clone_step->id]); ?>">На доработку
+                                </a>
+                                <a type="button" href="<?php echo Url::toRoute(['/task/working', 'id_clone' => $clone_step->id, 'id_task' => $task->id]); ?>" class="btn btn-warning work">В работе</a>
+                                <a href="<?php echo Url::toRoute(['/task/done', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
+                                   type="button" class="btn btn-info done">Сделано</a>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -197,5 +230,9 @@ $i = 1;
 </div>
 
 <div class="modal inmodal upload" id="upload" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg"></div>
+</div>
+
+<div class="modal inmodal comment" id="comment" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg"></div>
 </div>

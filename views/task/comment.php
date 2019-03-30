@@ -13,7 +13,7 @@ use yii\helpers\Html;
         </div>
         <div class="modal-body">
             <?= $form->field($model, 'comment')->textarea(); ?>
-            <?= $form->field($model, 'id_user')->hiddenInput(['value'=> Yii::$app->user->id])->label(false);; ?>
+            <?= $form->field($model, 'id_user')->hiddenInput(['value'=> Yii::$app->user->id])->label(false); ?>
             <?= $form->field($model, 'timestamp')->hiddenInput(['value' => date('Y-m-d H:i:s')])->label(false); ?>
             <?= $form->field($model, 'id_step_clone')->hiddenInput(['value' => $id_clone])->label(false); ?>
             <div class=" view-btn text-right">

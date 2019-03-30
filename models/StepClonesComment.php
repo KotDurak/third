@@ -69,4 +69,9 @@ class StepClonesComment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(ChainClonesSteps::className(), ['id' => 'id_step_clone']);
     }
+
+    public function getCommentator()
+    {
+        return $this->user->surname . ' ' . $this->user->name;
+    }
 }

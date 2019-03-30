@@ -12,6 +12,7 @@ use app\models\StepFiles;
 use app\models\Steps;
 use app\models\TaskEdit;
 use app\models\User;
+use Codeception\Step\Comment;
 use Yii;
 use yii\data\ActiveDataProvider;
 use app\models\Task;
@@ -229,6 +230,13 @@ class TaskController extends \yii\web\Controller
         $this->redirect(['task/card', 'id' => $id_task]);
     }
 
+    public function actionWorking($id_clone, $id_task)
+    {
+        $step = ChainClonesSteps::findOne($id_clone);
+        $step->changeStatus(ChainClonesSteps::STATUS_WORK);
+        $this->redirect(['task/card', 'id' => $id_task]);
+    }
+
     public function actionComment($id_clone)
     {
         $model = new StepClonesComment();
@@ -270,6 +278,34 @@ class TaskController extends \yii\web\Controller
         return $this->renderAjax('upload', [
            'file'   => $file,
             'model' => $model
+        ]);
+    }
+
+    public function actionArchive($id)
+    {
+        $model = Task::findOne($id);
+        $model->archive();
+        return $this->redirect(['task/card', 'id' => $id]);
+    }
+
+    public function actionComplete($id)
+    {
+        $model = Task::findOne($id);
+        $model->complete();
+        return $this->redirect(['task/card', 'id' => $id]);
+    }
+
+    public function actionStepComments($id_clone)
+    {
+        $model = ChainClonesSteps::findOne($id_clone);
+        $model_comment = new StepClonesComment();
+        if(Yii::$app->request->isAjax && $model_comment->load(Yii::$app->request->post())){
+            $model_comment->save();
+            return true;
+        }
+        return $this->renderAjax('step-comments', [
+           'model'  => $model,
+            'model_comment'   => $model_comment
         ]);
     }
 }

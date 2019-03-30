@@ -23,6 +23,9 @@ use yii\behaviors\AttributeBehavior;
  */
 class Task extends \yii\db\ActiveRecord
 {
+    const STATUS_WORK = 1;
+    const STATUS_DONE = 2;
+
     public function behaviors()
     {
        return [
@@ -140,6 +143,18 @@ class Task extends \yii\db\ActiveRecord
        $table = TaskTable::findOne(['id_task' => $id]);
        $rows = $table->getTaskTableRows()->asArray()->all();
        return $rows;
+   }
+
+   public function archive()
+   {
+       $this->is_archive = 1;
+       $this->save();
+   }
+
+   public function complete()
+   {
+       $this->status = self::STATUS_DONE;
+       $this->save();
    }
 
 }

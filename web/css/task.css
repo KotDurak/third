@@ -10,7 +10,7 @@
     overflow: auto;
 }
 
-.steps-btn a{
+.steps-btn a, .steps-btn button{
     border-radius: 20px;
 }
 

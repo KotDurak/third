@@ -182,4 +182,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
        }
        return   $user->surname. ' ' . $user->name . ' (' . $user->email .')';
     }
+
+    public function is_admin()
+    {
+        return boolval($this->is_root);
+    }
 }
