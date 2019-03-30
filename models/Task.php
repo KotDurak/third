@@ -115,6 +115,11 @@ class Task extends \yii\db\ActiveRecord
         return $this->hasOne(Project::className(), ['id' => 'id_project']);
     }
 
+    public function getCloneSteps()
+    {
+        return $this->getChainClones()->one()-> getCloneSteps()->all();
+    }
+
     public static function getStrStatus($status){
         switch ($status){
             case 0:
@@ -154,7 +159,20 @@ class Task extends \yii\db\ActiveRecord
    public function complete()
    {
        $this->status = self::STATUS_DONE;
+       $clone_steps = $this->getCloneSteps();
+       foreach ($clone_steps as $clone_step){
+          $clone_step->status = ChainClonesSteps::STATUS_DONE;
+          $clone_step->save();
+       }
        $this->save();
+   }
+
+   public function setWorkStatus()
+   {
+       if($this->status != self::STATUS_WORK){
+           $this->status = self::STATUS_WORK;
+           $this->save();
+       }
    }
 
 }

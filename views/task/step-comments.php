@@ -39,17 +39,21 @@ $comments = $model->getComments()->all();
                     <?php  endforeach;?>
                 </div>
             </div>
-            <div class="row">
-                <?php $form = ActiveForm::begin(['id' => 'worker-comment']); ?>
-                <?php echo $form->field($model_comment, 'comment')->textarea([
-                        'placeholder' => 'Введите комментарий если невозможна работа с этапом'])->label(false); ?>
-                <?= $form->field($model_comment, 'id_user')->hiddenInput(['value'=> Yii::$app->user->id])->label(false); ?>
-                <?= $form->field($model_comment, 'timestamp')->hiddenInput(['value' => date('Y-m-d H:i:s')])->label(false); ?>
-                <?= $form->field($model_comment, 'id_step_clone')->hiddenInput(['value' => $model->id])->label(false); ?>
-                <?php ActiveForm::end(); ?>
-            </div>
+            <?php if(Yii::$app->user->identity->is_admin() || $model->id_user == Yii::$app->user->id): ?>
+                <div class="row">
+                    <?php $form = ActiveForm::begin(['id' => 'worker-comment']); ?>
+                    <?php echo $form->field($model_comment, 'comment')->textarea([
+                            'placeholder' => 'Введите комментарий если невозможна работа с этапом'])->label(false); ?>
+                    <?= $form->field($model_comment, 'id_user')->hiddenInput(['value'=> Yii::$app->user->id])->label(false); ?>
+                    <?= $form->field($model_comment, 'timestamp')->hiddenInput(['value' => date('Y-m-d H:i:s')])->label(false); ?>
+                    <?= $form->field($model_comment, 'id_step_clone')->hiddenInput(['value' => $model->id])->label(false); ?>
+                    <?php ActiveForm::end(); ?>
+                </div>
+            <?php endif; ?>
             <div class=" view-btn text-right">
-                <?= Html::submitButton('Комментировать', ['class' => 'btn btn-info', 'id' => 'submit-comment']) ?>
+                <?php if(Yii::$app->user->identity->is_admin() || $model->id_user == Yii::$app->user->id): ?>
+                    <?= Html::submitButton('Комментировать', ['class' => 'btn btn-info', 'id' => 'submit-comment']) ?>
+                <?php endif; ?>
                 <button  type="button" class="btn btn-primary" data-dismiss="modal">Отмена</button>
             </div>
         </div>

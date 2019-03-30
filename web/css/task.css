@@ -19,3 +19,29 @@
     position: relative;
     left:-15px;
 }
+
+.status-1{
+    background: #f0ad4e;
+}
+
+.status-2{
+    background: #c9302c;
+}
+
+.status-3{
+    background: #398439;
+}
+
+.status-step{
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    float: right;
+}
+
+.user-step-info{
+    padding: 4px;
+    background: #e0d9d9;
+    border-radius: 11px;
+}

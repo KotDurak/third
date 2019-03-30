@@ -183,7 +183,7 @@ $fake_buttons = $this->render('fake-buttons');
                            </a>
                            <a type="button" href="<?php echo Url::toRoute(['/task/working', 'id_clone' => $clone_step->id, 'id_task' => $task->id]); ?>" class="btn btn-warning work">В работе</a>
                            <a href="<?php echo Url::toRoute(['/task/complete', 'id' => $task->id]) ?>"
-                              type="button" class="btn btn-info done">Принять</a>
+                              type="button" class="btn btn-success done">Принять</a>
 
                        </div>
                     <?php else: ?>
@@ -202,12 +202,14 @@ $fake_buttons = $this->render('fake-buttons');
                             <?php if(!$access_step): ?>
                                 <?php echo $fake_buttons; ?>
                             <?php else: ?>
-                                <a href="<?php echo Url::toRoute(['/task/rework', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
+                                <?php if(Yii::$app->user->identity->is_admin()): ?>
+                                 <a href="<?php echo Url::toRoute(['/task/rework', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
                                    type="button" class="btn btn-danger  rework" modal-url="<?php echo Url::toRoute(['/task/comment', 'id_clone' => $clone_step->id]); ?>">На доработку
                                 </a>
+                                <?php endif; ?>
                                 <a type="button" href="<?php echo Url::toRoute(['/task/working', 'id_clone' => $clone_step->id, 'id_task' => $task->id]); ?>" class="btn btn-warning work">В работе</a>
                                 <a href="<?php echo Url::toRoute(['/task/done', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
-                                   type="button" class="btn btn-info done">Сделано</a>
+                                   type="button" class="btn btn-success done">Сделано</a>
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>
@@ -216,7 +218,38 @@ $fake_buttons = $this->render('fake-buttons');
         <?php endforeach; ?>
     </div>
     <div class="col-md-3">
-        side
+       <h4>Цепочка этапов <?php echo $task->getChains()->one()->name; ?></h4>
+        <?php
+            $step_clones = $task->getCloneSteps();
+
+
+        ?>
+        <ol>
+            <?php foreach ($step_clones as $step_clone): ?>
+                <?php
+                    $status = $step_clone->status;
+                    $class = 'status-'.$status;
+                ?>
+                <li>
+                    <?php echo  $step_clone->step->name; ?>
+                    <span class="status-step <?php echo $class; ?>"></span>
+                </li>
+            <?php endforeach; ?>
+        </ol>
+        <h4>Кому назначено</h4>
+        <ol>
+            <?php foreach($step_clones as $step_clone): ?>
+                <?php
+                    $user = $step_clone->user;
+                    $group = $step_clone->step->group->name;
+                    $user_name = $user->surname . ' ' . $user->name;
+                ?>
+                <li>
+                    <strong><?php echo $group; ?></strong><br>
+                    <span class="user-step-info"><?php echo $user_name; ?></span>
+                </li>
+            <?php endforeach; ?>
+        </ol>
     </div>
 </div>
 
