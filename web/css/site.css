@@ -233,3 +233,7 @@ a.desc:after {
 .ajaxDelete{
     cursor: pointer;
 }
+
+#menu-import{
+    border: 1px dashed #5cb85c;
+}

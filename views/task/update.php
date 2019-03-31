@@ -1,20 +1,29 @@
 <?php
 use yii\widgets\ActiveForm;
-    use yii\helpers\ArrayHelper;
-    use yii\jui\DatePicker;
-    use kartik\datetime\DateTimePicker;
-    use kartik\select2\Select2;
-    use yii\web\JsExpression;
-    use app\models\SelectUserStep;
-    use yii\helpers\Html;
-    use app\models\User;
-$this->params['breadcrumbs'][] = ['label' => 'Список задач', 'url' => ['/task/list?id_project='.$task->id_project]];
+use yii\helpers\ArrayHelper;
+use yii\jui\DatePicker;
+use kartik\datetime\DateTimePicker;
+use kartik\select2\Select2;
+use yii\web\JsExpression;
+use app\models\SelectUserStep;
+use yii\helpers\Html;
+use app\models\User;
+use app\models\Project;
+
+$id_project = isset($_GET['id_project']) ? $_GET['id_project'] : $task->id_project;
+$this->params['breadcrumbs'][] = ['label' => 'Список задач', 'url' => ['/task/list?id_project='.$id_project]];
 $this->params['breadcrumbs'][] = 'Редактировать задачу';
 
 $this->registerJsFile('@web/js/task/update.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
 
+
     $projects = ArrayHelper::map($task->getProject()->asArray()->all(), 'id', 'name');
+    if(empty($projects)){
+        $projects = Project::find()->where(['id' => $_GET['id_project']])->asArray()->all();
+        $projects = ArrayHelper::map($projects, 'id','name');
+
+    }
 
     $current_chain = ($task->getChains()->all());
     $current_chain = array_shift($current_chain);
@@ -27,19 +36,22 @@ $this->registerJsFile('@web/js/task/update.js',
    /**
     * Текущие шаги для задачи;
    */
-   foreach ($current_chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step){
-        $clone_step = $step->getStepClones()->where(['id_clone' => $clone->id])->one();
-        if(empty($clone_step)){
-           $clone_step = new \app\models\ChainClonesSteps();
-        }
-        $modelsClonesSteps[] = $clone_step;
-        $modelSteps[] = new SelectUserStep([
-             'id_step' => $step->id,
-             'label'   => $step->name,
-             'id_group'   => $step->id_group,
-             'id_user'  => $clone_step->id_user
-         ]);
-     }
+   if(!empty($current_chain)){
+       foreach ($current_chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step){
+           $clone_step = $step->getStepClones()->where(['id_clone' => $clone->id])->one();
+           if(empty($clone_step)){
+               $clone_step = new \app\models\ChainClonesSteps();
+           }
+           $modelsClonesSteps[] = $clone_step;
+           $modelSteps[] = new SelectUserStep([
+               'id_step' => $step->id,
+               'label'   => $step->name,
+               'id_group'   => $step->id_group,
+               'id_user'  => $clone_step->id_user
+           ]);
+       }
+   }
+
 
 
 

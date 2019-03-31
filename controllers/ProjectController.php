@@ -18,6 +18,7 @@ use app\models\User;
 use Yii;
 use yii\db\Query;
 use yii\helpers\Json;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
@@ -99,6 +100,7 @@ class ProjectController extends Controller
     public function actionImport($id)
     {
         $project = Project::findOne($id);
+        $url = Yii::$app->request->url;
         $import = new Import();
         if(!empty(Yii::$app->request->post()) && $import->load(Yii::$app->request->post())){
             $deadline = date('Y-m-d H:i:s', strtotime($import->deadline));
@@ -140,7 +142,7 @@ class ProjectController extends Controller
                 $task->save(false);
                 $i++;
             }
-           return $this->redirect('index');
+           return $this->redirect(['task/list', 'id_project' => $id]);
         }
         return $this->renderAjax('import', compact(
             'project',

@@ -11,6 +11,7 @@ use app\models\Groups;
 use app\models\StepFiles;
 use app\models\Steps;
 use app\models\TaskEdit;
+use app\models\TaskTable;
 use app\models\User;
 use Codeception\Step\Comment;
 use Yii;
@@ -358,6 +359,27 @@ class TaskController extends \yii\web\Controller
         $task = Task::findOne($id);
         $task->delete();
         return Json::encode(['task delete']);
+    }
+
+    public function actionAdd($id_project)
+    {
+        $task = new Task();
+        $modelEdit = new TaskEdit();
+        if (!empty(Yii::$app->request->post()) && $task->load(Yii::$app->request->post())) {
+            $post = Yii::$app->request->post();
+            $task->load(Yii::$app->request->post());
+            $task = Task::createTask($task, $post, $modelEdit, $id_project);
+            return  $this->redirect('/task/list?id_project=' . $task->id_project);
+        }
+        return $this->render('update', [
+            'task' => $task,
+            'modelEdit' => $modelEdit
+        ]);
+    }
+
+    public function actionChange()
+    {
+        
     }
 
 }

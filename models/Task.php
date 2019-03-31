@@ -154,7 +154,12 @@ class Task extends \yii\db\ActiveRecord
    public static function getRows($id)
    {
        $table = TaskTable::findOne(['id_task' => $id]);
-       $rows = $table->getTaskTableRows()->asArray()->all();
+        try{
+            $rows = $table->getTaskTableRows()->asArray()->all();
+        } catch(Exception $e){
+
+        }
+
        return $rows;
    }
 
@@ -236,6 +241,61 @@ class Task extends \yii\db\ActiveRecord
         unset($GLOBALS['clone']);
 
         return (!empty($steps)) ? $steps['name'] : false;
+   }
+
+   public static function createTask(Task $task, $post, TaskEdit $modelEdit = NULL, $id_project)
+   {
+       $task->created = date('Y-m-d H:i:s', strtotime($task->created));
+       $task->deadline = date('Y-m-d H:i:s', strtotime($post['Task']['deadline']));
+       $task->id_project = $id_project;
+       $task->status = Task::STATUS_NOT;
+       $task->save();
+       $id = $task->id;
+       $table = new TaskTable();
+       $table->id_task = $task->id;
+       $table->save();
+       $modelEdit->load($post);
+       $clone = new ChainClones();
+       $clone->id_task = $id;
+       $clone->id_chain = $modelEdit->id_chain;
+       $clone->save();
+       foreach ($post['SelectUserStep'] as $i => $step) {
+           $post['SelectUserStep'][$i]['status'] = $post['ChainClonesSteps'][$i]['status'];
+
+       }
+       $is_rework = false;
+       foreach ($post['SelectUserStep'] as $item) {
+           $clone_step = new ChainClonesSteps();
+           $clone_step->id_clone = $clone->id;
+           $clone_step->id_step = $item['id_step'];
+
+           $clone_step->id_user = $item['id_user'];
+           $clone_step->status = (!empty($item['status'])) ? $item['status'] : ChainClonesSteps::STATUS_WORK;
+
+           if ($item['status'] == 2) {
+               $is_rework = true;
+           }
+           $clone_step->save();
+           $step = Steps::findOne($item['id_step']);;
+           $attributes =  $step->getStepAttributes()->all();
+           self::setStepAttributes($attributes, $clone_step);
+
+       }
+       if ($is_rework) {
+           $task->status = 2;
+       }
+       return $task;
+   }
+
+   public static function setStepAttributes($attributes, $clone_step)
+   {
+       foreach ($attributes as $attr){
+           $attr_val = new AttributesValues();
+           $attr_val->id_attribute = $attr->id;
+           $attr_val->id_step_clone = $clone_step->id;
+           $attr_val->value = $attr->def_value;
+           $attr_val->save(false);
+       }
    }
 
 }

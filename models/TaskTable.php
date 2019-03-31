@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Matrix\Exception;
 use Yii;
 
 /**
@@ -58,6 +59,10 @@ class TaskTable extends \yii\db\ActiveRecord
      */
     public function getTaskTableRows()
     {
-        return $this->hasMany(TaskTableRows::className(), ['id_table' => 'id']);
+        try{
+            return $this->hasMany(TaskTableRows::className(), ['id_table' => 'id']);
+        } catch (Exception $e){
+            return array();
+        }
     }
 }
