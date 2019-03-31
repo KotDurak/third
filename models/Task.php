@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Matrix\Exception;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
@@ -120,6 +121,18 @@ class Task extends \yii\db\ActiveRecord
         return $this->getChainClones()->one()-> getCloneSteps()->all();
     }
 
+    public function getFiles()
+    {
+        return $this->hasMany(Files::className(), ['id' => 'id_file'])->
+            viaTable('files_task_steps', ['id_task' => 'id']);
+    }
+
+    public function getArchive()
+    {
+        return $this->hasOne(Files::className(), ['id' => 'id_archive']);
+    }
+
+
     public static function getStrStatus($status){
         switch ($status){
             case 0:
@@ -160,11 +173,40 @@ class Task extends \yii\db\ActiveRecord
    {
        $this->status = self::STATUS_DONE;
        $clone_steps = $this->getCloneSteps();
+       $files = $this->getFiles()->all();
+       $zip = new \ZipArchive();
+       if(!empty($files)){
+           $zip_name = Yii::getAlias('@webroot'). '/uploads/files/' . uniqid('z').'.zip';
+           $model_zip = new Files();
+           $model_zip->name = basename($zip_name);
+           $model_zip->tmp = basename($zip_name);
+           $model_zip['real-name'] = 'Архив по задаче ' . $this->name;
+           $model_zip->save();
+           $model_zip->link('tasks', $this);
+
+           if($zip->open($zip_name,\ZipArchive::CREATE) !== false){
+               foreach ($files as $file){
+                   $path = Yii::getAlias('@webroot'). '/uploads/files/' . $file['tmp'];
+                   if(file_exists($path)){
+                       $zip->addFile($path, $file['real-name'].'.'.pathinfo($path, PATHINFO_EXTENSION));
+                   }
+               }
+               $zip->close();
+
+           }
+
+           foreach ($files as $file){
+               $file->delete();
+           }
+       }
+
        foreach ($clone_steps as $clone_step){
           $clone_step->status = ChainClonesSteps::STATUS_DONE;
           $clone_step->save();
+
        }
        $this->save();
+       return isset($zip_name) ? $zip_name : false;
    }
 
    public function setWorkStatus()

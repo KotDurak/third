@@ -21,6 +21,12 @@ $i = 1;
 
 $access_step = true;
 $fake_buttons = $this->render('fake-buttons');
+if(Yii::$app->session->hasFlash('download')){
+    echo Yii::$app->session->getFlash('download');
+}
+
+$archive = $task->archive;
+
 ?>
 
 <div class="row top-task-info">
@@ -41,6 +47,22 @@ $fake_buttons = $this->render('fake-buttons');
         <span><?php echo date('d.m.Y H:i', strtotime($task->deadline)); ?></span>
     </div>
 </div>
+<?php if(!empty($archive)): ?>
+    <?php
+    $url = Url::to(['file/download', 'id' => $archive['id'],  ['data-pjax' => '0']]);
+    $a = Html::a($archive['real-name'], $url);
+    $url_del = '';
+    $del_a = Html::a('<i class="glyphicon glyphicon-remove"></i>',
+        Url::to(['task/delete-file', 'id' => $archive->id, 'id_task' => $task->id]));
+    ?>
+    <div class="row">
+        <div class="alert alert-warning">
+            <strong>Задача завершена!</strong> Скачайте архив, а затем удалите его с сервера, чтобы не занимать лишнее место.<br>
+            <?php echo  $a . ' ' . $del_a; ?>
+
+        </div>
+    </div>
+<?php  endif; ?>
 <div class="row">
     <div class="col-md-9">
         <?php foreach ($steps as $step): ?>
@@ -158,10 +180,14 @@ $fake_buttons = $this->render('fake-buttons');
                                 $path = Yii::getAlias('@webroot') . '/uploads/files/' . $file['tmp'];
                                 $type = FileHelper::getMimeType($path);
                                 $a = Html::a($file['real-name'], $url);
+
+                                $del_a = Html::a('<i class="glyphicon glyphicon-remove"></i>',
+                                    Url::to(['task/delete-file', 'id' => $file['id'], 'id_task' => $task->id]), ['class' => 'remove-file']);
                                 ?>
                                 <li class="word-item list-group-item">
                                  <!--   <?php echo \yii\helpers\Html::img($word, ['width' => '20']) ?> -->
                                     <?php echo $a; ?>
+                                    <?php echo $del_a; ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>

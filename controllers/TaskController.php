@@ -295,7 +295,11 @@ class TaskController extends \yii\web\Controller
     public function actionComplete($id)
     {
         $model = Task::findOne($id);
-        $model->complete();
+        $zip_name = $model->complete();
+        if($zip_name){
+            return $this->redirect(['task/card', 'id' => $id]);
+            //return Yii::$app->response->SendFile($zip_name);
+        }
         return $this->redirect(['task/card', 'id' => $id]);
     }
 
@@ -311,5 +315,13 @@ class TaskController extends \yii\web\Controller
            'model'  => $model,
             'model_comment'   => $model_comment
         ]);
+    }
+
+
+    public function actionDeleteFile($id, $id_task)
+    {
+        $file = Files::findOne($id);
+        $file->delete();
+        return $this->redirect(['task/card', 'id' => $id_task]);
     }
 }

@@ -62,4 +62,18 @@ class Files extends \yii\db\ActiveRecord
             unlink($path);
         }
     }
+
+    public function getTasks()
+    {
+        return $this->hasMany(Task::className(), ['id_archive' => 'id']);
+    }
+
+    public function beforeDelete()
+    {
+        $path = Yii::getAlias('@webroot'). '/uploads/files/' . $this->tmp;
+        if(file_exists($path)){
+            unlink($path);
+        }
+        return parent::beforeDelete();
+    }
 }
