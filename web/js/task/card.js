@@ -28,6 +28,10 @@ $(function(){
       $('#upload').modal('show').find('.modal-dialog').load(link);
    });
 
-
-
+   $('.add-external').on('click', function(e){
+       e.preventDefault();
+       var D_elem = $(this);
+       var link = D_elem.attr('href');
+       $('#external').modal('show').find('.modal-dialog').load(link);
+   });
 });

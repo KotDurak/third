@@ -164,11 +164,11 @@ $archive = $task->archive;
                     </div>
                     <?php endif; ?>
                     <div class="results-files">
-                        <h4>Файлы результата
+                        <h5><strong>Файлы результата</strong>
                             <?php echo Html::a('Загрузить' ,Url::toRoute(['task/upload', 'id_task' => $task->id, 'id_step' => $step->id]), [
                                 'class' => 'upload-task'
                             ]);?>
-                        </h4>
+                        </h5>
                         <?php
                             $result_files = $step->showTaskFiles($task->id);
                         ?>
@@ -188,6 +188,25 @@ $archive = $task->archive;
                                  <!--   <?php echo \yii\helpers\Html::img($word, ['width' => '20']) ?> -->
                                     <?php echo $a; ?>
                                     <?php echo $del_a; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <?php
+                            $url = Url::to(['task/add-external', 'id_task' => $task->id, 'id_step'  => $step->id]);
+                            $add_tag = Html::a('Добавить внешний источникк', $url, ['class' => 'add-external'])
+                        ?>
+                        <h5><strong>Внешние страницы:</strong> <?php echo $add_tag; ?></h5>
+                        <?php
+                            $sources = $step->showExternal($task->id);
+                        ?>
+                        <ul class="list-group">
+                            <?php foreach($sources as $source): ?>
+                                <?php
+                                    $url_del = Url::to(['task/delete-external', 'id' => $source['id'], 'id_task' => $task->id]);
+                                    $a = Html::a('<i class="glyphicon glyphicon-remove"></i>', $url_del);
+                                ?>
+                                <li class="list-group-item" style="overflow: hidden;text-overflow: ellipsis;">
+                                    <?php echo Html::a($source['src'], $source['src'], ['target' => '_blank']) . $a; ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -293,5 +312,9 @@ $archive = $task->archive;
 </div>
 
 <div class="modal inmodal comment" id="comment" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg"></div>
+</div>
+
+<div class="modal inmodal external" id="external" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg"></div>
 </div>

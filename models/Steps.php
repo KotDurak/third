@@ -86,6 +86,11 @@ class Steps extends \yii\db\ActiveRecord
             ->viaTable('files_task_steps', ['id_step' => 'id']);
     }
 
+    public  function getExternal()
+    {
+        return $this->hasMany(ExternalSource::className(), ['id_step' => 'id']);
+    }
+
 
     /**
      * Получает список файлов по задаче
@@ -101,6 +106,13 @@ class Steps extends \yii\db\ActiveRecord
             $ids[] = $task_file['id_file'];
         }
         return Files::find()->where(['in', 'id', $ids])->asArray()->all();
+    }
+
+    public function showExternal($id_task)
+    {
+        $sources = $this->getExternal()->where(['id_task' => $id_task])->asArray()->all();
+        return $sources;
+
     }
 
 }

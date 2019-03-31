@@ -23,6 +23,8 @@ use yii\widgets\ActiveForm;
 use app\models\ChainClones;
 use app\models\StepClonesComment;
 use yii\web\UploadedFile;
+use app\models\ExternalSource;
+use yii\helpers\Json;
 
 
 class TaskController extends \yii\web\Controller
@@ -38,19 +40,19 @@ class TaskController extends \yii\web\Controller
         $taskSearch = new TaskSearch();
         $dataProvider = $taskSearch->search(\Yii::$app->request->get());
         $dataProvider->setPagination([
-            'pageSize'  => $page_size
+            'pageSize' => $page_size
         ]);
-        $dataProvider->query->andFilterWhere(['id_project'  => $id_project]);
-       // $dataProvider->query->where('id_project=' . $id_project);
-       /* $dataProvider = new ActiveDataProvider([
-            'query' => Task::find()->where(['id_project' => $id_project]),
-            'pagination'    => [
-                'pageSize'  => $page_size
-            ]
-        ]);*/
+        $dataProvider->query->andFilterWhere(['id_project' => $id_project]);
+        // $dataProvider->query->where('id_project=' . $id_project);
+        /* $dataProvider = new ActiveDataProvider([
+             'query' => Task::find()->where(['id_project' => $id_project]),
+             'pagination'    => [
+                 'pageSize'  => $page_size
+             ]
+         ]);*/
         return $this->render('list', [
-            'dataProvider'  => $dataProvider,
-            'taskSearch'    => $taskSearch
+            'dataProvider' => $dataProvider,
+            'taskSearch' => $taskSearch
         ]);
     }
 
@@ -59,7 +61,7 @@ class TaskController extends \yii\web\Controller
         $task = Task::findOne($id);
 
         $modelEdit = new TaskEdit();
-        if(!empty(Yii::$app->request->post())){
+        if (!empty(Yii::$app->request->post())) {
             $post = Yii::$app->request->post();
             $task->load(Yii::$app->request->post());
             $task->created = date('Y-m-d H:i:s', strtotime($task->created));
@@ -70,29 +72,29 @@ class TaskController extends \yii\web\Controller
             $clone->id_task = $id;
             $clone->id_chain = $modelEdit->id_chain;
             $clone->save();
-            foreach ($post['SelectUserStep'] as $i => $step){
+            foreach ($post['SelectUserStep'] as $i => $step) {
                 $post['SelectUserStep'][$i]['status'] = $post['ChainClonesSteps'][$i]['status'];
             }
             $is_rework = false;
-            foreach( $post['SelectUserStep'] as $item){
+            foreach ($post['SelectUserStep'] as $item) {
                 $clone_step = new ChainClonesSteps();
                 $clone_step->id_clone = $clone->id;
                 $clone_step->id_step = $item['id_step'];
                 $clone_step->id_user = $item['id_user'];
                 $clone_step->status = $item['status'];
-                if($item['status'] == 2){
+                if ($item['status'] == 2) {
                     $is_rework = true;
                 }
                 $clone_step->save();
             }
-            if($is_rework){
+            if ($is_rework) {
                 $task->status = 2;
             }
             $task->save();
             $this->redirect('/task/list?id_project=' . $task->id_project);
         }
         return $this->render('update', [
-            'task'  => $task,
+            'task' => $task,
             'modelEdit' => $modelEdit
         ]);
     }
@@ -110,7 +112,7 @@ class TaskController extends \yii\web\Controller
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $out = ['results' => ['id' => '', 'text' => '']];
         $query = new Query();
-        if(!is_null($q)){
+        if (!is_null($q)) {
             $query->select('id, name as text')
                 ->from('chain')
                 ->where(['like', 'name', $q])
@@ -118,9 +120,9 @@ class TaskController extends \yii\web\Controller
             $command = $query->createCommand();
             $data = $command->queryAll();
             $out['results'] = array_values($data);
-        } else if($id > 0){
+        } else if ($id > 0) {
             $out['results'] = ['id' => $id, 'text' => Chain::find($id)->name];
-        } else{
+        } else {
             $query->select('id, name as text')
                 ->from('chain');
             $command = $query->createCommand();
@@ -135,17 +137,17 @@ class TaskController extends \yii\web\Controller
         $form = new ActiveForm();
         $chain = Chain::findOne($id);
         $modelSteps = [];
-        foreach ($chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step){
+        foreach ($chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step) {
             $modelSteps[] = new SelectUserStep([
                 'id_step' => $step->id,
-                'label'   => $step->name,
-                'id_group'   => $step->id_group
+                'label' => $step->name,
+                'id_group' => $step->id_group
             ]);
         }
         return $this->renderAjax('add-fields', [
-            'form'  => $form,
+            'form' => $form,
             'chain' => $chain,
-            'modelSteps'   => $modelSteps
+            'modelSteps' => $modelSteps
         ]);
 
     }
@@ -160,16 +162,16 @@ class TaskController extends \yii\web\Controller
         $form = new ActiveForm();
         $chain = Chain::findOne($id_chain);
         $modelsClonesSteps = [];
-        foreach($chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step){
+        foreach ($chain->getSteps()->orderBy(['sort' => SORT_ASC])->all() as $step) {
             $modelsClonesSteps[] = new ChainClonesSteps([
-                'id_step'   => $step->id,
-                'status'    => 0,
+                'id_step' => $step->id,
+                'status' => 0,
             ]);
         }
 
         return $this->renderAjax('step-list', [
-            'modelsClonesSteps'   => $modelsClonesSteps,
-            'form'              => $form
+            'modelsClonesSteps' => $modelsClonesSteps,
+            'form' => $form
         ]);
     }
 
@@ -177,27 +179,27 @@ class TaskController extends \yii\web\Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $groups = Groups::findOne($id_group);
-        if(!is_null($q)){
+        if (!is_null($q)) {
             $users = $groups->getUsers()->where(['like', 'surname', $q])
                 ->orWhere(['like', 'name', $q])
                 ->asArray()->all();
-        } else{
+        } else {
             $users = $groups->getUsers()->asArray()->all();
         }
 
         $add_users = User::find()->where(['is_outer' => 1])->one();
         $users[] = $add_users;
         $results = [];
-        foreach ($users as $user){
-            if($user->is_outer == 1){
+        foreach ($users as $user) {
+            if ($user->is_outer == 1) {
                 $results[] = [
-                    'id'    => $user['id'],
-                    'text'  => '<strong style="color:red">Внешний сотрудник!</strong>'
+                    'id' => $user['id'],
+                    'text' => '<strong style="color:red">Внешний сотрудник!</strong>'
                 ];
-            } else{
-                $results[]  = [
-                    'id'    => $user['id'],
-                    'text'  => $user['surname']. ' ' . $user['name'] . ' (' . $user['email'] . ')'
+            } else {
+                $results[] = [
+                    'id' => $user['id'],
+                    'text' => $user['surname'] . ' ' . $user['name'] . ' (' . $user['email'] . ')'
                 ];
             }
 
@@ -211,7 +213,7 @@ class TaskController extends \yii\web\Controller
         $task = Task::findOne($id);
 
         return $this->render('card', [
-            'task'  => $task
+            'task' => $task
         ]);
     }
 
@@ -244,15 +246,15 @@ class TaskController extends \yii\web\Controller
     public function actionComment($id_clone)
     {
         $model = new StepClonesComment();
-        if(Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())){
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             $model->save();
             $step = ChainClonesSteps::findOne($id_clone);
             $step->changeStatus(ChainClonesSteps::STATUS_REWORK);
             return true;
         }
-        return $this->renderAjax('comment',[
+        return $this->renderAjax('comment', [
             'model' => $model,
-            'id_clone'  => $id_clone
+            'id_clone' => $id_clone
         ]);
     }
 
@@ -261,13 +263,13 @@ class TaskController extends \yii\web\Controller
         $model = Steps::findOne($id_step);
         $file = new FileLoad();
 
-        if(Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())){
+        if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
             $file->file = UploadedFile::getInstances($file, 'file');
-            foreach ($file->file as $item){
+            foreach ($file->file as $item) {
                 $modelFile = new Files();
                 $modelFile['real-name'] = $item->baseName;
                 $modelFile->name = uniqid();
-                $modelFile->tmp =   $modelFile->name . '.' . $item->extension;
+                $modelFile->tmp = $modelFile->name . '.' . $item->extension;
                 $item->saveAs(Yii::getAlias('@web') . 'uploads/files/' . $modelFile->tmp);
                 $modelFile->save();
                 $files_steps = new FilesTaskSteps();
@@ -280,7 +282,7 @@ class TaskController extends \yii\web\Controller
         }
 
         return $this->renderAjax('upload', [
-           'file'   => $file,
+            'file' => $file,
             'model' => $model
         ]);
     }
@@ -296,7 +298,7 @@ class TaskController extends \yii\web\Controller
     {
         $model = Task::findOne($id);
         $zip_name = $model->complete();
-        if($zip_name){
+        if ($zip_name) {
             return $this->redirect(['task/card', 'id' => $id]);
             //return Yii::$app->response->SendFile($zip_name);
         }
@@ -307,16 +309,15 @@ class TaskController extends \yii\web\Controller
     {
         $model = ChainClonesSteps::findOne($id_clone);
         $model_comment = new StepClonesComment();
-        if(Yii::$app->request->isAjax && $model_comment->load(Yii::$app->request->post())){
+        if (Yii::$app->request->isAjax && $model_comment->load(Yii::$app->request->post())) {
             $model_comment->save();
             return true;
         }
         return $this->renderAjax('step-comments', [
-           'model'  => $model,
-            'model_comment'   => $model_comment
+            'model' => $model,
+            'model_comment' => $model_comment
         ]);
     }
-
 
     public function actionDeleteFile($id, $id_task)
     {
@@ -324,4 +325,30 @@ class TaskController extends \yii\web\Controller
         $file->delete();
         return $this->redirect(['task/card', 'id' => $id_task]);
     }
+
+    public function actionDeleteExternal($id, $id_task)
+    {
+        $model = ExternalSource::findOne($id);
+        $model->delete();
+        return $this->redirect(['task/card', 'id' => $id_task]);
+    }
+
+    public function actionAddExternal($id_task, $id_step)
+    {
+       $model = new ExternalSource();
+
+        if(Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())){
+            $model->id_step = $id_step;
+            $model->id_task = $id_task;
+            $model->save();
+            return Json::encode(['message' => 'Внешний источник добавлен', 'id' => $model->id]);
+        }
+
+        return $this->renderAjax('add-external', [
+            'model' => $model,
+            'id_task'   => $id_task,
+            'id_step'   => $id_step
+        ]);
+    }
+
 }
