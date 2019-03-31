@@ -45,3 +45,9 @@
     background: #e0d9d9;
     border-radius: 11px;
 }
+
+#count-rows{
+    padding: 7px;
+    border-radius: 20px;
+    border: 1px dashed #5cb85c;
+}

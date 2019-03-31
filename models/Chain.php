@@ -59,4 +59,10 @@ class Chain extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Steps::className(), ['id_chain' => 'id']);
     }
+
+    public function getTasks()
+    {
+        return $this->hasMany(Task::className(), ['id' => 'id_task'])
+            ->viaTable('chain_clones', ['id_chain'  => 'id']);
+    }
 }

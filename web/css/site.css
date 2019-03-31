@@ -237,3 +237,14 @@ a.desc:after {
 #menu-import{
     border: 1px dashed #5cb85c;
 }
+
+#count-rows{
+    padding: 7px;
+    border-radius: 20px;
+    border: 1px dashed #5cb85c;
+}
+
+#count-rows:focus{
+    outline: none;
+
+}

@@ -379,7 +379,12 @@ class TaskController extends \yii\web\Controller
 
     public function actionChange()
     {
-        
+        $tasks = Yii::$app->request->get('task');
+        $data = Task::FilterByFirst($tasks);
+
+        return $this->renderAjax('change', [
+           'data'  => $data
+        ]);
     }
 
 }

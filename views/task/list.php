@@ -147,11 +147,22 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
 
 
 Pjax::end();
+    $bottom_menus = '';
+    $menu_change = Html::a('Изменить <iglyphicon glyphicon-pencil></i>', Url::to(['task/change']), [
+           'class'  => 'btn btn-default circle-conttrols', 'id' => 'task-change'
+    ]);
+    $bottom_menus .= $menu_change;
+
 ?>
 <div class="row">
-
+    <?php echo $bottom_menus; ?>
 </div>
 
 <div class="modal inmodal import" id="import" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg"></div>
 </div>
+
+<div class="modal inmodal change" id="change" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-lg"></div>
+</div>
+

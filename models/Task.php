@@ -298,4 +298,14 @@ class Task extends \yii\db\ActiveRecord
        }
    }
 
+   public static function FilterByFirst($tasks)
+   {
+       $task = Task::findOne($tasks[0]);
+       $chain = $task->getChains()->one();
+       $filters = $chain->getTasks()->where(['in', 'id', $tasks])->asArray()->all();
+       return [
+           'id_chain'   => $chain->id,
+           'tasks'      => $filters
+       ];
+   }
 }

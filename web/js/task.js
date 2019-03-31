@@ -62,4 +62,28 @@ $(function(){
             }
         });
     });
+
+    $('#task-list').on('click', '.task-list input[type="checkbox"]', function(e){
+        var D_elem = $(this);
+        var D_table = D_elem.closest('.task-list');
+        var keys = D_table.yiiGridView('getSelectedRows');
+    });
+
+    $('#task-change').on('click', function (e) {
+        e.preventDefault();
+        var D_elem = $(this);
+        var old_url = D_elem.attr('href');
+        var new_url = old_url;
+        var keys = $('.task-list').yiiGridView('getSelectedRows');
+        var delimetr = '?';
+        for(var i in keys){
+            new_url += delimetr + 'task[]=' + keys[i];
+            delimetr = '&';
+        }
+        $('#change').modal('show').find('.modal-dialog').load(new_url);
+        /*$.ajax({
+           type:'post',
+           url:new_url
+        }); */
+    });
 });
