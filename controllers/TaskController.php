@@ -222,7 +222,7 @@ class TaskController extends \yii\web\Controller
     {
         $step = ChainClonesSteps::findOne($id_clone);
         $task = Task::findOne($id_task);
-        $task->setWorkStatus();
+        $task->setRework();
         $step->changeStatus(ChainClonesSteps::STATUS_REWORK);
         $this->redirect(['task/card', 'id' => $id_task]);
     }
@@ -237,9 +237,9 @@ class TaskController extends \yii\web\Controller
     public function actionWorking($id_clone, $id_task)
     {
         $step = ChainClonesSteps::findOne($id_clone);
+        $step->changeStatus(ChainClonesSteps::STATUS_WORK);
         $task = Task::findOne($id_task);
         $task->setWorkStatus();
-        $step->changeStatus(ChainClonesSteps::STATUS_WORK);
         $this->redirect(['task/card', 'id' => $id_task]);
     }
 
@@ -250,6 +250,8 @@ class TaskController extends \yii\web\Controller
             $model->save();
             $step = ChainClonesSteps::findOne($id_clone);
             $step->changeStatus(ChainClonesSteps::STATUS_REWORK);
+            $task = $step->clone->task;
+            $task->setRework();
             return true;
         }
         return $this->renderAjax('comment', [
@@ -349,6 +351,13 @@ class TaskController extends \yii\web\Controller
             'id_task'   => $id_task,
             'id_step'   => $id_step
         ]);
+    }
+
+    public function actionDelete($id)
+    {
+        $task = Task::findOne($id);
+        $task->delete();
+        return Json::encode(['task delete']);
     }
 
 }

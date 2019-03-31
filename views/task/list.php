@@ -56,11 +56,11 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                 'attribute' => 'status',
                 'label'     => 'Состояние',
                 'filter'    => [
-                    0 => 'Не настроен',
-                    1 => 'В работе',
-                    2 => 'На доработке',
-                    3 => 'Принятные',
-                    4 => 'В архиве'
+                    Task::STATUS_NOT => 'Не настроен',
+                    Task::STATUS_WORK => 'В работе',
+                    Task::STATUS_REWORK => 'На доработке',
+                    Task::STATUS_DONE => 'Принятные',
+                    Task::STATUS_ARCHIVE => 'В архиве'
                 ],
                 'content'   => function($data){
                     return Task::getStrStatus($data['status']);
@@ -85,16 +85,11 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                 'label'     => 'Стадния задаиня',
                 'content'    => function($data){
                     $clone = Task::findOne($data['id'])->getChainClones()->one();
-                    if(empty($clone)){
-                        return 'Не установлен';
+                    $step = $data->getLastDoneStep();
+                    if($step !== false){
+                        return $step;
                     }
-                      $step = $clone->getCloneSteps()->where(['status' => '1'])->one()->step;
-                    if(!empty($step)){
-                        return $step->name;
-                    } else {
-                        return 'Не установлен';
-                    }
-
+                    return 'Не установлен';
                 }
             ],
             [
@@ -128,7 +123,21 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header'    => 'Действия',
-                'template'  => '{update} {delete}'
+                'template'  => '{update} {delete}',
+                'buttons'   => [
+                    'delete'    => function($url, $model, $key){
+                        $url = Url::to(['task/delete', 'id' => $model->id]);
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>',
+                            false,
+                            [
+                                'class' => 'ajaxDelete',
+                                'delete-url'    => $url,
+                                'pjax-container' => 'task-list',
+                                'title'          => Yii::t('app', 'Delete')
+                            ]
+                        );
+                    }
+                ]
             ]
         ]
     ]);

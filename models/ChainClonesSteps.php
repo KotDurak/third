@@ -71,6 +71,11 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'id_user']);
     }
 
+    public function getClone()
+    {
+        return $this->hasOne(ChainClones::className(), ['id' => 'id_clone']);
+    }
+
     public function getAttributesValues()
     {
         return $this->hasMany(AttributesValues::className(), ['id_step_clone' => 'id']);

@@ -229,3 +229,7 @@ a.desc:after {
     max-height: 368px;
     overflow: auto;
 }
+
+.ajaxDelete{
+    cursor: pointer;
+}

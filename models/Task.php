@@ -24,8 +24,11 @@ use yii\behaviors\AttributeBehavior;
  */
 class Task extends \yii\db\ActiveRecord
 {
+    const STATUS_NOT = 0;
     const STATUS_WORK = 1;
     const STATUS_DONE = 2;
+    const STATUS_ARCHIVE = 3;
+    const STATUS_REWORK = 4;
 
     public function behaviors()
     {
@@ -121,6 +124,11 @@ class Task extends \yii\db\ActiveRecord
         return $this->getChainClones()->one()-> getCloneSteps()->all();
     }
 
+    public function getReworkSteps()
+    {
+        return $this->getChainClones()->one()->getCloneSteps()->where(['status' => ChainClonesSteps::STATUS_REWORK])->all();
+    }
+
     public function getFiles()
     {
         return $this->hasMany(Files::className(), ['id' => 'id_file'])->
@@ -134,26 +142,13 @@ class Task extends \yii\db\ActiveRecord
 
 
     public static function getStrStatus($status){
-        switch ($status){
-            case 0:
-                return 'Не настроен';
-                break;
-            case 1:
-                return 'В работе';
-                break;
-            case 2:
-                return  'На доработке';
-                break;
-            case 3:
-                return 'Принятые';
-                break;
-            case 4:
-                return 'В архиве';
-                break;
-            default:
-                return 'Не настроен';
-                break;
-        }
+        $statuses  = [Task::STATUS_NOT => 'Не настроен',
+                    Task::STATUS_WORK => 'В работе',
+                    Task::STATUS_REWORK => 'На доработке',
+                    Task::STATUS_DONE => 'Принятные',
+                    Task::STATUS_ARCHIVE => 'В архиве'
+        ];
+        return $statuses[$status];
     }
 
    public static function getRows($id)
@@ -166,6 +161,7 @@ class Task extends \yii\db\ActiveRecord
    public function archive()
    {
        $this->is_archive = 1;
+       $this->status = Task::STATUS_ARCHIVE;
        $this->save();
    }
 
@@ -211,10 +207,35 @@ class Task extends \yii\db\ActiveRecord
 
    public function setWorkStatus()
    {
-       if($this->status != self::STATUS_WORK){
+       $rework_steps = $this->getReworkSteps();
+
+
+       if($this->status != self::STATUS_WORK && empty($rework_steps)){
            $this->status = self::STATUS_WORK;
            $this->save();
        }
+   }
+
+   public function setRework()
+   {
+       $this->status = self::STATUS_REWORK;
+       $this->save();
+   }
+
+   public function getLastDoneStep()
+   {
+        $clone = $this->getChainClones()->one();
+        $GLOBALS['clone'] = $clone;
+        $chain = Chain::findOne($clone->id_chain);
+        $steps = $chain->getSteps()->joinWith([
+            'stepClones' => function($query){
+                $query->onCondition(['chain_clones_steps.id_clone' => $GLOBALS['clone']['id']]);
+                $query->andWhere(['status' => ChainClonesSteps::STATUS_DONE]);
+            },
+        ])->orderBy(['sort' => SORT_DESC])->asArray()->one();
+        unset($GLOBALS['clone']);
+
+        return (!empty($steps)) ? $steps['name'] : false;
    }
 
 }
