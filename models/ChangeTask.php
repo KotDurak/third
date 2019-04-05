@@ -10,6 +10,7 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use app\models\Task;
 
 class ChangeTask extends Model
 {
@@ -21,6 +22,18 @@ class ChangeTask extends Model
 
     public function rules()
     {
-        
+        return [
+            [['id_step', 'id_user', 'is_outer', 'is_self', 'is_clear'], 'integer']
+        ];
+    }
+
+    public function doChange($tasks)
+    {
+        foreach ($tasks as $task){
+            $clone = ChainClones::findOne(['id_task' => $task['id']]);
+            $clone_step = $clone->getCloneSteps()->where(['id_step' => $this->id_step])->one();
+            $clone_step->id_user = ($this->id_user != -1) ? $this->id_user : null;
+            $clone_step->save(false);
+        }
     }
 }
