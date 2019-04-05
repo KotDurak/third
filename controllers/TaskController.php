@@ -410,4 +410,8 @@ class TaskController extends \yii\web\Controller
         ]);
     }
 
+    public function actionCopy(){
+
+    }
+
 }
