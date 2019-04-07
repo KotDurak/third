@@ -64,6 +64,7 @@ class Task extends \yii\db\ActiveRecord
             [['created'], 'required'],
             [['id_manager'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_manager' => 'id']],
             [['id_user'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_user' => 'id']],
+            [['id_project'], 'exist', 'skipOnError' => true, 'targetClass' => Project::className(), 'targetAttribute' => ['id_project' => 'id']]
         ];
     }
 
@@ -159,14 +160,12 @@ class Task extends \yii\db\ActiveRecord
 
    public static function getRows($id)
    {
+       $rows = array();
        $table = TaskTable::findOne(['id_task' => $id]);
-        try{
+        if(!empty($table)){
             $rows = $table->getTaskTableRows()->asArray()->all();
-        } catch(Exception $e){
-
         }
-
-       return $rows;
+        return $rows;
    }
 
    public function archive()
@@ -316,5 +315,51 @@ class Task extends \yii\db\ActiveRecord
            'id_chain'   => $chain->id,
            'tasks'      => $filters
        ];
+   }
+
+    /**
+     * Создаем копии задач
+     *
+     * @param $tasks массив идентификаторов задач
+     */
+    public static function copyTasks($tasks)
+   {
+       foreach ($tasks as $task){
+           $old_task = Task::findOne($task);
+           $name = $old_task->name;
+           $new_task = new Task();
+           $atributes = $old_task->attributes;
+           unset($atributes['id']);
+           $i = 2;
+           while (!empty($current = Task::find()->where(['name' => $atributes['name'] .'(' . $i . ')'])->one())){
+                $i++;
+           }
+           $atributes['name'] .= '(' . $i . ')';
+           $chain = $old_task->chain;
+           $clone_steps = $old_task->getCloneSteps();
+           $new_task->setAttributes($atributes);
+           $new_task->save(false);
+           $chain_clones = new ChainClones();
+           $chain_clones->id_chain = $chain->id;
+           $chain_clones->id_task = $new_task->id;
+           $chain_clones->save();
+           foreach ($clone_steps as $clone_step){
+               $model = new ChainClonesSteps();
+               $model->id_step = $clone_step->id_step;
+               $model->id_user = $clone_step->id_user;
+               $model->status = $clone_step->status;
+               $model->id_clone = $chain_clones->id;
+               $model->save(false);
+               $attributes_vals = $clone_step->getAttributesValues()->all();
+               foreach ($attributes_vals as $attributes_val){
+                   $model_attr = new AttributesValues();
+                   $model_attr->id_attribute = $attributes_val->id_attribute;
+                   $model_attr->id_step_clone = $model->id;
+                   $model_attr->value = $attributes_val->value;
+                   $model_attr->save();
+               }
+           }
+       }
+       die();
    }
 }

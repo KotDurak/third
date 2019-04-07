@@ -93,11 +93,35 @@ $(function(){
         var old_url = D_elem.attr('href');
         var new_url = old_url;
         var keys = $('.task-list').yiiGridView('getSelectedRows');
+        var pjax = 'task-list';
         var delimetr = '?';
         for(var i in keys){
             new_url += delimetr + 'task[]=' + keys[i];
             delimetr = '&';
         }
-        console.log(new_url);
+        bootbox.confirm({
+            message: "Создать копии задач?",
+            buttons: {
+                confirm: {
+                    label: 'Да',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'Нет',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if(result){
+                    $.ajax({
+                        url:new_url,
+                        type:  'post',
+                        success:function(data){
+                            $.pjax.reload({container: '#' + $.trim(pjax)});
+                        }
+                    });
+                }
+            }
+        });
     });
 });

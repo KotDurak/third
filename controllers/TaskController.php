@@ -410,8 +410,10 @@ class TaskController extends \yii\web\Controller
         ]);
     }
 
-    public function actionCopy(){
-
+    public function actionCopy()
+    {
+        $tasks = Yii::$app->request->get('task');
+        Task::copyTasks($tasks);
     }
 
 }

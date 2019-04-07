@@ -157,7 +157,7 @@ Pjax::end();
            'class'  => 'btn btn-default circle-conttrols', 'id' => 'task-change'
     ]);
 
-    $menu_copy = Html::a('<i class="glyphicon glyphicon-duplicate"></i> Копировать', Url::to('task/copy'), [
+    $menu_copy = Html::a('<i class="glyphicon glyphicon-duplicate"></i> Копировать', Url::to(['task/copy']), [
         'class'  => 'btn btn-default circle-conttrols', 'id' => 'task-copy'
     ]);
     $bottom_menus .= $menu_change;
