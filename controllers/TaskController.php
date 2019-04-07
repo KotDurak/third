@@ -416,4 +416,35 @@ class TaskController extends \yii\web\Controller
         Task::copyTasks($tasks);
     }
 
+    public function actionArchiveMass()
+    {
+        $tasks = Yii::$app->request->get('task');
+        foreach($tasks as $task){
+            $task_model = Task::findOne($task);
+            $task_model->is_archive = 1;
+            $task_model->status = Task::STATUS_ARCHIVE;
+            $task_model->save(false);
+
+        }
+        return true;
+    }
+
+    public function actionAcceptMass()
+    {
+        $tasks = Yii::$app->request->get('task');
+        Task::setStatusAccept($tasks);
+    }
+
+    public function actionDeleteMass()
+    {
+        $tasks = Yii::$app->request->get('task');
+        if(empty($tasks)){
+            return true;
+        }
+        Task::deleteAll([
+            'AND',
+            ['in', 'id', $tasks]
+        ]);
+    }
+
 }

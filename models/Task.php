@@ -18,6 +18,7 @@ use yii\behaviors\AttributeBehavior;
  * @property int $status
  * @property int $id_user
  * @property int $id_manager
+ * @property int $is_archive
  *
  * @property User $manager
  * @property User $user
@@ -60,7 +61,7 @@ class Task extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'description'], 'string'],
-            [['status', 'id_user', 'id_manager'], 'integer'],
+            [['status', 'id_user', 'id_manager', 'is_archive'], 'integer'],
             [['created'], 'required'],
             [['id_manager'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_manager' => 'id']],
             [['id_user'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_user' => 'id']],
@@ -80,6 +81,7 @@ class Task extends \yii\db\ActiveRecord
             'status' => 'Status',
             'id_user' => 'Id User',
             'id_manager' => 'Id Manager',
+            'is_archive'    => 'Is Archive'
         ];
     }
 
@@ -360,6 +362,21 @@ class Task extends \yii\db\ActiveRecord
                }
            }
        }
-       die();
+        return true;
    }
+
+   public static function setStatusAccept($tasks)
+   {
+       $models = Task::find()->where(['in', 'id', $tasks])->all();
+       foreach ($models as $model){
+            $steps = $model->getCloneSteps();
+            foreach ($steps as $step){
+                $step->status = ChainClonesSteps::STATUS_DONE;
+                $step->save();
+            }
+            $model->status = Task::STATUS_DONE;
+            $model->save();
+       }
+   }
+
 }

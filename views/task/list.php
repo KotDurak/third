@@ -77,7 +77,12 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
             [
                 'attribute' => 'name',
                 'label'     => 'Название',
+                'format'    => 'html',
                 'content'   => function($data){
+                    if($data->status == Task::STATUS_ARCHIVE){
+                        return '<span style="color: #cccccc">' . $data['name'] . '</span>';
+
+                    }
                     return Html::a($data['name'], Url::toRoute(['task/card', 'id' => $data['id']]));
                 }
             ],
@@ -160,8 +165,23 @@ Pjax::end();
     $menu_copy = Html::a('<i class="glyphicon glyphicon-duplicate"></i> Копировать', Url::to(['task/copy']), [
         'class'  => 'btn btn-default circle-conttrols', 'id' => 'task-copy'
     ]);
+
+    $menu_archive = Html::a('В архив', Url::to(['task/archive-mass']), [
+        'class'  => 'btn btn-default circle-conttrols', 'id' => 'task-mass-change'
+    ]);
+    $menu_accept = Html::a('Принять', Url::to(['task/accept-mass']), [
+        'class'  => 'btn btn-default circle-conttrols', 'id' => 'task-mass-accept'
+    ]);
+
+    $menu_delete = Html::a('Удалить', Url::to(['task/delete-mass']), [
+        'class'     => 'btn btn-danger circle-conttrols', 'id'   => 'task-mass-delete'
+    ]);
+
     $bottom_menus .= $menu_change;
     $bottom_menus .= $menu_copy;
+    $bottom_menus .= $menu_archive;
+    $bottom_menus .= $menu_accept;
+    $bottom_menus .= $menu_delete;
 
 ?>
 <div class="row">
