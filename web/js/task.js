@@ -86,4 +86,18 @@ $(function(){
            url:new_url
         }); */
     });
+
+    $('#task-copy').on('click', function(e){
+        e.preventDefault();
+        var D_elem = $(this);
+        var old_url = D_elem.attr('href');
+        var new_url = old_url;
+        var keys = $('.task-list').yiiGridView('getSelectedRows');
+        var delimetr = '?';
+        for(var i in keys){
+            new_url += delimetr + 'task[]=' + keys[i];
+            delimetr = '&';
+        }
+        console.log(new_url);
+    });
 });

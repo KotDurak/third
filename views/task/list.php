@@ -56,6 +56,11 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                 'class' => 'yii\grid\CheckboxColumn',
             ],
             [
+                'attribute'  => 'chain',
+                'label'     => 'Цепочка',
+                'value'     => 'chain.name'
+            ],
+            [
                 'attribute' => 'status',
                 'label'     => 'Состояние',
                 'filter'    => [
@@ -148,10 +153,15 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
 
 Pjax::end();
     $bottom_menus = '';
-    $menu_change = Html::a('Изменить <iglyphicon glyphicon-pencil></i>', Url::to(['task/change']), [
+    $menu_change = Html::a(' <i class="glyphicon glyphicon-pencil"></i> Изменить', Url::to(['task/change']), [
            'class'  => 'btn btn-default circle-conttrols', 'id' => 'task-change'
     ]);
+
+    $menu_copy = Html::a('<i class="glyphicon glyphicon-duplicate"></i> Копировать', Url::to('task/copy'), [
+        'class'  => 'btn btn-default circle-conttrols', 'id' => 'task-copy'
+    ]);
     $bottom_menus .= $menu_change;
+    $bottom_menus .= $menu_copy;
 
 ?>
 <div class="row">

@@ -11,6 +11,7 @@ use app\models\Task;
  */
 class TaskSearch extends Task
 {
+    public $chain;
     /**
      * {@inheritdoc}
      */
@@ -55,7 +56,14 @@ class TaskSearch extends Task
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->joinWith('chain');
 
+        $dataProvider->sort->attributes['chain'] = [
+            'asc' => ['chain.name' => SORT_ASC],
+            'desc' => ['chain.name' => SORT_DESC],
+        ];
+
+        $query->andFilterWhere(['like', 'chain.name', $this->chain]);
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,

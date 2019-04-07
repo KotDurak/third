@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Chain;
 use app\models\ChainClonesSteps;
+use app\models\ChangeTask;
 use app\models\FileLoad;
 use app\models\Files;
 use app\models\FilesTaskSteps;
@@ -20,6 +21,7 @@ use app\models\Task;
 use app\models\TaskSearch;
 use yii\db\Query;
 use app\models\SelectUserStep;
+use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 use app\models\ChainClones;
 use app\models\StepClonesComment;
@@ -381,10 +383,35 @@ class TaskController extends \yii\web\Controller
     {
         $tasks = Yii::$app->request->get('task');
         $data = Task::FilterByFirst($tasks);
+        $model = new ChangeTask();
+        $tasks = [];
+        foreach ($data['tasks'] as $task){
+            $tasks[] = Task::findOne($task['id']);
+        }
+
+        if(Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())){
+            $tasks = Yii::$app->request->post('Task');
+            $model->doChange($tasks);
+            return true;
+        }
 
         return $this->renderAjax('change', [
-           'data'  => $data
+            'data'  => $data,
+            'model' => $model,
+            'tasks' => $tasks
         ]);
+    }
+
+    public function actionStepsList($id_step)
+    {
+        $users = Steps::findOne($id_step)->group->getUsers()->asArray()->all();
+        return $this->renderAjax('users-list', [
+            'users' => $users
+        ]);
+    }
+
+    public function actionCopy(){
+
     }
 
 }

@@ -7,6 +7,7 @@ use Yii;
 use yii\web\IdentityInterface;
 use app\models\Groups;
 
+
 /**
  * This is the model class for table "user".
  *
@@ -30,6 +31,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     const STATUS_WAIT = 5;
     const STATUS_DELETED = 2;
     const STATUS_ACTIVE = 1;
+
+    const CANCEL_TASK = -1;
     /**
      * {@inheritdoc}
      */

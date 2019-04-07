@@ -55,19 +55,24 @@ class Project extends \yii\db\ActiveRecord
         $tasks = [];
         $table = [];
         $count = 0;
+        $set_name = true;
         $task_name = '';
         foreach ((array)$rows_excell as $num => $row){
             $row = (array)$row;
             if(!empty($row['A']) && !empty($row['E']) && $row['E'] > 0){
                 $table[] = $row;
+                if($set_name){
+                    $task_name = $row['C'];
+                    $set_name = false;
+                }
             } else if(!empty($row['A']) && (empty($row['E']) || $row['E'] < 1)){
-                $task_name = $row['A'];
                 continue;
             } else if(empty($row['E']) && empty($row['F']) && !empty($table)){
                 $tasks[] = [
                     'name'  => $task_name,
                     'table' => $table
                 ];
+                $set_name = true;
                 $table = [];
                 $count++;
             }

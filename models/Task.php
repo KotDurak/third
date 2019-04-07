@@ -114,6 +114,12 @@ class Task extends \yii\db\ActiveRecord
             ->viaTable('chain_clones', ['id_task' => 'id']);
     }
 
+    public function getChain()
+    {
+        return $this->hasOne(Chain::className(), ['id' => 'id_chain'])
+            ->viaTable('chain_clones', ['id_task' => 'id']);
+    }
+
     public function getProject()
     {
         return $this->hasOne(Project::className(), ['id' => 'id_project']);
@@ -300,6 +306,9 @@ class Task extends \yii\db\ActiveRecord
 
    public static function FilterByFirst($tasks)
    {
+       if(empty($tasks)){
+           return NULL;
+       }
        $task = Task::findOne($tasks[0]);
        $chain = $task->getChains()->one();
        $filters = $chain->getTasks()->where(['in', 'id', $tasks])->asArray()->all();
