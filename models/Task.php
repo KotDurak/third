@@ -138,6 +138,7 @@ class Task extends \yii\db\ActiveRecord
         return $this->getChainClones()->one()->getCloneSteps()->where(['status' => ChainClonesSteps::STATUS_REWORK])->all();
     }
 
+
     public function getFiles()
     {
         return $this->hasMany(Files::className(), ['id' => 'id_file'])->

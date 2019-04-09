@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\SignupForm;
 use app\models\SignupService;
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -63,6 +64,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        if( Yii::$app->user->identity->is_admin()){
+
+        } else{
+
+        }
         return $this->render('index');
     }
 

@@ -14,6 +14,7 @@ use Yii;
  */
 class ChainClonesSteps extends \yii\db\ActiveRecord
 {
+    const STATUS_NOT = 0;
     const STATUS_WORK = 1;
     const STATUS_REWORK = 2;
     const STATUS_DONE = 3;
@@ -86,6 +87,12 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
         return $this->hasMany(StepClonesComment::className(), ['id_step_clone' => 'id']);
     }
 
+    public function getTask()
+    {
+        return $this->hasOne(Task::className(),['id' => 'id_task'])
+            ->viaTable('chain_clones', ['id' => 'id_clone']);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -97,5 +104,35 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
             'id_step' => 'Id Step',
             'status' => 'Status',
         ];
+    }
+
+    public static function getStepsByWorker($id_worker = null)
+    {
+        if(is_null($id_worker)){
+            $id_worker = Yii::$app->user->id;
+        }
+        $clones_steps = ChainClonesSteps::find()->select('COUNT(id), status')->where(['id_user' => $id_worker])->groupBy('status')
+            ->asArray()
+            ->all();
+        $statuses = [
+            ChainClonesSteps::STATUS_NOT,
+            ChainClonesSteps::STATUS_DONE,
+            ChainClonesSteps::STATUS_REWORK,
+            ChainClonesSteps::STATUS_WORK
+        ];
+        $groups = [];
+        $groups['count'] = 0;
+        foreach ($statuses as  $status){
+            $groups[$status] = 0;
+            foreach ($clones_steps as $step){
+                if($step['status'] == $status){
+                    $groups['count'] += $step['COUNT(id)'];
+                    $groups[$status] = $step['COUNT(id)'];
+                    break;
+                }
+            }
+
+        }
+        return $groups;
     }
 }

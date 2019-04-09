@@ -4,12 +4,9 @@
 
 $this->title = 'TD CRM';
 ?>
-<div class="site-index">
-
-    <div class="jumbotron">
-        <h1>Сводка</h1>
-
-        <p class="lead">Сводка по сотрудникам</p>
-    </div>
-
+<?php if(Yii::$app->user->identity->is_admin()): ?>
+<div class="row">
 </div>
+<?php else: ?>
+   <?php echo  $this->render('workers'); ?>
+<?php endif; ?>

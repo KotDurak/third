@@ -447,4 +447,26 @@ class TaskController extends \yii\web\Controller
         ]);
     }
 
+    public function actionUsersTasks($id_user, $status)
+    {
+        $clone_steps = ChainClonesSteps::find()->where(['id_user' => $id_user])
+            ->andWhere(['status' => $status])->all();
+        $tasks = [];
+        foreach($clone_steps as $clone_step){
+            $tasks[] = $clone_step->task->id;
+        }
+        $taskSearch = new TaskSearch();
+        $dataProvider = new ActiveDataProvider([
+            'query' => Task::find()->where(['in', 'id', $tasks])
+        ]);
+        $dataProvider->setPagination([
+            'pageSize' => 10
+        ]);
+        $dataProvider->query->alias('t')->andFilterWhere(['id' => 17]);
+
+        return $this->render('users-tasks', [
+            'dataProvider' => $dataProvider,
+
+        ]);
+    }
 }
