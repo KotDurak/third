@@ -64,7 +64,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        if( Yii::$app->user->identity->is_admin()){
+        if(!Yii::$app->user->isGuest && Yii::$app->user->identity->is_admin()){
 
         } else{
 

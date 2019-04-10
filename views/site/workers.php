@@ -2,11 +2,20 @@
     use app\models\ChainClonesSteps;
     use yii\helpers\Url;
     use yii\helpers\Html;
+    use app\models\Project;
+    use yii\helpers\ArrayHelper;
+
+$this->registerJsFile('@web/js/site/workers.js',
+    ['depends' => [\yii\web\JqueryAsset::className()]]);
 
     $clone_steps = ChainClonesSteps::getStepsByWorker();
+    $projects = Project::find()->asArray()->all();
+    $projects = ArrayHelper::map($projects, 'id', 'name');
+    array_unshift($projects, 'Все');
+
 ?>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12 worker-block">
         <table class="table">
             <thead>
             <tr>
@@ -25,14 +34,48 @@
                         $count  = $clone_steps[ChainClonesSteps::STATUS_REWORK];
                         $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => ChainClonesSteps::STATUS_REWORK]);
                         $a = Html::a($count, $url, ['style' => 'color:red']);
+                        echo $a;
                     ?>
-                    <?php echo $a;?>
                 </td>
-                <td><?php echo $clone_steps[ChainClonesSteps::STATUS_WORK]; ?></td>
-                <td><?php echo $clone_steps[ChainClonesSteps::STATUS_DONE]; ?></td>
-                <td><?php echo $clone_steps['count']; ?></td>
+                <td>
+                    <?php
+                        $count  = $clone_steps[ChainClonesSteps::STATUS_WORK];
+                        $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => ChainClonesSteps::STATUS_WORK]);
+                        $a = Html::a($count, $url, ['style' => 'color:#f0ad4e;']);
+                        echo  $a;
+                     ?>
+                </td>
+                <td>
+                    <?php
+                        $count  = $clone_steps[ChainClonesSteps::STATUS_DONE];
+                        $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => ChainClonesSteps::STATUS_DONE]);
+                        $a = Html::a($count, $url, ['style' => 'color:green']);
+                        echo  $a;
+                    ?>
+                </td>
+                <td>
+                    <?php
+                        $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => 'all']);
+                        $a = Html::a($clone_steps['count'], $url, ['style' => 'color:#000']);
+                        echo  $a;
+                    ?>
+                </td>
             </tr>
             </tbody>
         </table>
+    </div>
+    <div class="col-md-12 worker-block">
+       <div class="col-md-4">
+           <h4>По проектам</h4>
+       </div>
+        <div class="col-md-4">
+            <?php echo Html::dropDownList('project', null, $projects, [
+                    'id'    => 'select-project'
+            ]); ?>
+        </div>
+        <div class="col-md-4 text-center">
+            <strong>Всего проектов</strong><br>
+            <span><?php echo (count($projects) - 1); ?></span>
+        </div>
     </div>
 </div>

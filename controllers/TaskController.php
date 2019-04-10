@@ -449,24 +449,29 @@ class TaskController extends \yii\web\Controller
 
     public function actionUsersTasks($id_user, $status)
     {
-        $clone_steps = ChainClonesSteps::find()->where(['id_user' => $id_user])
-            ->andWhere(['status' => $status])->all();
+        if($status != 'all'){
+            $clone_steps = ChainClonesSteps::find()->where(['id_user' => $id_user])
+                ->andWhere(['status' => $status])->all();
+        } else{
+            $clone_steps = ChainClonesSteps::find()->where(['id_user' => $id_user])
+               ->all();
+        }
         $tasks = [];
         foreach($clone_steps as $clone_step){
             $tasks[] = $clone_step->task->id;
         }
+
+
         $taskSearch = new TaskSearch();
-        $dataProvider = new ActiveDataProvider([
-            'query' => Task::find()->where(['in', 'id', $tasks])
-        ]);
+        $dataProvider = $taskSearch->search(\Yii::$app->request->get());
         $dataProvider->setPagination([
             'pageSize' => 10
         ]);
-        $dataProvider->query->alias('t')->andFilterWhere(['id' => 17]);
+        $dataProvider->query->alias('t')->andFilterWhere(['in','id', $tasks]);
 
         return $this->render('users-tasks', [
             'dataProvider' => $dataProvider,
-
+            'taskSearch'    => $taskSearch
         ]);
     }
 }

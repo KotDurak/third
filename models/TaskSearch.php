@@ -56,14 +56,14 @@ class TaskSearch extends Task
             // $query->where('0=1');
             return $dataProvider;
         }
-        $query->joinWith('chain');
+      //  $query->joinWith('chain');
 
-        $dataProvider->sort->attributes['chain'] = [
+       /* $dataProvider->sort->attributes['chain'] = [
             'asc' => ['chain.name' => SORT_ASC],
             'desc' => ['chain.name' => SORT_DESC],
-        ];
+        ]; */
 
-        $query->andFilterWhere(['like', 'chain.name', $this->chain]);
+     //   $query->andFilterWhere(['like', 'chain.name', $this->chain]);
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,

@@ -4,7 +4,7 @@
 
 $this->title = 'TD CRM';
 ?>
-<?php if(Yii::$app->user->identity->is_admin()): ?>
+<?php if(!Yii::$app->user->isGuest && Yii::$app->user->identity->is_admin()): ?>
 <div class="row">
 </div>
 <?php else: ?>

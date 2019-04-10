@@ -230,7 +230,7 @@ a.desc:after {
     overflow: auto;
 }
 
-.ajaxDelete{
+.ajaxDelete{s
     cursor: pointer;
 }
 
@@ -246,5 +246,9 @@ a.desc:after {
 
 #count-rows:focus{
     outline: none;
+}
 
+.worker-block{
+    border: 1px solid #000;
+    margin-top:30px;
 }
