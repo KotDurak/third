@@ -11,7 +11,8 @@ $this->registerJsFile('@web/js/site/workers.js',
     $clone_steps = ChainClonesSteps::getStepsByWorker();
     $projects = Project::find()->asArray()->all();
     $projects = ArrayHelper::map($projects, 'id', 'name');
-    array_unshift($projects, 'Все');
+    $projects[0] = 'Не выбрано';
+    ksort($projects);
 
 ?>
 <div class="row">
@@ -69,13 +70,19 @@ $this->registerJsFile('@web/js/site/workers.js',
            <h4>По проектам</h4>
        </div>
         <div class="col-md-4">
-            <?php echo Html::dropDownList('project', null, $projects, [
-                    'id'    => 'select-project'
-            ]); ?>
+            <div class="form-group">
+                <?php echo Html::dropDownList('project', null, $projects, [
+                        'id'    => 'select-project',
+                        'class' => 'form-control'
+                ]); ?>
+            </div>
         </div>
         <div class="col-md-4 text-center">
             <strong>Всего проектов</strong><br>
             <span><?php echo (count($projects) - 1); ?></span>
+        </div>
+        <div class="col-md-12" id="project-container">
+
         </div>
     </div>
 </div>

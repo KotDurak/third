@@ -447,7 +447,7 @@ class TaskController extends \yii\web\Controller
         ]);
     }
 
-    public function actionUsersTasks($id_user, $status)
+    public function actionUsersTasks($id_user, $status, $id_project = null)
     {
         if($status != 'all'){
             $clone_steps = ChainClonesSteps::find()->where(['id_user' => $id_user])
@@ -468,6 +468,9 @@ class TaskController extends \yii\web\Controller
             'pageSize' => 10
         ]);
         $dataProvider->query->alias('t')->andFilterWhere(['in','id', $tasks]);
+        if(!is_null($id_project)){
+            $dataProvider->query->andFilterWhere(['id_project' => $id_project]);
+        }
 
         return $this->render('users-tasks', [
             'dataProvider' => $dataProvider,

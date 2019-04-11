@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\ChainClonesSteps;
+use app\models\Project;
 use app\models\SignupForm;
 use app\models\SignupService;
 use app\models\User;
@@ -124,8 +126,6 @@ class SiteController extends Controller
         ]);
     }
 
-
-
     /**
      * Displays about page.
      *
@@ -134,5 +134,18 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    /**
+     * Получает спиосок задач сотрудника по проектам;
+     *
+     * @param $id_prohect
+     */
+    public function actionProjectTasks($id_project)
+    {
+        $clone_steps = ChainClonesSteps::getStepsByProject($id_project);
+        return $this->renderAjax('tasks-project', [
+            'clone_steps'   => $clone_steps
+        ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "chain_clones_steps".
@@ -133,6 +134,48 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
             }
 
         }
+        return $groups;
+    }
+
+    public static function getStepsByProject($id_project)
+    {
+        $id_worker = Yii::$app->user->id;
+        $tasks = Task::find()->where(['id_project' => $id_project])->joinWith('chainClones')
+            ->asArray()
+            ->all();
+        $clones = ArrayHelper::getColumn($tasks,'chainClones');
+        $ids = [];
+        foreach ($clones as $clone){
+            $ids[] = $clone[0]['id'];
+        }
+
+        $clones_steps = ChainClonesSteps::find()->select('COUNT(id), status')
+            ->where(['id_user' => $id_worker])
+           ->andWhere(['in', 'id_clone', $ids])
+            ->groupBy('status')
+            ->asArray()
+            ->all();
+
+        $statuses = [
+            ChainClonesSteps::STATUS_NOT,
+            ChainClonesSteps::STATUS_DONE,
+            ChainClonesSteps::STATUS_REWORK,
+            ChainClonesSteps::STATUS_WORK
+        ];
+        $groups = [];
+        $groups['count'] = 0;
+        foreach ($statuses as  $status){
+            $groups[$status] = 0;
+            foreach ($clones_steps as $step){
+                if($step['status'] == $status){
+                    $groups['count'] += $step['COUNT(id)'];
+                    $groups[$status] = $step['COUNT(id)'];
+                    break;
+                }
+            }
+
+        }
+        $groups['id_project'] = $id_project;
         return $groups;
     }
 }
