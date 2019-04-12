@@ -7,6 +7,7 @@ use app\models\Project;
 use app\models\SignupForm;
 use app\models\SignupService;
 use app\models\User;
+use function GuzzleHttp\Psr7\str;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -147,5 +148,14 @@ class SiteController extends Controller
         return $this->renderAjax('tasks-project', [
             'clone_steps'   => $clone_steps
         ]);
+    }
+
+    public function actionUsersTasksDate()
+    {
+        $post = Yii::$app->request->post();
+        $from = (!empty($post['from'])) ? date('Y-m-d H:i:s', strtotime($post['from'])) : null;
+        $to = (!empty($post['to'])) ? date('Y-m-d H:i:s', strtotime($post['to'])) : null;
+        $clone_steps = ChainClonesSteps::getStepsByDates($from, $to);
+        die();
     }
 }

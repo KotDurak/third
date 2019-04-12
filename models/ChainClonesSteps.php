@@ -178,4 +178,17 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
         $groups['id_project'] = $id_project;
         return $groups;
     }
+
+    public static function getStepsByDates($from, $to)
+    {
+        $query = Task::find();
+        if(!is_null($from)){
+            $query->andWhere(['>=', 'deadline', $from]);
+        }
+        if(!is_null($to)){
+            $query->andWhere(['<=', 'deadline', $to]);
+        }
+        $tasks =$query->asArray()->all();
+        print_pre($tasks); die();
+    }
 }

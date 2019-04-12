@@ -4,6 +4,8 @@
     use yii\helpers\Html;
     use app\models\Project;
     use yii\helpers\ArrayHelper;
+    use yii\jui\DatePicker;
+    use kartik\datetime\DateTimePicker;
 
 $this->registerJsFile('@web/js/site/workers.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
@@ -83,6 +85,42 @@ $this->registerJsFile('@web/js/site/workers.js',
         </div>
         <div class="col-md-12" id="project-container">
 
+        </div>
+    </div>
+
+    <div class="col-md-12 worker-block">
+        <div class="time-filters clearfix">
+            <h4>Дедлайн в промежутке</h4>
+            <?php
+                echo '<div class="col-md-6">' . DatePicker::widget([
+                    'language'  => 'ru',
+                    'dateFormat' => 'dd.MM.yyyy',
+                    'clientOptions'    => [
+                        'changeYear'    => true,
+                        'changeMonth'    => true
+                    ],
+                    'options'  => [
+                        'id'    => 'date-from',
+                        'class' => 'form-control',
+                        'placeholder'   => 'От'
+                    ],
+                ]) . '</div>';
+                echo '<div class="col-md-6">' . DatePicker::widget([
+                    'language'  => 'ru',
+                    'dateFormat' => 'dd.MM.yyyy',
+                    'clientOptions'    => [
+                        'changeYear'    => true,
+                        'changeMonth'    => true
+                    ],
+                    'options'  => [
+                        'id'    => 'date-to',
+                        'class' => 'form-control',
+                        'placeholder'   => 'До'
+                    ],
+                ]) . '</div>';
+            ?>
+        </div>
+        <div id="date-contaier">
         </div>
     </div>
 </div>

@@ -252,3 +252,8 @@ a.desc:after {
     border: 1px solid #000;
     margin-top:30px;
 }
+
+.time-filters{
+    margin:0 auto;
+    width: 60%;
+}
