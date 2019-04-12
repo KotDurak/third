@@ -477,4 +477,26 @@ class TaskController extends \yii\web\Controller
             'taskSearch'    => $taskSearch
         ]);
     }
+
+    public function actionUsersTasksDate($id_user, $status, $from, $to)
+    {
+        $clone_steps = ChainClonesSteps::find()->where(['id_user' => $id_user])
+            ->all();
+        $tasks = [];
+        foreach($clone_steps as $clone_step){
+            $tasks[] = $clone_step->task->id;
+        }
+        $taskSearch = new TaskSearch();
+        $dataProvider = $taskSearch->search(\Yii::$app->request->get());
+        $dataProvider->setPagination([
+            'pageSize' => 10
+        ]);
+        $dataProvider->query->alias('t')->andFilterWhere(['in','id', $tasks]);
+        $dataProvider->query->andWhere(['>','deadline', $from]);
+        $dataProvider->query->andWhere(['<', 'deadline', $to]);
+        return $this->render('users-tasks', [
+            'dataProvider' => $dataProvider,
+            'taskSearch'    => $taskSearch
+        ]);
+    }
 }

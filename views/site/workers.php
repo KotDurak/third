@@ -105,7 +105,7 @@ $this->registerJsFile('@web/js/site/workers.js',
                         'placeholder'   => 'От'
                     ],
                 ]) . '</div>';
-                echo '<div class="col-md-6">' . DatePicker::widget([
+                echo '<div class="col-md-6">' .DatePicker::widget([
                     'language'  => 'ru',
                     'dateFormat' => 'dd.MM.yyyy',
                     'clientOptions'    => [

@@ -181,6 +181,7 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
 
     public static function getStepsByDates($from, $to)
     {
+        $id_worker = Yii::$app->user->id;
         $query = Task::find();
         if(!is_null($from)){
             $query->andWhere(['>=', 'deadline', $from]);
@@ -188,7 +189,42 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
         if(!is_null($to)){
             $query->andWhere(['<=', 'deadline', $to]);
         }
-        $tasks =$query->asArray()->all();
-        print_pre($tasks); die();
+        $query->joinWith('chainClones');
+        $tasks = $query->asArray()->all();
+        $clones = ArrayHelper::getColumn($tasks,'chainClones');
+        $ids = [];
+        foreach ($clones as $clone){
+            $ids[] = $clone[0]['id'];
+        }
+
+        $clones_steps = ChainClonesSteps::find()->select('COUNT(id), status')
+            ->where(['id_user' => $id_worker])
+            ->andWhere(['in', 'id_clone', $ids])
+            ->groupBy('status')
+            ->asArray()
+            ->all();
+
+        $statuses = [
+            ChainClonesSteps::STATUS_NOT,
+            ChainClonesSteps::STATUS_DONE,
+            ChainClonesSteps::STATUS_REWORK,
+            ChainClonesSteps::STATUS_WORK
+        ];
+        $groups = [];
+        $groups['count'] = 0;
+        foreach ($statuses as  $status){
+            $groups[$status] = 0;
+            foreach ($clones_steps as $step){
+                if($step['status'] == $status){
+                    $groups['count'] += $step['COUNT(id)'];
+                    $groups[$status] = $step['COUNT(id)'];
+                    break;
+                }
+            }
+
+        }
+        $groups['from'] = $from;
+        $groups['to'] = $to;
+        return $groups;
     }
 }

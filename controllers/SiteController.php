@@ -153,9 +153,11 @@ class SiteController extends Controller
     public function actionUsersTasksDate()
     {
         $post = Yii::$app->request->post();
-        $from = (!empty($post['from'])) ? date('Y-m-d H:i:s', strtotime($post['from'])) : null;
-        $to = (!empty($post['to'])) ? date('Y-m-d H:i:s', strtotime($post['to'])) : null;
+        $from = (!empty($post['from'])) ? date('Y-m-d 00:00:00', strtotime($post['from'])) : null;
+        $to = (!empty($post['to'])) ? date('Y-m-d 23:59:59', strtotime($post['to'])) : null;
         $clone_steps = ChainClonesSteps::getStepsByDates($from, $to);
-        die();
+        return $this->renderAjax('tasks-date', [
+            'clone_steps'   => $clone_steps
+        ]);
     }
 }
