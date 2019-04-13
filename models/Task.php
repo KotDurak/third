@@ -63,6 +63,7 @@ class Task extends \yii\db\ActiveRecord
             [['name', 'description'], 'string'],
             [['status', 'id_user', 'id_manager', 'is_archive'], 'integer'],
             [['created'], 'required'],
+            [['timestamp'], 'safe'],
             [['id_manager'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_manager' => 'id']],
             [['id_user'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['id_user' => 'id']],
             [['id_project'], 'exist', 'skipOnError' => true, 'targetClass' => Project::className(), 'targetAttribute' => ['id_project' => 'id']]
@@ -341,6 +342,7 @@ class Task extends \yii\db\ActiveRecord
            $chain = $old_task->chain;
            $clone_steps = $old_task->getCloneSteps();
            $new_task->setAttributes($atributes);
+           $new_task->deadline = $old_task->deadline;
            $new_task->save(false);
            $chain_clones = new ChainClones();
            $chain_clones->id_chain = $chain->id;
