@@ -48,9 +48,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             [['name', 'surname'], 'required'],
-            [['name', 'surname', 'password', 'email', 'is_root'], 'string'],
+            [['name', 'surname', 'password', 'email', 'is_root', 'rate', 'type_rate', 'about'], 'string'],
             [['birthday', 'date_create'], 'safe'],
-            [['status'], 'integer'],
+            [['status', 'is_moderator'], 'integer'],
             [['email_confirm_token'], 'string', 'max' => 255],
             [['email_confirm_token', 'email'], 'unique'],
             ['status', 'in', 'range' => [self::STATUS_DELETED, self::STATUS_WAIT, self::STATUS_ACTIVE]]
@@ -73,6 +73,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'status' => 'Статус',
             'date_create' => 'Дата регистрации',
             'email_confirm_token' => 'Email Confirm Token',
+            'rate_type'   => 'Тип ставки',
+            'rate' => 'Ставка',
+            'about' => 'Заметки о пользователе'
         ];
     }
 
@@ -192,6 +195,16 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     public function is_admin()
     {
-        return boolval($this->is_root);
+        return (boolval($this->is_root) || boolval($this->is_moderator));
+    }
+
+    public function showTasks()
+    {
+        $ids = [];
+        foreach ($this->cloneSteps as $cloneStep){
+            $ids[] = $cloneStep->clone->id_task;
+        }
+        $tasks = Task::find()->where(['in', 'id', $ids])->asArray()->all();
+        return $tasks;
     }
 }

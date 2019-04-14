@@ -58,7 +58,7 @@ use app\models\Groups;
            'name'   => 'groups',
            'value'  => '',
            'data'   => $groups,
-            'options' => ['multiple' => true, 'placeholder' => 'Группы'],
+            'options' => ['multiple' => true, 'placeholder' => 'Должности'],
             'value' => $selectedGroups
         ]);
     ?>

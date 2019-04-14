@@ -70,6 +70,18 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+
+        if(Yii::$app->user->identity->is_ban){
+            $this->layout = false;
+            Yii::$app->user->logout();
+            return  $this->render('ban');
+        }
+        if(!Yii::$app->user->isGuest){
+            $user = User::findOne(Yii::$app->user->id);
+            $user->last_visit = date('Y-m-d H:i:s');
+            $user->save();
+        }
+
         if(!Yii::$app->user->isGuest && Yii::$app->user->identity->is_admin()){
 
         } else{

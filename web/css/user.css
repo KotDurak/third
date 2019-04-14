@@ -1,0 +1,14 @@
+.position-list{
+    list-style-type: none;
+}
+
+.users-list{
+    overflow: auto;
+}
+
+.right-top-menu{
+    float: right;
+}
+.select2-container {
+    z-index: 99999;
+}
