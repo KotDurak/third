@@ -80,7 +80,8 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                 'format'    => 'html',
                 'content'   => function($data){
                     if($data->status == Task::STATUS_ARCHIVE){
-                        return '<span style="color: #cccccc">' . $data['name'] . '</span>';
+                        return Html::a($data['name'], Url::toRoute(['task/card', 'id' => $data['id'],
+                           ]), [ 'style' => 'color:#cccccc']);
 
                     }
                     return Html::a($data['name'], Url::toRoute(['task/card', 'id' => $data['id']]));

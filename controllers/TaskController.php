@@ -59,6 +59,30 @@ class TaskController extends \yii\web\Controller
         ]);
     }
 
+
+    /**
+     * Получаем задачи по статусу
+     *
+     * @param string $status
+     * @param int $page_size
+     * @return string
+     */
+    public function actionListStatus($status = 'all', $page_size = 10)
+    {
+        $taskSearch = new TaskSearch();
+        $dataProvider = $taskSearch->search(\Yii::$app->request->get());
+        $dataProvider->setPagination([
+            'pageSize' => $page_size
+        ]);
+        if($status != 'all'){
+            $dataProvider->query->andFilterWhere(['status' => $status]);
+        }
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'taskSearch' => $taskSearch
+        ]);
+    }
+
     public function actionUpdate($id)
     {
         $task = Task::findOne($id);
