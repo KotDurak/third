@@ -6,6 +6,7 @@ use app\models\ChainClonesSteps;
 use app\models\Project;
 use app\models\SignupForm;
 use app\models\SignupService;
+use app\models\Task;
 use app\models\User;
 use function GuzzleHttp\Psr7\str;
 use Yii;
@@ -158,6 +159,14 @@ class SiteController extends Controller
         $clone_steps = ChainClonesSteps::getStepsByDates($from, $to);
         return $this->renderAjax('tasks-date', [
             'clone_steps'   => $clone_steps
+        ]);
+    }
+
+    public function actionAdminTaskProjects($id_project)
+    {
+        $tasks = Task::getTaskStatusesByProject($id_project);
+        return $this->renderAjax('tasks-table', [
+            'tasks' => $tasks
         ]);
     }
 }

@@ -411,4 +411,45 @@ class Task extends \yii\db\ActiveRecord
        return $groups;
    }
 
+   public static function getTaskStatusesByProject($id_project)
+   {
+       $tasks = Task::find()
+           ->select('COUNT(id) as count, status')
+           ->where(['id_project' => $id_project])
+           ->groupBy('status')
+           ->asArray()
+           ->all();
+       $statuses = [
+           Task::STATUS_NOT,
+           Task::STATUS_DONE,
+           Task::STATUS_ARCHIVE,
+           Task::STATUS_WORK,
+           Task::STATUS_REWORK
+       ];
+       $groups = [];
+       $groups['count'] = 0;
+       foreach ($statuses as $status){
+           $groups[$status] = 0;
+           foreach ($tasks as $task){
+               if($task['status'] == $status){
+                   $groups['count'] += $task['count'];
+                   $groups[$status] = $task['count'];
+                   break;
+               }
+           }
+       }
+       return $groups;
+   }
+
+
+    /**
+     * Получить список задач по сотрудника;
+     *
+     * @param $id_user
+     */
+    public static function getTaskByWorker($id_user)
+   {
+
+   }
+
 }
