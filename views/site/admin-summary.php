@@ -6,6 +6,7 @@ use yii\helpers\Html;
 use app\models\Project;
 use yii\helpers\ArrayHelper;
 use yii\jui\DatePicker;
+use app\models\User;
 
 
 $this->registerJsFile('@web/js/site/admin-summary.js',
@@ -17,6 +18,12 @@ $projects = ArrayHelper::map($projects, 'id', 'name');
 $projects[0] = 'Не выбрано';
 ksort($projects);
 
+$users = User::find()->select(['concat(surname, " " ,name) as username', 'id'])->orderBy(['username' => SORT_ASC, 'surname' => SORT_ASC , 'name' => SORT_ASC])->asArray()->all();
+$users  = ArrayHelper::map($users, 'id', 'username');
+$keys = array_keys($users);
+array_unshift($keys, 0);
+array_unshift($users, 'Не выбран');
+$users = array_combine($keys, $users);
 
 ?>
 
@@ -96,6 +103,61 @@ ksort($projects);
             <span><?php echo (count($projects) - 1); ?></span>
         </div>
         <div class="col-md-12" id="task-by-project">
+
+        </div>
+    </div>
+    <div class="col-md-12 worker-block">
+        <div class="col-md-4">
+            <h4>По сотрудникам</h4>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <?php echo Html::dropDownList('users', 's', $users, [
+                    'id'    => 'select-user',
+                    'class' => 'form-control'
+                ]); ?>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <strong>Должность</strong><br>
+            <ul id="positions">
+            </ul>
+        </div>
+        <div class="col-md-12" id="task-by-user"></div>
+    </div>
+    <div class="col-md-12 worker-block">
+        <div class="time-filters clearfix">
+            <h4>Дедлайн в промежутке</h4>
+            <?php
+            echo '<div class="col-md-6">' . DatePicker::widget([
+                    'language'  => 'ru',
+                    'dateFormat' => 'dd.MM.yyyy',
+                    'clientOptions'    => [
+                        'changeYear'    => true,
+                        'changeMonth'    => true
+                    ],
+                    'options'  => [
+                        'id'    => 'date-from',
+                        'class' => 'form-control',
+                        'placeholder'   => 'От'
+                    ],
+                ]) . '</div>';
+            echo '<div class="col-md-6">' .DatePicker::widget([
+                    'language'  => 'ru',
+                    'dateFormat' => 'dd.MM.yyyy',
+                    'clientOptions'    => [
+                        'changeYear'    => true,
+                        'changeMonth'    => true
+                    ],
+                    'options'  => [
+                        'id'    => 'date-to',
+                        'class' => 'form-control',
+                        'placeholder'   => 'До'
+                    ],
+                ]) . '</div>';
+            ?>
+        </div>
+        <div id="date-contaier">
         </div>
     </div>
 </div>

@@ -11,6 +11,8 @@ use app\models\User;
 use function GuzzleHttp\Psr7\str;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -168,5 +170,33 @@ class SiteController extends Controller
         return $this->renderAjax('tasks-table', [
             'tasks' => $tasks
         ]);
+    }
+
+    public function actionAdminTaskUser($id_user)
+    {
+        $tasks = Task::getTaskByWorker($id_user);
+        return $this->renderAjax('task-user-table', [
+            'tasks' => $tasks,
+            'id_user'   => $id_user
+        ]);
+    }
+
+    public function actionUserGroups($id_user)
+    {
+        $user = User::findOne($id_user);
+        $groups = $user->getGroups()->asArray()->all();
+        $groups = ArrayHelper::map($groups, 'id', 'name');
+        return $this->renderAjax('positions', [
+           'groups' => $groups
+        ]);
+    }
+
+    public function actionAdminTasksDate()
+    {
+        $post = Yii::$app->request->post();
+        $from = (!empty($post['from'])) ? date('Y-m-d 00:00:00', strtotime($post['from'])) : null;
+        $to = (!empty($post['to'])) ? date('Y-m-d 23:59:59', strtotime($post['to'])) : null;
+        $tasks = Task::getTasksByDate($from, $to);
+
     }
 }

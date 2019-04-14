@@ -106,10 +106,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             ->viaTable('user_groups', ['id_user' => 'id']);
     }
 
-
     public static function findIdentity($id)
     {
         return User::findOne($id);
+    }
+
+    public function getCloneSteps()
+    {
+        return $this->hasMany(ChainClonesSteps::className(), ['id_user' => 'id']);
     }
 
 

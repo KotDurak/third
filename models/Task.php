@@ -8,6 +8,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
 use yii\behaviors\AttributeBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "task".
@@ -438,6 +439,7 @@ class Task extends \yii\db\ActiveRecord
                }
            }
        }
+       $groups['id_project'] = $id_project;
        return $groups;
    }
 
@@ -447,9 +449,59 @@ class Task extends \yii\db\ActiveRecord
      *
      * @param $id_user
      */
-    public static function getTaskByWorker($id_user)
-   {
+    public static function getTaskByWorker($id_user, $ids_only = false)
+    {
+        $ids= [];
+        $user = User::find($id_user)->joinWith('cloneSteps')
+            ->where(['user.id' => $id_user])
+            ->one();
+        foreach($user->cloneSteps as $cloneStep){
+            $ids[] = $cloneStep->clone->id_task;
+        }
+        if($ids_only){
+            return $ids;
+        }
+        $tasks = Task::find()->select('COUNT(id) as count, status')
+            ->where(['in', 'id', $ids])
+            ->groupBy('status')
+            ->asArray()
+            ->all();
+        $statuses = [
+            Task::STATUS_NOT,
+            Task::STATUS_DONE,
+            Task::STATUS_ARCHIVE,
+            Task::STATUS_WORK,
+            Task::STATUS_REWORK
+        ];
+        $groups = [];
+        $groups['count'] = 0;
+        foreach ($statuses as $status){
+            $groups[$status] = 0;
+            foreach ($tasks as $task){
+                if($task['status'] == $status){
+                    $groups['count'] += $task['count'];
+                    $groups[$status] = $task['count'];
+                    break;
+                }
+            }
+        }
 
-   }
+        return $groups;
+    }
+
+
+    public static function getTasksByDate($from, $to)
+    {
+        $query = Task::find()->select('COUNT(id) as count, status');
+        if($from){
+            $query->andWhere(['>=', 'deadline', $from]);
+        }
+        if($to){
+            $query->andWhere(['<=', 'deadline', $to]);
+        }
+        $tasks = $query->groupBy('status')
+            ->asArray()->all();
+        print_pre($tasks);die();
+    }
 
 }

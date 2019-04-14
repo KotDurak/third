@@ -257,3 +257,7 @@ a.desc:after {
     margin:0 auto;
     width: 60%;
 }
+
+ul#positions{
+    list-style-type: none;
+}

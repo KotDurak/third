@@ -67,7 +67,7 @@ class TaskController extends \yii\web\Controller
      * @param int $page_size
      * @return string
      */
-    public function actionListStatus($status = 'all', $page_size = 10)
+    public function actionListStatus($status = 'all', $id_project = null, $page_size = 10)
     {
         $taskSearch = new TaskSearch();
         $dataProvider = $taskSearch->search(\Yii::$app->request->get());
@@ -77,6 +77,26 @@ class TaskController extends \yii\web\Controller
         if($status != 'all'){
             $dataProvider->query->andFilterWhere(['status' => $status]);
         }
+        $dataProvider->query->andFilterWhere(['id_project' => $id_project]);
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'taskSearch' => $taskSearch
+        ]);
+    }
+
+
+    public function actionListStatusUser($status, $id_user, $page_size = 10)
+    {
+        $ids = Task::getTaskByWorker($id_user, true);
+        $taskSearch = new TaskSearch();
+        $dataProvider = $taskSearch->search(\Yii::$app->request->get());
+        $dataProvider->setPagination([
+            'pageSize' => $page_size
+        ]);
+        if($status != 'all'){
+            $dataProvider->query->andFilterWhere(['status' => $status]);
+        }
+        $dataProvider->query->andFilterWhere(['in', 'id', $ids]);
         return $this->render('list', [
             'dataProvider' => $dataProvider,
             'taskSearch' => $taskSearch
