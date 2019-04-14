@@ -197,6 +197,10 @@ class SiteController extends Controller
         $from = (!empty($post['from'])) ? date('Y-m-d 00:00:00', strtotime($post['from'])) : null;
         $to = (!empty($post['to'])) ? date('Y-m-d 23:59:59', strtotime($post['to'])) : null;
         $tasks = Task::getTasksByDate($from, $to);
-
+        return $this->renderAjax('task-user-date', [
+           'tasks'  => $tasks,
+           'from'   => $from,
+           'to'     => $to
+        ]);
     }
 }

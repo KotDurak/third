@@ -501,7 +501,27 @@ class Task extends \yii\db\ActiveRecord
         }
         $tasks = $query->groupBy('status')
             ->asArray()->all();
-        print_pre($tasks);die();
+        $statuses = [
+            Task::STATUS_NOT,
+            Task::STATUS_DONE,
+            Task::STATUS_ARCHIVE,
+            Task::STATUS_WORK,
+            Task::STATUS_REWORK
+        ];
+        $groups = [];
+        $groups['count'] = 0;
+        foreach ($statuses as $status){
+            $groups[$status] = 0;
+            foreach ($tasks as $task){
+                if($task['status'] == $status){
+                    $groups['count'] += $task['count'];
+                    $groups[$status] = $task['count'];
+                    break;
+                }
+            }
+        }
+
+        return $groups;
     }
 
 }

@@ -103,6 +103,28 @@ class TaskController extends \yii\web\Controller
         ]);
     }
 
+    public function actionListStatusDate($status, $from, $to, $page_size = 10)
+    {
+        $taskSearch = new TaskSearch();
+        $dataProvider = $taskSearch->search(\Yii::$app->request->get());
+        $dataProvider->setPagination([
+            'pageSize' => $page_size
+        ]);
+        if($status != 'all'){
+            $dataProvider->query->andFilterWhere(['status' => $status]);
+        }
+        if($from){
+            $dataProvider->query->andFilterWhere(['>=', 'deadline', $from]);
+        }
+        if($to){
+            $dataProvider->query->andFilterWhere(['<=', 'deadline', $to]);
+        }
+        return $this->render('list', [
+            'dataProvider' => $dataProvider,
+            'taskSearch' => $taskSearch
+        ]);
+    }
+
     public function actionUpdate($id)
     {
         $task = Task::findOne($id);
