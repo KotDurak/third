@@ -52,7 +52,7 @@ AppAsset::register($this);
             ['label' => 'Сводка', 'url' => ['/site/index']],
             ['label' => 'Проекты', 'url' => ['project/index']],
             ['label' => 'Настройки',   'items' => [
-                ['label' => 'Должности', 'url' => ['/site/index']],
+                ['label' => 'Должности', 'url' => ['/group/index']],
                 ['label' => 'Сотрудники', 'url' => ['/user/index']],
                 ['label' => 'Цепочка этапов', 'url' => ['/chain/index']]
             ]],

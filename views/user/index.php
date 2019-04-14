@@ -15,7 +15,7 @@ $add_url = Url::to('/user/add');
 ?>
 <div class="row">
     <div  class="btn-group right-top-menu">
-        <?php echo Html::a('<i clglyphicon glyphicon-plus></i> Добавить сотрудника', $add_url, [
+        <?php echo Html::a('<i class="glyphicon glyphicon-plus"></i> Добавить сотрудника', $add_url, [
             'class'  => 'btn btn-success circle-conttrols' ,
             'type'  => 'button',
             'id'    => 'add-user'
@@ -76,7 +76,10 @@ echo GridView::widget([
             'attribute' => 'last_visit',
             'label'     => 'Просамтривал задания',
             'content'    => function($date){
-                return date('d.m.Y H:i');
+                if(!empty($date['last_visit'])){
+                    return date('d.m.Y H:i', strtotime($date['last_visit']));
+                }
+                return null;
             }
         ],
         [

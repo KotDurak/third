@@ -9,6 +9,7 @@
 namespace app\controllers;
 
 use app\models\Groups;
+use app\models\SignupForm;
 use app\models\User;
 use app\models\UserSearch;
 use yii\helpers\ArrayHelper;
@@ -42,14 +43,55 @@ class UserController  extends \yii\web\Controller
         $user = new User();
         $groups = ArrayHelper::map(Groups::find()->asArray()->all(), 'id', 'name');
 
-        if(Yii::$app->request->isAjax && $user->load(Yii::$app->request->post())){
+        if($user->load(Yii::$app->request->post()) && $user->save()){
             $groups = Yii::$app->request->post('groups');
-            print_pre($groups); die();
+            $user->saveGroups($groups);
+            $passord = $user->password;
+            SignupForm::sentEmailToUser($user, $passord);
+            $user->setPassword($user->password);
+            return $this->redirect('index');
         }
 
-        return $this->renderAjax('add', [
+        return $this->render('add', [
             'user'  => $user,
             'groups'    => $groups
         ]);
+    }
+    public function actionUpdate($id)
+    {
+        $user = $this->findModel($id);
+        $groups = ArrayHelper::map(Groups::find()->asArray()->all(), 'id', 'name');
+
+        if ($user->load(Yii::$app->request->post()) && $user->save()) {
+            $groups = Yii::$app->request->post('groups');
+            $user->saveGroups($groups);
+            return $this->redirect(['index']);
+        }
+
+        return $this->render('add', [
+            'user' => $user,
+            'groups'    => $groups
+        ]);
+    }
+
+
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+        return $this->redirect(['index']);
+    }
+
+    public function actionView($id)
+    {
+        return $this->render('view');
+    }
+
+    protected function findModel($id)
+    {
+        if (($model = User::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
