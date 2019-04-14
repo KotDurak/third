@@ -8,13 +8,17 @@ use yii\grid\GridView;
 use yii\data\ActiveDataProvider;
 
 $this->registerCssFile('/css/chain.css');
+
+$is_root = Yii::$app->user->identity->is_root;
 ?>
 
 
 <div class="container">
+    <?php if(Yii::$app->user->identity->is_root): ?>
     <div class="row top-button">
             <?= Html::a('Добавить новую цепочку', ['/chain/add'], ['class'=>'btn btn-default circle-conttrols', 'id' => 'create-chain']) ?>
     </div>
+    <?php endif; ?>
     <?php
         Pjax::begin([
             'id'    => 'chain-pjax',
@@ -28,14 +32,17 @@ $this->registerCssFile('/css/chain.css');
                 <div class="panel-heading">
                     <strong>Цеопчка этапов - <?= $chain->name ?></strong>
                     <div class="text-right btn-group steps-controls">
-                        <?= Html::a('<i class="glyphicon glyphicon-plus"></i> Добавить шаг', ['/chain/add-step?id_chain=' . $chain->id], ['class'=>'btn btn-success add-step', 'id' => 'add-step']) ?>
-                        <?= Html::a('<i class="glyphicon glyphicon-remove"></i> Удалить цепочку', ['/chain/delete?id=' . $chain->id], ['class'=>'btn btn-danger delete-chain', 'id' => 'delete-chain']) ?>
+                        <?php if($is_root): ?>
+                            <?= Html::a('<i class="glyphicon glyphicon-plus"></i> Добавить шаг', ['/chain/add-step?id_chain=' . $chain->id], ['class'=>'btn btn-success add-step', 'id' => 'add-step']) ?>
+                            <?= Html::a('<i class="glyphicon glyphicon-remove"></i> Удалить цепочку', ['/chain/delete?id=' . $chain->id], ['class'=>'btn btn-danger delete-chain', 'id' => 'delete-chain']) ?>
+                        <?php endif; ?>
                     </div>
                     <div class="clearfix"></div>
                 </div>
                 <div class="panel-body">
                     <?php
                         $steps = ($chain->getSteps()->orderBy(['sort' => SORT_ASC]));
+
                         $provider = new ActiveDataProvider([
                             'query' => $steps,
                         ]);
@@ -66,17 +73,22 @@ $this->registerCssFile('/css/chain.css');
                                         $html = '<ul>';
                                         foreach ($files as $file){
                                             $tmp = $file['tmp'];
+
                                             $delete = Url::to(['file/delete', 'id'  => $file['id']]);
                                              $delete =   Html::a('<span class="glyphicon glyphicon-trash"></span>' , $delete, ['data-pjax' => '0']);
                                              $url = Url::to(['file/download', 'id' => $file['id']]);
                                              $a = Html::a($file['real-name'], $url, ['data-pjax' => '0']);
+                                            if(!Yii::$app->user->identity->is_root){
+                                                $delete = '';
+                                            }
                                             $html .= '<li>'.$delete . ' ' .$a.'</li>';
                                         }
                                         $html .= '</ul>';
                                         return  $html;
                                     }
                                 ],
-                                [
+
+                                 $is_root ? [
                                     'class' => 'yii\grid\ActionColumn',
                                     'template'  => '{add-attr} {update} {delete} {upload}',
                                     'buttons'   => [
@@ -123,7 +135,13 @@ $this->registerCssFile('/css/chain.css');
                                                 ]);
                                         }
                                     ]
-                                ],
+                                ] : [
+                                     'attribute'    => 'id',
+                                     'label'    => '',
+                                     'content'    => function($data){
+                                         return 'Доступа нет';
+                                     }
+                                 ],
                             ],
                         ]);
                     ?>
