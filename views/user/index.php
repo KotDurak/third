@@ -118,6 +118,7 @@ echo GridView::widget([
         [
             'class' => 'yii\grid\ActionColumn',
             'header'    => 'Действия',
+            'template'  => Yii::$app->user->identity->is_root ? '{update} {delete}' : '{update}'
         ]
     ]
 ]);

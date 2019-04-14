@@ -51,11 +51,12 @@ AppAsset::register($this);
         'items' => [
             ['label' => 'Сводка', 'url' => ['/site/index']],
             ['label' => 'Проекты', 'url' => ['project/index']],
+            Yii::$app->user->identity->is_admin() ?
             ['label' => 'Настройки',   'items' => [
                 ['label' => 'Должности', 'url' => ['/group/index']],
                 ['label' => 'Сотрудники', 'url' => ['/user/index']],
                 ['label' => 'Цепочка этапов', 'url' => ['/chain/index']]
-            ]],
+            ]] : '',
 
         ],
 

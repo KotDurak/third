@@ -11,7 +11,7 @@ $this->registerJsFile('@web/js/group.js',
 $this->params['breadcrumbs'][] = 'Должности';
 $add_url =  Url::to('/group/add');
 ?>
-
+<?php if(Yii::$app->user->identity->is_root): ?>
 <div class="row">
     <div  class="btn-group right-top-menu">
         <?php echo Html::a('<i  class="clglyphicon glyphicon-plus"></i> Создать должность', $add_url, [
@@ -21,6 +21,7 @@ $add_url =  Url::to('/group/add');
         ]); ?>
     </div>
 </div>
+<?php endif; ?>
 <?php
 Pjax::begin(array('id' => 'groups-list', 'enablePushState' => false));
 echo GridView::widget([
@@ -33,8 +34,7 @@ echo GridView::widget([
         [
             'attribute' => 'name'
         ],
-
-
+        Yii::$app->user->identity->is_root ?
         [
             'class' => 'yii\grid\ActionColumn',
             'header'    => 'Действия',
@@ -47,6 +47,11 @@ echo GridView::widget([
                     ]);
                 }
             ]
+        ] : [
+                'attribute' => 'id',
+                'content'   => function($data){
+                        return 'Нет доступа';
+                }
         ]
     ]
 ]);

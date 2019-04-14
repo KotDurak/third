@@ -18,15 +18,18 @@ $this->registerJsFile('@web/js/task.js',
     $counts = [10, 20, 30, 50, 100, 200, -1];
 
     $menus = '';
-    $menu_add = Html::a('Добавить <i class="glyphicon glyphicon-plus"></i>', Url::to(['task/add', 'id_project' => $_GET['id_project']]), [
+    if(Yii::$app->user->identity->is_root){
+        $menu_add = Html::a('Добавить <i class="glyphicon glyphicon-plus"></i>', Url::to(['task/add', 'id_project' => $_GET['id_project']]), [
             'class' => 'btn btn-success circle-conttrols'
-    ]);
-    $menus .= $menu_add;
+        ]);
+        $menus .= $menu_add;
 
-    $menu_import = Html::a('Импорт задач <i class="glyphicon glyphicon-import"></i>', Url::to(['project/import', 'id' => $_GET['id_project']]), [
+        $menu_import = Html::a('Импорт задач <i class="glyphicon glyphicon-import"></i>', Url::to(['project/import', 'id' => $_GET['id_project']]), [
             'class' => 'btn btn-default circle-conttrols', 'id' => 'menu-import'
-    ]);
-    $menus .= $menu_import;
+        ]);
+        $menus .= $menu_import;
+    }
+
 ?>
 <div class="row">
     <div class="col-md-12 text-right">
@@ -137,7 +140,7 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header'    => 'Действия',
-                'template'  => '{update} {delete}',
+                'template'  => Yii::$app->user->identity->is_root ? '{update} {delete}' : '{update}',
                 'buttons'   => [
                     'delete'    => function($url, $model, $key){
                         $url = Url::to(['task/delete', 'id' => $model->id]);
@@ -185,9 +188,11 @@ Pjax::end();
     $bottom_menus .= $menu_delete;
 
 ?>
+<?php if(Yii::$app->user->identity->is_root): ?>
 <div class="row">
     <?php echo $bottom_menus; ?>
 </div>
+<?php endif; ?>
 
 <div class="modal inmodal import" id="import" role="dialog" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg"></div>

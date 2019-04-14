@@ -12,9 +12,11 @@ $this->registerJsFile('@web/js/project_add.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
 
 ?>
+<?php if(Yii::$app->user->identity->is_root): ?>
 <div class="col-md-12 text-right">
     <?= Html::a('<i class="glyphicon glyphicon-plus"></i>Создать проект', [ Yii::$app->urlManager->createUrl('project/add')], ['class'=>'btn btn-success circle-conttrols', 'id' => 'create-project']) ?>
 </div>
+<?php endif; ?>
 
 <div class="list-content" url="<?php echo  Yii::$app->urlManager->createUrl('project/list'); ?>">
 <?php echo $this->render('/project/list', compact('dataProvider', 'projectSearch')); ?>

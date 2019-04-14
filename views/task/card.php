@@ -85,7 +85,7 @@ $archive = $task->archive;
                         if ($step->type == 'table') {
                             $rows = Task::getRows($task['id']);
                         }
-
+                        $worker = $clone_step->id_user;
                     ?>
                     <?php if ($step->type == 'table'): ?>
                         <div class="table-container">
@@ -113,6 +113,7 @@ $archive = $task->archive;
                     <?php else: ?>
                        <?php
                             $attributes = $clone_step->getAttributesValues()->all();
+
                         ?>
                         <?php if(!empty($attributes)): ?>
                         <table class="table table-striped">
@@ -129,9 +130,13 @@ $archive = $task->archive;
                                         <td><?php echo $value->attribute0->name; ?></td>
                                         <td><?php echo $value->value; ?></td>
                                         <td>
+                                            <?php if(Yii::$app->user->identity->is_admin() || Yii::$app->user->id == $worker): ?>
                                             <a  class="attr-link" href="<?php echo Url::toRoute(['attributes-values/change', 'id' => $value['id']]) ?>">
                                                 <span class="glyphicon glyphicon-pencil"></span>
                                             </a>
+                                            <?php else: ?>
+                                                Доступа нет
+                                            <?php  endif;?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -164,8 +169,10 @@ $archive = $task->archive;
                     </div>
                     <?php endif; ?>
                     <div class="results-files">
+
                         <h5><strong>Файлы результата</strong>
-                            <?php echo Html::a('Загрузить' ,Url::toRoute(['task/upload', 'id_task' => $task->id, 'id_step' => $step->id]), [
+
+                            <?php  if($is_self) echo Html::a('Загрузить' ,Url::toRoute(['task/upload', 'id_task' => $task->id, 'id_step' => $step->id]), [
                                 'class' => 'upload-task'
                             ]);?>
                         </h5>
@@ -193,7 +200,7 @@ $archive = $task->archive;
                         </ul>
                         <?php
                             $url = Url::to(['task/add-external', 'id_task' => $task->id, 'id_step'  => $step->id]);
-                            $add_tag = Html::a('Добавить внешний источникк', $url, ['class' => 'add-external'])
+                            $add_tag = ($is_self) ? Html::a('Добавить внешний источникк', $url, ['class' => 'add-external']) : '';
                         ?>
                         <h5><strong>Внешние страницы:</strong> <?php echo $add_tag; ?></h5>
                         <?php

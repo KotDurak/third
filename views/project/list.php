@@ -16,6 +16,9 @@ echo GridView::widget([
             'attribute' => 'name',
             'label'     => 'Название проекта',
             'content'   => function($data, $key, $index, $column){
+                if(!Yii::$app->user->identity->is_admin()){
+                    return $data['name'];
+                }
                 return Html::a($data['name'], Url::toRoute(['task/list', 'id_project' => $data['id']]), [
                     'target'    => '_blank'
                 ]);
@@ -32,6 +35,9 @@ echo GridView::widget([
             'label'     => 'Импорт',
             'format'    => 'html',
             'value'     => function($data){
+                if(!Yii::$app->user->identity->is_root){
+                    return 'нет доступа';
+                }
                 $html = '<a  class="proj-import" href="'.Url::toRoute(['project/import', 'id' => $data['id']]).'" title="Импорт "
                             aria-label="Импорт" data-pjax="0"><span class="glyphicon glyphicon-indent-left"></span>
                             </a>';
@@ -42,6 +48,9 @@ echo GridView::widget([
             'label'     => 'Действия',
             'format'     => 'html',
             'value'     => function($data){
+                if(!Yii::$app->user->identity->is_root){
+                    return 'нет доступа';
+                }
                 $html = '';
                 $html .= '<a  class="proj-edit" href="'.Url::toRoute(['project/edit', 'id' => $data['id']]).'" title="Редактировать"
                             aria-label="Редактировать" data-pjax="0"><span class="glyphicon glyphicon-pencil"></span>
