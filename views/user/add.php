@@ -28,7 +28,7 @@ $form = ActiveForm::begin(['id' => 'form-add-user',
 <?php echo $form->field($user, 'surname')->label('Фамилия'); ?>
 <?php echo $form->field($user, 'email')->label('Email');  ?>
 <?php if(!isset($_GET['id'])): ?>
-    <?php echo $form->field($user, 'password')->label('Пароль'); ?>
+    <?php echo $form->field($user, 'password')->passwordInput()->label('Пароль'); ?>
 <?php endif; ?>
 <?php
     echo $form->field($user, 'is_root')->checkbox([

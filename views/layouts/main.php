@@ -46,21 +46,24 @@ AppAsset::register($this);
        Система управления<br>
        созданием контента
 </div>';
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-left third-navbar'],
-        'items' => [
-            ['label' => 'Сводка', 'url' => ['/site/index']],
-            ['label' => 'Проекты', 'url' => ['project/index']],
-            Yii::$app->user->identity->is_admin() ?
-            ['label' => 'Настройки',   'items' => [
-                ['label' => 'Должности', 'url' => ['/group/index']],
-                ['label' => 'Сотрудники', 'url' => ['/user/index']],
-                ['label' => 'Цепочка этапов', 'url' => ['/chain/index']]
-            ]] : '',
+    if(!Yii::$app->user->isGuest){
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav navbar-left third-navbar'],
+            'items' => [
+                ['label' => 'Сводка', 'url' => ['/site/index']],
+                ['label' => 'Проекты', 'url' => ['project/index']],
+                Yii::$app->user->identity->is_admin() ?
+                    ['label' => 'Настройки',   'items' => [
+                        ['label' => 'Должности', 'url' => ['/group/index']],
+                        ['label' => 'Сотрудники', 'url' => ['/user/index']],
+                        ['label' => 'Цепочка этапов', 'url' => ['/chain/index']]
+                    ]] : '',
 
-        ],
+            ],
 
-    ]);
+        ]);
+    }
+
     if(!Yii::$app->user->isGuest)
     echo '<div class="right-menu">'
 
