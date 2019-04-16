@@ -253,6 +253,24 @@ class Task extends \yii\db\ActiveRecord
         return (!empty($steps)) ? $steps['name'] : false;
    }
 
+   public function getActualStep()
+   {
+       if($this->status == Task::STATUS_DONE){
+           return '<span style="color:green">Задача завершена</span>';
+       }
+       $clone = $this->getChainClones()->one();
+       $GLOBALS['clone'] = $clone;
+       $chain = Chain::findOne($clone->id_chain);
+       $steps = $chain->getSteps()->joinWith([
+           'stepClones' => function($query){
+               $query->onCondition(['chain_clones_steps.id_clone' => $GLOBALS['clone']['id']]);
+               $query->andWhere(['status' => ChainClonesSteps::STATUS_WORK]);
+           },
+       ])->orderBy(['sort' => SORT_DESC])->asArray()->one();
+       unset($GLOBALS['clone']);
+       return (!empty($steps)) ? $steps['name'] : false;
+   }
+
    public static function createTask(Task $task, $post, TaskEdit $modelEdit = NULL, $id_project)
    {
        $task->created = date('Y-m-d H:i:s', strtotime($task->created));

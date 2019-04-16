@@ -106,7 +106,11 @@ class ProjectController extends Controller
             $deadline = date('Y-m-d H:i:s', strtotime($import->deadline));
             $tasks = $project->getTasks()->where(['status' => '0'])->all();
             $modelSteps = ModelMultiple::createMultiple(SelectUserStep::className());
+            $post = Yii::$app->request->post();
             ModelMultiple::loadMultiple($modelSteps, Yii::$app->request->post());
+            $id_chain = $post['Import']['id_chain'];
+            $tmp_step = Steps::find()->where(['id_chain' => $id_chain])->orderBy(['id' => SORT_ASC])->one();
+
             $i = 1;
             foreach ($tasks as $task){
                 $chainClone = new ChainClones();
@@ -118,6 +122,9 @@ class ProjectController extends Controller
                     $stepClone->id_step = $step->id_step;
                     $stepClone->id_clone = $chainClone->id;
                     $stepClone->status = 0;
+                    if($tmp_step->id == $step->id_step){
+                        $stepClone->status = ChainClonesSteps::STATUS_WORK;
+                    }
                     $stepClone->id_user = $step->id_user;
                     $stepClone->save(false);
                     $stepsAttr = Steps::findOne($step->id_step)->getStepAttributes()->all();
@@ -258,13 +265,20 @@ class ProjectController extends Controller
                 ->orWhere(['like', 'name', $q])
                 ->asArray()->all();
         } else{
-            $users = $groups->getUsers()->asArray()->all();
+            $users = $groups->getUsers()->asArray()->joinWith('groups')->all();
         }
 
         $add_users = User::find()->where(['is_outer' => 1])->one();
         $users[] = $add_users;
         $results = [];
         foreach ($users as $user){
+            if(is_null($q)){
+                $groups = ArrayHelper::getColumn($user['groups'], 'name');
+                $groups = '(' . implode(',', $groups) . ')';
+            } else{
+                $groups = '';
+            }
+
             if($user->is_outer == 1){
                 $results[] = [
                     'id'    => $user['id'],
@@ -273,7 +287,7 @@ class ProjectController extends Controller
             } else{
                 $results[]  = [
                     'id'    => $user['id'],
-                    'text'  => $user['surname']. ' ' . $user['name'] . ' (' . $user['email'] . ')'
+                    'text'  => $user['surname']. ' ' . $user['name'] . ' (' . $user['email'] . ')' . $groups
                 ];
             }
 

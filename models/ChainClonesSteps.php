@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Codeception\Step;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -23,6 +24,33 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
 
     public  function changeStatus($status)
     {
+        $step = Steps::findOne($this->id_step);
+        $GLOBALS['sort'] = $step->sort;
+        $result = ChainClonesSteps::find()->where(['chain_clones_steps.id' => $this->id])
+            ->joinWith([
+               'clone'  => function($query){
+                    $query->joinWith([
+                        'chain' => function($q){
+                            $q->joinWith([
+                                'steps' => function($q2){
+                                        $q2->andWhere(['>', 'sort', $GLOBALS['sort']]);
+                                        $q2->orderBy(['sort' => SORT_ASC]);
+                                        $q2->limit(1);
+                                }
+                            ]);
+
+                        }
+                    ]);
+               }
+            ])->asArray()->one();
+        if(!empty($result)){
+            $step = $result['clone']['chain']['steps'];
+            $step = array_shift($step);
+            $clone_step = ChainClonesSteps::find()->where(['id_step' => $step['id']])
+            ->andWhere(['id_clone' => $this->id_clone])->one();
+            $clone_step->status = ChainClonesSteps::STATUS_WORK;
+            $clone_step->save();
+        }
         $this->status = $status;
         $this->save();
     }
@@ -226,5 +254,11 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
         $groups['from'] = $from;
         $groups['to'] = $to;
         return $groups;
+    }
+
+    public static function getDisabled(ChainClonesSteps $step, $status)
+    {
+
+        return ($step->status == $status) ? 'disabled' : '';
     }
 }

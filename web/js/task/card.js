@@ -34,4 +34,9 @@ $(function(){
        var link = D_elem.attr('href');
        $('#external').modal('show').find('.modal-dialog').load(link);
    });
+
+   $('[disabled]').on('click', function (e) {
+        e.preventDefault();
+        return false;
+   });
 });

@@ -172,7 +172,7 @@ $archive = $task->archive;
 
                         <h5><strong>Файлы результата</strong>
 
-                            <?php  if($is_self) echo Html::a('Загрузить' ,Url::toRoute(['task/upload', 'id_task' => $task->id, 'id_step' => $step->id]), [
+                            <?php  if($is_self || Yii::$app->user->identity->is_admin()) echo Html::a('Загрузить' ,Url::toRoute(['task/upload', 'id_task' => $task->id, 'id_step' => $step->id]), [
                                 'class' => 'upload-task'
                             ]);?>
                         </h5>
@@ -200,7 +200,7 @@ $archive = $task->archive;
                         </ul>
                         <?php
                             $url = Url::to(['task/add-external', 'id_task' => $task->id, 'id_step'  => $step->id]);
-                            $add_tag = ($is_self) ? Html::a('Добавить внешний источникк', $url, ['class' => 'add-external']) : '';
+                            $add_tag = ($is_self || Yii::$app->user->identity->is_admin()) ? Html::a('Добавить внешний источникк', $url, ['class' => 'add-external']) : '';
                         ?>
                         <h5><strong>Внешние страницы:</strong> <?php echo $add_tag; ?></h5>
                         <?php
@@ -255,12 +255,12 @@ $archive = $task->archive;
                                 <?php echo $fake_buttons; ?>
                             <?php else: ?>
                                 <?php if(Yii::$app->user->identity->is_admin()): ?>
-                                 <a href="<?php echo Url::toRoute(['/task/rework', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
+                                 <a <?php echo ChainClonesSteps::getDisabled($clone_step, ChainClonesSteps::STATUS_REWORK); ?> href="<?php echo Url::toRoute(['/task/rework', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
                                    type="button" class="btn btn-danger  rework" modal-url="<?php echo Url::toRoute(['/task/comment', 'id_clone' => $clone_step->id]); ?>">На доработку
                                 </a>
                                 <?php endif; ?>
-                                <a type="button" href="<?php echo Url::toRoute(['/task/working', 'id_clone' => $clone_step->id, 'id_task' => $task->id]); ?>" class="btn btn-warning work">В работе</a>
-                                <a href="<?php echo Url::toRoute(['/task/done', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
+                                <a type="button" <?php echo ChainClonesSteps::getDisabled($clone_step, ChainClonesSteps::STATUS_WORK); ?> href="<?php echo Url::toRoute(['/task/working', 'id_clone' => $clone_step->id, 'id_task' => $task->id]); ?>" class="btn btn-warning work">В работе</a>
+                                <a <?php echo ChainClonesSteps::getDisabled($clone_step, ChainClonesSteps::STATUS_DONE); ?> href="<?php echo Url::toRoute(['/task/done', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
                                    type="button" class="btn btn-success done">Сделано</a>
                             <?php endif; ?>
                         </div>
