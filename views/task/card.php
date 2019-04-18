@@ -241,8 +241,9 @@ $archive = $task->archive;
                     <?php else: ?>
                         <?php
                             $comments = $clone_step->getComments()->all();
+
                         ?>
-                        <?php if(!empty($comments) && $clone_step->status == \app\models\ChainClonesSteps::STATUS_REWORK): ?>
+                        <?php if(!empty($comments) || $clone_step->status == \app\models\ChainClonesSteps::STATUS_REWORK): ?>
                             <a href="<?php echo Url::toRoute(['task/step-comments', 'id_clone' => $clone_step->id]); ?>" class="notice-comment">
                                 <?php
                                     $src = Url::to('@images/notice.png');

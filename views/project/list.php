@@ -25,6 +25,14 @@ echo GridView::widget([
             }
         ],
         [
+            'attribute' => 'tasks.id',
+            'label'     => 'Количество задач',
+            'value'     => function($model){
+                $tasks = $model->getTasks()->count();
+                return $tasks;
+            }
+        ],
+        [
             'attribute' => 'url',
             'label' => 'Сайт проекта',
             'content'   => function($data, $key, $index, $column){

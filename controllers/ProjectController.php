@@ -262,13 +262,19 @@ class ProjectController extends Controller
         $groups = Groups::findOne($id_group);
         if(!is_null($q)){
             $users = $groups->getUsers()->where(['like', 'surname', $q])
+                ->andWhere(['<>', 'is_outer', '1'])
                 ->orWhere(['like', 'name', $q])
                 ->asArray()->all();
         } else{
             $users = $groups->getUsers()->asArray()->joinWith('groups')->all();
-        }
 
+        }
         $add_users = User::find()->where(['is_outer' => 1])->one();
+        foreach ($users as  $key => $user){
+            if($user['id'] == $add_users->id){
+                unset($users[$key]);
+            }
+        }
         $users[] = $add_users;
         $results = [];
         foreach ($users as $user){

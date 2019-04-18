@@ -258,6 +258,10 @@ class Task extends \yii\db\ActiveRecord
        if($this->status == Task::STATUS_DONE){
            return '<span style="color:green">Задача завершена</span>';
        }
+       $clone = $this->chainClones;
+       if(empty($clone)){
+           return  '<span style="color:red">Задача не настроена. Импорт не завершен</span>';
+       }
        $clone = $this->getChainClones()->one();
        $GLOBALS['clone'] = $clone;
        $chain = Chain::findOne($clone->id_chain);
@@ -265,6 +269,7 @@ class Task extends \yii\db\ActiveRecord
            'stepClones' => function($query){
                $query->onCondition(['chain_clones_steps.id_clone' => $GLOBALS['clone']['id']]);
                $query->andWhere(['status' => ChainClonesSteps::STATUS_WORK]);
+               $query->orWhere(['status' => ChainClonesSteps::STATUS_REWORK]);
            },
        ])->orderBy(['sort' => SORT_DESC])->asArray()->one();
        unset($GLOBALS['clone']);

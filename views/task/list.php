@@ -101,7 +101,7 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                 'attribute' => 'id',
                 'label'     => 'Стадния задаиня',
                 'content'    => function($data){
-                    $clone = Task::findOne($data['id'])->getChainClones()->one();
+                  //  $clone = Task::findOne($data['id'])->getChainClones()->one();
                     $step = $data->getActualStep();
                     if($step !== false){
                         return $step;

@@ -18,6 +18,8 @@ use Yii;
 
 class UserController  extends \yii\web\Controller
 {
+
+
     public function actionIndex()
     {
         $userSearch = new UserSearch();
@@ -25,6 +27,7 @@ class UserController  extends \yii\web\Controller
         $dataProvider->setPagination([
             'pageSize' => 20
         ]);
+        $dataProvider->query->andWhere(['is', 'is_outer',  new \yii\db\Expression('null')]);
         return $this->render('index', [
             'dataProvider'  => $dataProvider,
             'userSearch'    => $userSearch
@@ -62,7 +65,7 @@ class UserController  extends \yii\web\Controller
         $user = $this->findModel($id);
         $groups = ArrayHelper::map(Groups::find()->asArray()->all(), 'id', 'name');
 
-        if ($user->load(Yii::$app->request->post()) && $user->save()) {
+        if ($user->load(Yii::$app->request->post()) && $user->save(false)) {
             $groups = Yii::$app->request->post('groups');
             $user->saveGroups($groups);
             return $this->redirect(['index']);

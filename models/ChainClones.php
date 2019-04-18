@@ -82,7 +82,9 @@ class ChainClones extends \yii\db\ActiveRecord
     public static function deleteByTaskId($id)
     {
         $old_clone = ChainClones::findOne(['id_task' => $id]);
-        $old_clone->delete();
+        if(!empty($old_clone)){
+            $old_clone->delete();
+        }
     }
 
 }

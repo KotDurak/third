@@ -51,7 +51,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             [['name', 'surname', 'password', 'email', 'is_root', 'rate', 'type_rate', 'about'], 'string'],
             [['birthday', 'date_create'], 'safe'],
             [['email'], 'email'],
-            [['status', 'is_moderator'], 'integer'],
+            [['status', 'is_moderator','is_outer'], 'integer'],
             [['email_confirm_token'], 'string', 'max' => 255],
             [['email_confirm_token', 'email'], 'unique'],
             ['status', 'in', 'range' => [self::STATUS_DELETED, self::STATUS_WAIT, self::STATUS_ACTIVE]]
@@ -76,7 +76,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'email_confirm_token' => 'Email Confirm Token',
             'rate_type'   => 'Тип ставки',
             'rate' => 'Ставка',
-            'about' => 'Заметки о пользователе'
+            'about' => 'Заметки о пользователе',
+            'positions'    => 'Должности'
         ];
     }
 
@@ -183,6 +184,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
            return true;
        }
        return false;
+    }
+
+    public function getPositions()
+    {
+        return $this->groups;
     }
 
     public static function getUserName($id)

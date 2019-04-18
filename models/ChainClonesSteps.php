@@ -5,6 +5,7 @@ namespace app\models;
 use Codeception\Step;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\rbac\CheckAccessInterface;
 
 /**
  * This is the model class for table "chain_clones_steps".
@@ -43,6 +44,7 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
                     ]);
                }
             ])->asArray()->one();
+
         if(!empty($result)){
             $step = $result['clone']['chain']['steps'];
             $step = array_shift($step);
@@ -53,6 +55,26 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
         }
         $this->status = $status;
         $this->save();
+    }
+
+    public function resetStatuses()
+    {
+        $step = Steps::findOne($this->id_step);
+        $steps = Steps::find()->where(['id_chain' => $step->id_chain])
+            ->andWhere(['>', 'sort', $step->sort])->asArray()->all();
+        $ids = [];
+        foreach ($steps as $step){
+            $ids[] = $step['id'];
+        }
+
+        $clones = ChainClonesSteps::find()
+            ->where(['id_clone' => $this->id_clone])
+            ->andWhere(['in','id_step', $ids])->all();
+
+        foreach ($clones as $clone){
+            $clone->status = ChainClonesSteps::STATUS_NOT;
+            $clone->save();
+        }
     }
 
     public static function getLabel($val)

@@ -46,7 +46,7 @@ CB;
                     'pluginEvents'  => [
                        'fileuploaded' => $cb
                     ]
-            ]) ?>
+            ])->label('Импорт (импортируются колонки C,E,F,G)'); ?>
 
             <div class="col-md-12 task-count text-right">
                 Количество задач <span class="count">0</span>

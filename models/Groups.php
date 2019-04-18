@@ -40,7 +40,7 @@ class Groups extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Наименовние',
+            'name' => 'Наименовние должности',
         ];
     }
 
