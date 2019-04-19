@@ -4,6 +4,7 @@ namespace app\models;
 
 use Codeception\Lib\Generator\Group;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 use app\models\Groups;
 
@@ -77,7 +78,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'rate_type'   => 'Тип ставки',
             'rate' => 'Ставка',
             'about' => 'Заметки о пользователе',
-            'positions'    => 'Должности'
+            'positions'    => 'Должности',
+            'groupsStr' => 'Список должностей'
         ];
     }
 
@@ -203,6 +205,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function is_admin()
     {
         return (boolval($this->is_root) || boolval($this->is_moderator));
+    }
+
+    public function getGroupsStr()
+    {
+        return implode(',',ArrayHelper::getColumn($this->groups, 'name'));
     }
 
     public function showTasks()

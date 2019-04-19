@@ -58,7 +58,7 @@ echo GridView::widget([
             }
 
         ],
-        [
+      /*  [
            'attribute'  => 'id',
            'label'      => 'Должности',
            'filterInputOptions' => ['disabled' => true],
@@ -71,6 +71,13 @@ echo GridView::widget([
                $html .= '</ul>';
                return $html;
            }
+        ], */
+        [
+            'attribute' => 'groupsName',
+            'label' => 'Должности',
+            'content'   => function($data){
+                return $data->getGroupsStr();
+            }
         ],
         [
             'attribute' => 'last_visit',

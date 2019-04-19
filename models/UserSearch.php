@@ -12,6 +12,7 @@ use app\models\User;
 class UserSearch extends User
 {
     public $groupsName;
+    public $groupsStr;
 
     /**
      * {@inheritdoc}
@@ -20,7 +21,8 @@ class UserSearch extends User
     {
         return [
             [['id', 'status'], 'integer'],
-            [['name', 'surname', 'password', 'email', 'is_root', 'birthday', 'date_create', 'email_confirm_token', 'auth_key', 'groupsName'], 'safe'],
+            [['name', 'surname', 'password', 'email', 'is_root', 'birthday',
+                'date_create', 'email_confirm_token', 'auth_key', 'groupsName', 'groupsStr'], 'safe'],
         ];
     }
 
@@ -51,8 +53,8 @@ class UserSearch extends User
         ]);
 
         $dataProvider->sort->attributes['groupsName'] = [
-            'asc' => [Groups::tableName().'.name' => SORT_ASC],
-            'desc' => [Groups::tableName().'.name' => SORT_DESC],
+            'asc' => ['groups.name' => SORT_ASC],
+            'desc' => ['groups.name' => SORT_DESC],
         ];
 
         $this->load($params);
@@ -71,14 +73,15 @@ class UserSearch extends User
             'date_create' => $this->date_create,
         ]);
 
+        $query->andFilterWhere(['like', 'groups.name', $this->groupsName]);
+
         $query->andFilterWhere(['like', 'name', $this->name])
             ->andFilterWhere(['like', 'surname', $this->surname])
             ->andFilterWhere(['like', 'password', $this->password])
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['like', 'is_root', $this->is_root])
             ->andFilterWhere(['like', 'email_confirm_token', $this->email_confirm_token])
-            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
-            ->andFilterWhere(['like', Groups::tableName(), $this->groupsName]);
+            ->andFilterWhere(['like', 'auth_key', $this->auth_key]);
 
         return $dataProvider;
     }
