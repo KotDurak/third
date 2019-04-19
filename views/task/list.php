@@ -63,6 +63,13 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                 'label'     => 'Цепочка',
                 'value'     => 'chain.name'
             ],
+         /*   [
+                'attribute' => 'id',
+                'label' => 'test',
+                'content'   => function($data){
+
+                }
+            ], */
             [
                 'attribute' => 'status',
                 'label'     => 'Состояние',
