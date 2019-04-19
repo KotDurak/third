@@ -118,7 +118,14 @@ echo GridView::widget([
         [
             'class' => 'yii\grid\ActionColumn',
             'header'    => 'Действия',
-            'template'  => Yii::$app->user->identity->is_root ? '{update} {delete}' : '{update}'
+            'template'  => Yii::$app->user->identity->is_root ? '{update} {delete} {repair}' : '{update}',
+            'buttons'   => [
+                'repair'    => function($url, $model, $key){
+                    return Html::a('<i class="glyphicon glyphicon-refresh"></i>', [
+                         'user/password-repair', 'id' => $model->id
+                    ], ['title' => 'Восстановить пароль', 'class' => 'password-repair']);
+                }
+            ]
         ]
     ]
 ]);
@@ -127,5 +134,9 @@ Pjax::end();
 ?>
 
 <div class="modal inmodal add" id="add" role="dialog" data-keyboard="false" style="overflow:hidden;">
+    <div class="modal-dialog modal-lg"></div>
+</div>
+
+<div class="modal inmodal repair" id="repair" role="dialog" data-keyboard="false" style="overflow:hidden;">
     <div class="modal-dialog modal-lg"></div>
 </div>

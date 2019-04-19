@@ -65,7 +65,7 @@ AppAsset::register($this);
     }
 
     if(!Yii::$app->user->isGuest)
-    echo '<div class="right-menu">'
+    echo '<div class="right-menu custom-right-menu">'
 
         . Html::beginForm(['/site/logout'], 'post')
         . Html::submitButton(
@@ -73,6 +73,12 @@ AppAsset::register($this);
             ['class' => 'btn btn-link logout']
         )
         . Html::endForm()
+           . Nav::widget([
+               'options' => ['class' => 'navbar-nav navbar-left third-navbar'],
+                'items' => [
+                    ['label' => 'Профиль', 'url' => ['/user/view', 'id' => Yii::$app->user->id]],
+                ]
+            ])
          .'
         </div>';
     NavBar::end();

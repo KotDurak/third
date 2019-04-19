@@ -32,11 +32,10 @@ $(function(){
         });
     });
 
-  /*  $('#add-user').on('click', function (e) {
+    $('.password-repair').on('click', function(e){
         e.preventDefault();
         var D_elem = $(this);
         var link = D_elem.attr('href');
-         $('#add').modal('show').find('.modal-dialog').load(link);
-
-    }); */
+        $('#repair').modal('show').find('.modal-dialog').load(link);
+    });
 });

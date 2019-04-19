@@ -86,7 +86,23 @@ class UserController  extends \yii\web\Controller
 
     public function actionView($id)
     {
-        return $this->render('view');
+        $user = User::findOne($id);
+        return $this->render('view', [
+            'user'  => $user
+        ]);
+    }
+
+    public function actionPasswordRepair($id){
+        $model = $this->findModel($id);
+        if($model->load(Yii::$app->request->post())){
+            $password = $model->password;
+            SignupForm::sentNewPassword($model, $password);
+            $model->setPassword($password);
+            return true;
+        }
+        return $this->renderAjax('repair', [
+            'model'  => $model
+        ]);
     }
 
     protected function findModel($id)

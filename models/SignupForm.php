@@ -88,6 +88,22 @@ class SignupForm extends Model
             throw new \RuntimeException('Ошииька отправки сообщения');
     }
 
+    public static function sentNewPassword(User $user, $password)
+    {
+        $email = $user->email;
+        $sent = Yii::$app->mailer
+            ->compose([
+                'html'  =>  'layouts/password',
+                'text'  => 'layouts/user-password',
+            ], [
+                'user'      => $user,
+                'password'  => $password
+            ])->setTo($email)
+            ->setFrom(Yii::$app->params['adminEmail'])
+            ->setSubject('Новый пароль в системе third-dimension')
+            ->send();
+    }
+
     public function confirmation($token)
     {
         if(empty($token)){
