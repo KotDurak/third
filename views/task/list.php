@@ -29,6 +29,7 @@ $this->registerJsFile('@web/js/task.js',
         ]);
         $menus .= $menu_import;
     }
+$this->registerCssFile('@web/css/task.css');
 
 ?>
 <div class="row">

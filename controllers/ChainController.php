@@ -253,4 +253,15 @@ class ChainController extends \yii\web\Controller
         ]);
     }
 
+    public function actionCheckUniq()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $index = Yii::$app->request->post('index');
+        $attrs = StepAttributes::find()->where(['index' => $index])->asArray()->all();
+        $response = [
+            'acc' => empty($attrs)
+        ];
+        return $response;
+    }
+
 }

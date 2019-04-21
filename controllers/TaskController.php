@@ -21,6 +21,7 @@ use app\models\Task;
 use app\models\TaskSearch;
 use yii\db\Query;
 use app\models\SelectUserStep;
+use yii\debug\models\timeline\DataProvider;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 use app\models\ChainClones;
@@ -93,8 +94,12 @@ class TaskController extends \yii\web\Controller
     public function actionListStatusUser($status, $id_user, $page_size = 10)
     {
         $ids = Task::getTaskByWorker($id_user, true);
-        $taskSearch = new TaskSearch();
-        $dataProvider = $taskSearch->search(\Yii::$app->request->get());
+      //  $taskSearch = new TaskSearch();//
+      //   $dataProvider = $taskSearch->search(\Yii::$app->request->get());
+        $dataProvider = new ActiveDataProvider([
+           'query' => Task::find()
+        ]);
+
         $dataProvider->setPagination([
             'pageSize' => $page_size
         ]);
@@ -104,7 +109,7 @@ class TaskController extends \yii\web\Controller
         $dataProvider->query->andFilterWhere(['in', 'id', $ids]);
         return $this->render('list', [
             'dataProvider' => $dataProvider,
-            'taskSearch' => $taskSearch
+        //    'taskSearch' => $taskSearch
         ]);
     }
 

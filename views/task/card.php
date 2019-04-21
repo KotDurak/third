@@ -230,10 +230,10 @@ $archive = $task->archive;
 
                        <div class="btn-group steps-btn">
                            <a type="button"  class="btn btn-default" href="<?php echo Url::toRoute(['task/archive', 'id' => $task->id]); ?>">Архивировать</a>
-                           <a href="<?php echo Url::toRoute(['/task/rework', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
+                          <!-- <a href="<?php echo Url::toRoute(['/task/rework', 'id_clone' => $clone_step->id, 'id_task' => $_GET['id']]) ?>"
                               type="button" class="btn btn-danger  rework" modal-url="<?php echo Url::toRoute(['/task/comment', 'id_clone' => $clone_step->id]); ?>">На доработку
                            </a>
-                           <a type="button" href="<?php echo Url::toRoute(['/task/working', 'id_clone' => $clone_step->id, 'id_task' => $task->id]); ?>" class="btn btn-warning work">В работе</a>
+                           <a type="button" href="<?php echo Url::toRoute(['/task/working', 'id_clone' => $clone_step->id, 'id_task' => $task->id]); ?>" class="btn btn-warning work">В работе</a> -->
                            <a href="<?php echo Url::toRoute(['/task/complete', 'id' => $task->id]) ?>"
                               type="button" class="btn btn-success done">Принять</a>
 

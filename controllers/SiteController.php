@@ -215,4 +215,30 @@ class SiteController extends Controller
            'to'     => $to
         ]);
     }
+
+    public function actionUsersSelect()
+    {
+        $GLOBALS['id_group'] = Yii::$app->request->post('id_group');
+        if($GLOBALS['id_group'] != 0) {
+            $users = User::find()->select(['CONCAT(`surname`, " " , `user`.`name`) as n', 'user.id'])->joinWith([
+                'groups' => function ($query) {
+                    $query->andWhere(['groups.id' => $GLOBALS['id_group']]);
+                }
+            ])->asArray()->all();
+        } else{
+            $users = User::find()->select(['CONCAT(`surname`, " " , `user`.`name`) as n', 'id', 'user.id'])->asArray()->all();
+
+        }
+
+        $users = ArrayHelper::map($users, 'id', 'n');
+     //   print_pre($users); die();
+        $keys = array_keys($users);
+        array_unshift($keys,0);
+        array_unshift($users, 'Не выбрано');
+        $users = array_combine($keys, $users);
+
+        return $this->renderAjax('users-select', [
+            'users' => $users
+        ]);
+    }
 }

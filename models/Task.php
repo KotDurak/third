@@ -155,9 +155,9 @@ class Task extends \yii\db\ActiveRecord
 
     public static function getStrStatus($status){
         $statuses  = [Task::STATUS_NOT => 'Не настроен',
-                    Task::STATUS_WORK => 'В работе',
-                    Task::STATUS_REWORK => 'На доработке',
-                    Task::STATUS_DONE => 'Принятные',
+                    Task::STATUS_WORK => '<span class="status-work">В работе</span>',
+                    Task::STATUS_REWORK => '<span class="status-rework">На доработке</span>',
+                    Task::STATUS_DONE => '<span class="status-done">Принятные</span>',
                     Task::STATUS_ARCHIVE => 'В архиве'
         ];
         return $statuses[$status];

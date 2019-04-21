@@ -82,4 +82,31 @@ $(function(){
         $('#edit-step').modal('show').find('.modal-dialog').load(D_elem.attr('href'));
     });
 
+    $('body').on('keyup', '.index-attr', function(e){
+        var D_elem = $(this);
+        var data = {
+            index: $(this).val()
+        };
+        $.ajax({
+            url:'/chain/check-uniq',
+            type:'post',
+            dataType:'json',
+            data:data,
+            success:function(data){
+                var D_group = D_elem.closest('.form-group');
+                if(!data.acc){
+                   D_group.addClass('has-error');
+                   var D_text = $('<p class="help-block help-block-error">Такое название для поля index уже существует</p>');
+                   D_group.append(D_text);
+                   $('#submit').attr('disabled', 'disabled');
+                } else{
+                    D_group.removeClass('has-error');
+                    D_group.find('.help-block-error').remove();
+                    $('#submit').removeAttr('disabled');
+                }
+
+            }
+        });
+    });
+
 });

@@ -97,11 +97,11 @@ use yii\helpers\Url;
                                     ?>
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <?= $form->field($modelAttribute, "[{$i}]name")->label('Имя этапа'); ?>
+                                            <?= $form->field($modelAttribute, "[{$i}]name")->label('Имя аттрибута'); ?>
                                         </div>
                                         <div class="col-md-4">
                                             <?= $form->field($modelAttribute, "[{$i}]index")
-                                                ->textInput()->label('Уникальный индекс');?>
+                                                ->textInput(['class' => 'index-attr'])->label('Уникальный индекс');?>
                                         </div>
                                         <div class="col-md-4">
                                             <?= $form->field($modelAttribute, "[{$i}]def_value")

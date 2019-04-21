@@ -7,7 +7,7 @@ use app\models\Project;
 use yii\helpers\ArrayHelper;
 use yii\jui\DatePicker;
 use app\models\User;
-
+use app\models\Groups;
 
 $this->registerJsFile('@web/js/site/admin-summary.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
@@ -24,7 +24,11 @@ $keys = array_keys($users);
 array_unshift($keys, 0);
 array_unshift($users, 'Не выбран');
 $users = array_combine($keys, $users);
-
+$groups = ArrayHelper::map(Groups::find()->asArray()->all(), 'id', 'name');
+$keys = array_keys($groups);
+array_unshift($keys, 0);
+array_unshift($groups, 'Не выбрано');
+$groups = array_combine($keys, $groups);
 ?>
 
 <div class="row">
@@ -112,16 +116,21 @@ $users = array_combine($keys, $users);
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <?php echo Html::dropDownList('users', 's', $users, [
-                    'id'    => 'select-user',
-                    'class' => 'form-control'
-                ]); ?>
+                <label for="">Должности</label>
+                <?php echo Html::dropDownList('groups', '0', $groups, [
+                    'id'    => 'select-group',
+                    'class' => 'form-control',
+                ]);?>
             </div>
         </div>
-        <div class="col-md-4 text-center">
-            <strong>Должность</strong><br>
-            <ul id="positions">
-            </ul>
+        <div class="col-md-4">
+            <div class="form-group" id="users-contaier">
+                <label for="">Сотрудник</label>
+                <?php echo Html::dropDownList('users', 's', $users, [
+                    'id'    => 'select-user',
+                    'class' => 'form-control select-user'
+                ]); ?>
+            </div>
         </div>
         <div class="col-md-12" id="task-by-user"></div>
     </div>

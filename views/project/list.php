@@ -26,7 +26,39 @@ echo GridView::widget([
         ],
         [
             'attribute' => 'tasks.id',
-            'label'     => 'Количество задач',
+            'label'     => 'Задачи в архиве',
+            'value'     => function($model){
+                $tasks = $model->getTasks()->where(['status' => \app\models\Task::STATUS_ARCHIVE])->count();
+                return $tasks;
+            }
+        ],
+        [
+            'attribute' => 'tasks.id',
+            'label'     => 'Задачи на доработке',
+            'value'     => function($model){
+                $tasks = $model->getTasks()->where(['status' => \app\models\Task::STATUS_REWORK])->count();
+                return $tasks;
+            }
+        ],
+        [
+            'attribute' => 'tasks.id',
+            'label'     => 'Задачи на в работе',
+            'value'     => function($model){
+                $tasks = $model->getTasks()->where(['status' => \app\models\Task::STATUS_WORK])->count();
+                return $tasks;
+            }
+        ],
+        [
+            'attribute' => 'tasks.id',
+            'label'     => 'Принятые задачи',
+            'value'     => function($model){
+                $tasks = $model->getTasks()->where(['status' => \app\models\Task::STATUS_DONE])->count();
+                return $tasks;
+            }
+        ],
+        [
+            'attribute' => 'tasks.id',
+            'label'     => 'Общее количество задач',
             'value'     => function($model){
                 $tasks = $model->getTasks()->count();
                 return $tasks;
