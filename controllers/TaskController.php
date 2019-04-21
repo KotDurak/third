@@ -541,8 +541,11 @@ class TaskController extends \yii\web\Controller
         }
 
 
-        $taskSearch = new TaskSearch();
-        $dataProvider = $taskSearch->search(\Yii::$app->request->get());
+        //$taskSearch = new TaskSearch();
+       // $dataProvider = $taskSearch->search(\Yii::$app->request->get());
+        $dataProvider = new ActiveDataProvider([
+            'query' => Task::find()
+        ]);
         $dataProvider->setPagination([
             'pageSize' => 10
         ]);
@@ -553,7 +556,7 @@ class TaskController extends \yii\web\Controller
 
         return $this->render('users-tasks', [
             'dataProvider' => $dataProvider,
-            'taskSearch'    => $taskSearch
+         //   'taskSearch'    => $taskSearch
         ]);
     }
 

@@ -4,8 +4,15 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 
+$this->registerCss('
+    #project-table{
+        overflow:auto;
+    }
+');
+
+
 Pjax::begin(array('id' => 'notes', 'enablePushState' => false));
-echo GridView::widget([
+echo '<div class="container-fluid" id="project-table">' . GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel'   => $projectSearch,
     'columns'   => [
@@ -100,6 +107,6 @@ echo GridView::widget([
             }
         ],
     ]
-]);
+]) . '</div>';
 Pjax::end();
 ?>
