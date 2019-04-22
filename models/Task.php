@@ -135,6 +135,12 @@ class Task extends \yii\db\ActiveRecord
         return $this->getChainClones()->one()-> getCloneSteps()->all();
     }
 
+    public function getUserSteps()
+    {
+        return $this->hasMany(ChainClonesSteps::className(), ['id' => 'id_task'])
+            ->viaTable('chain_clones', ['id_task' => 'id']);
+    }
+
     public function getReworkSteps()
     {
         return $this->getChainClones()->one()->getCloneSteps()->where(['status' => ChainClonesSteps::STATUS_REWORK])->all();

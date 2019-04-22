@@ -16,6 +16,7 @@ use app\models\ProjectSearch;
 use app\models\Steps;
 use app\models\User;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\db\Query;
 use yii\helpers\Json;
 use yii\helpers\Url;
@@ -300,5 +301,22 @@ class ProjectController extends Controller
         }
        $out['results'] = $results;
         return $out;
+    }
+
+    public function actionUserVersion()
+    {
+        $ids =Project::getUserProject();
+
+        $projects = Project::find()->where(['in', 'id', $ids]);
+        $projectSearch = new ProjectSearch();
+        $dataProvider = new ActiveDataProvider([
+            'query'     => $projects,
+        ]);
+        $dataProvider->pagination->pageSize = 10;
+        $dataProvider->setSort(['defaultOrder' => ['id' => SORT_DESC]]);
+        return $this->render('user-version', [
+            'dataProvider'  => $dataProvider,
+            'projectSearch' => $projectSearch
+        ]);
     }
 }

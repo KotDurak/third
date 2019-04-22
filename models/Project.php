@@ -4,6 +4,8 @@ namespace app\models;
 
 use Yii;
 use moonland\phpexcel\Excel;
+use yii\helpers\ArrayHelper;
+
 /**
  * This is the model class for table "project".
  *
@@ -83,5 +85,25 @@ class Project extends \yii\db\ActiveRecord
     public function getTasks()
     {
         return $this->hasMany(Task::className(), ['id_project' => 'id']);
+    }
+
+    public static function getUserProject()
+    {
+        $project =  Project::find()->joinWith([
+            'tasks' => function($query){
+                $query->joinWith([
+                    'chainClones' => function($q){
+                        $q->joinWith([
+                            'cloneSteps'    => function($q2){
+                                $q2->andWhere(['chain_clones_steps.id_user' => Yii::$app->user->id]);
+                            }
+                        ]);
+                    }
+                ]);
+            }
+        ])->asArray()->all();
+       $ids = ArrayHelper::getColumn($project, 'id');
+
+        return $ids;
     }
 }

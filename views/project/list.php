@@ -49,7 +49,7 @@ echo '<div class="container-fluid" id="project-table">' . GridView::widget([
         ],
         [
             'attribute' => 'tasks.id',
-            'label'     => 'Задачи на в работе',
+            'label'     => 'Задачи  в работе',
             'value'     => function($model){
                 $tasks = $model->getTasks()->where(['status' => \app\models\Task::STATUS_WORK])->count();
                 return $tasks;

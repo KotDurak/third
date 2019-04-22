@@ -51,7 +51,7 @@ AppAsset::register($this);
             'options' => ['class' => 'navbar-nav navbar-left third-navbar'],
             'items' => [
                 ['label' => 'Сводка', 'url' => ['/site/index']],
-                ['label' => 'Проекты', 'url' => ['project/index']],
+                ['label' => 'Проекты', 'url' => Yii::$app->user->identity->is_admin() ? ['project/index'] : ['project/user-version']],
                 Yii::$app->user->identity->is_admin() ?
                     ['label' => 'Настройки',   'items' => [
                         ['label' => 'Должности', 'url' => ['/group/index']],
