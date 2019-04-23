@@ -1,4 +1,6 @@
 <?php
+
+use app\models\Task;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -34,42 +36,59 @@ echo '<div class="container-fluid" id="project-table">' . GridView::widget([
         [
             'attribute' => 'tasks.id',
             'label'     => 'Задачи в архиве',
+            'format'    => 'html',
             'value'     => function($model){
-                $tasks = $model->getTasks()->where(['status' => \app\models\Task::STATUS_ARCHIVE])->count();
-                return $tasks;
+                $GLOBALS['tasks'] =  Task::getTaskStatusesByProject($model->id);
+                $count  =  $GLOBALS['tasks'][Task::STATUS_ARCHIVE];
+                $url = Url::to(['task/list-status', 'status' => Task::STATUS_ARCHIVE, 'id_project' => $model->id]);
+                $a = Html::a($count, $url, ['style' => 'color:black']);
+                return $count > 0 ? $a : $count;
             }
         ],
         [
             'attribute' => 'tasks.id',
-            'label'     => 'Задачи на доработке',
+            'header'     => '<span style="color:red">Задачи на доработке</span>',
+            'format'     => 'html',
             'value'     => function($model){
-                $tasks = $model->getTasks()->where(['status' => \app\models\Task::STATUS_REWORK])->count();
-                return $tasks;
+                $count  =  $GLOBALS['tasks'][Task::STATUS_REWORK];
+                $url = Url::to(['task/list-status', 'status' => Task::STATUS_REWORK, 'id_project' => $model->id]);
+                $a = Html::a($count, $url, ['style' => 'color:red']);
+                return $count > 0 ? $a : $count;
             }
         ],
         [
             'attribute' => 'tasks.id',
-            'label'     => 'Задачи  в работе',
+            'header'     => '<span style="color: #f0ad4e;">Задачи  в работе</span>',
+            'format'    => 'html',
             'value'     => function($model){
-                $tasks = $model->getTasks()->where(['status' => \app\models\Task::STATUS_WORK])->count();
-                return $tasks;
+                $count  =  $GLOBALS['tasks'][Task::STATUS_WORK];
+                $url = Url::to(['task/list-status', 'status' => Task::STATUS_WORK, 'id_project' => $model->id]);
+                $a = Html::a($count, $url, ['style' => 'color:f0ad4e;']);
+                return $count > 0 ? $a : $count;
             }
         ],
         [
             'attribute' => 'tasks.id',
-            'label'     => 'Принятые задачи',
+            'header'     => '<span style="color: green">Принятые задачи</span>',
+            'format'      => 'html',
             'value'     => function($model){
-                $tasks = $model->getTasks()->where(['status' => \app\models\Task::STATUS_DONE])->count();
-                return $tasks;
+                $count  =  $GLOBALS['tasks'][Task::STATUS_DONE];
+                $url = Url::to(['task/list-status', 'status' => Task::STATUS_DONE, 'id_project' => $model->id]);
+                $a = Html::a($count, $url, ['style' => 'color:green;']);
+                return $count > 0 ? $a : $count;
             }
         ],
         [
             'attribute' => 'tasks.id',
             'label'     => 'Общее количество задач',
+            'format'    => 'html',
             'value'     => function($model){
-                $tasks = $model->getTasks()->count();
-                return $tasks;
+               $count = $GLOBALS['tasks']['count'];
+                $url = Url::to(['task/list-status', 'status' => 'all', 'id_project' => $model->id]);
+                $a = Html::a($count, $url, ['style' => 'color:black']);
+                return $count > 0 ? $a : $count;
             }
+
         ],
         [
             'attribute' => 'url',
