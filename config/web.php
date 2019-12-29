@@ -3,6 +3,8 @@
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
+$global = require dirname(__DIR__)  . '/external_config.php';
+
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
@@ -42,7 +44,7 @@ $config = [
                 ],
             ],
         ],
-        'db' => $db,
+        'db' => $global['db'],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
