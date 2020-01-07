@@ -13,7 +13,13 @@ use yii\helpers\Html;
 
 
 ?>
-
+<div class="row">
+    <div class="col-md-12 text-right">
+        <select onchange="location = this.value" name="" id="count-rows">
+            <?= \app\helpers\PaginationHelper::getPageCounts($dataProvider->getPagination()->getPageSize()) ?>
+        </select>
+    </div>
+</div>
 <?php
 
     echo GridView::widget([

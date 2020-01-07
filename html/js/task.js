@@ -8,7 +8,7 @@ $(function(){
             url: '/task/list?id_project=' + id_project + '&page_size=' + count,
             container:'#task-list',
         };
-        $.pjax.reload(options);
+      //  $.pjax.reload(options);
     });
 
     $('body').on('click', '.ajaxDelete', function(e){

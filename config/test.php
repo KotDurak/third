@@ -19,7 +19,7 @@ return [
             'useFileTransport' => true,
         ],
         'assetManager' => [
-            'basePath' => __DIR__ . '/../web/assets',
+            'basePath' => __DIR__ . '/../html/assets',
         ],
         'urlManager' => [
             'showScriptName' => true,

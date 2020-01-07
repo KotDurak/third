@@ -10,12 +10,14 @@ use app\models\Chain;
 use yii\jui\DatePicker;
 use yii\helpers\Html;
 
+/* @var $dataProvider \yii\data\ActiveDataProvider */
+
 $this->params['breadcrumbs'][] = 'Список задач';
 
 $this->registerJsFile('@web/js/task.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
 
-    $counts = [10, 20, 30, 50, 100, 200, -1];
+    $counts = [10, 20, 30, 50, 100, 200, 500];
 
     $menus = '';
     if(Yii::$app->user->identity->is_root){
@@ -30,22 +32,17 @@ $this->registerJsFile('@web/js/task.js',
         $menus .= $menu_import;
     }
 $this->registerCssFile('@web/css/task.css');
-
 ?>
 <div class="row">
     <div class="col-md-12 text-right">
         <?php echo  $menus; ?>
-        <select data-project="<?= $_GET['id_project']; ?>" name="" id="count-rows">
-            <?php foreach ($counts as $count): ?>
-                <option value="<?= $count ?>">
-                    <?php echo $count != -1 ? $count : 'все' ?>
-                </option>
-            <?php endforeach; ?>
+        <select data-project="<?= $_GET['id_project']; ?>" onchange="location = this.value" name="" id="count-rows">
+            <?= \app\helpers\PaginationHelper::getPageCounts($dataProvider->getPagination()->getPageSize() ,$counts) ?>
         </select>
     </div>
 </div>
 <?php
-Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
+
     echo GridView::widget([
         'options'      => [
             'class' => 'task-list'
@@ -64,13 +61,6 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
                 'label'     => 'Цепочка',
                 'value'     => 'chain.name'
             ],
-         /*   [
-                'attribute' => 'id',
-                'label' => 'test',
-                'content'   => function($data){
-
-                }
-            ], */
             [
                 'attribute' => 'status',
                 'label'     => 'Состояние',
@@ -167,8 +157,6 @@ Pjax::begin(array('id' => 'task-list', 'enablePushState' => false));
         ]
     ]);
 
-
-Pjax::end();
     $bottom_menus = '';
     $menu_change = Html::a(' <i class="glyphicon glyphicon-pencil"></i> Изменить', Url::to(['task/change']), [
            'class'  => 'btn btn-default circle-conttrols', 'id' => 'task-change'

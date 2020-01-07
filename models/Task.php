@@ -230,7 +230,6 @@ class Task extends \yii\db\ActiveRecord
    {
        $rework_steps = $this->getReworkSteps();
 
-
        if($this->status != self::STATUS_WORK && empty($rework_steps)){
            $this->status = self::STATUS_WORK;
            $this->save();

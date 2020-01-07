@@ -75,7 +75,7 @@ class TaskSearch extends Task
             'DATE(created)' => $this->created,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name])
+        $query->andFilterWhere(['like', Task::tableName().'.name', $this->name])
             ->andFilterWhere(['like', 'description', $this->description]);
 
         return $dataProvider;
