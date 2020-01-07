@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\helpers\TasksHelper;
 use app\models\Chain;
 use app\models\ChainClonesSteps;
 use app\models\ChangeTask;
@@ -20,6 +21,7 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use app\models\Task;
 use app\models\TaskSearch;
+use yii\db\ActiveQuery;
 use yii\db\Query;
 use app\models\SelectUserStep;
 use yii\debug\models\timeline\DataProvider;
@@ -549,7 +551,7 @@ class TaskController extends \yii\web\Controller
 
         $taskSearch = new TaskSearch();
         $dataProvider = $taskSearch->search(Yii::$app->request->get());
-
+        $statuses = TasksHelper::getTaskStatusByUser($id_user, $tasks);
         $dataProvider->query->andFilterWhere(['in',Task::tableName().'.id', $tasks]);
         if(!is_null($id_project)){
             $dataProvider->query->andFilterWhere(['id_project' => $id_project]);
@@ -557,7 +559,8 @@ class TaskController extends \yii\web\Controller
 
         return $this->render('users-tasks', [
             'dataProvider' => $dataProvider,
-           'taskSearch'    => $taskSearch
+            'taskSearch'    => $taskSearch,
+            'statuses'      => $statuses
         ]);
     }
 

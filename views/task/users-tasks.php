@@ -10,7 +10,7 @@ use app\models\Chain;
 use yii\jui\DatePicker;
 use yii\helpers\Html;
 
-
+/* @var $statuses array */
 
 ?>
 <div class="row">
@@ -21,7 +21,6 @@ use yii\helpers\Html;
     </div>
 </div>
 <?php
-
     echo GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel'   => $taskSearch,
@@ -70,13 +69,8 @@ use yii\helpers\Html;
             [
                 'attribute' => 'id',
                 'label'     => 'Стадния задаиня',
-                'content'    => function($data){
-                    $clone = Task::findOne($data['id'])->getChainClones()->one();
-                    $step = $data->getLastDoneStep();
-                    if($step !== false){
-                        return $step;
-                    }
-                    return 'Не установлен';
+                'content'    => function($data) use ($statuses){
+                    return $statuses[$data['id']];
                 }
             ],
             [

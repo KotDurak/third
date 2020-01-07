@@ -138,7 +138,7 @@ $this->registerCssFile('@web/css/task.css');
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header'    => 'Действия',
-                'template'  => Yii::$app->user->identity->is_root ? '{update} {delete}' : '{update}',
+                'template'  => Yii::$app->user->identity->is_admin() ? (Yii::$app->user->identity->is_root ? '{update} {delete}' : '{update}') : null,
                 'buttons'   => [
                     'delete'    => function($url, $model, $key){
                         $url = Url::to(['task/delete', 'id' => $model->id]);
