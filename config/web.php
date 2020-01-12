@@ -12,8 +12,8 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
-        '@images'   => '/web/uploads/images/',
-        '@files'    => '/web/uploads/files/',
+        '@images'   => '/html/uploads/images/',
+        '@files'    => '/html/uploads/files/',
     ],
     'components' => [
         'request' => [

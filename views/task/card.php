@@ -185,6 +185,9 @@ $archive = $task->archive;
                                 $word = Url::to('@images/word.png');
                                 $url = Url::to(['file/download', 'id' => $file['id'],  ['data-pjax' => '0']]);
                                 $path = Yii::getAlias('@webroot') . '/uploads/files/' . $file['tmp'];
+                                if (!file_exists($path)) {
+                                    continue;
+                                }
                                 $type = FileHelper::getMimeType($path);
                                 $a = Html::a($file['real-name'], $url);
 

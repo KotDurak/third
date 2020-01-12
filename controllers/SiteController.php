@@ -186,7 +186,7 @@ class SiteController extends Controller
 
     public function actionAdminTaskUser($id_user)
     {
-        $tasks = Task::getTaskByWorker($id_user);
+        $tasks = ChainClonesSteps::getStepsByWorker($id_user);
         return $this->renderAjax('task-user-table', [
             'tasks' => $tasks,
             'id_user'   => $id_user

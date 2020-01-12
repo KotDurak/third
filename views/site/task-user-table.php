@@ -1,13 +1,16 @@
 <?php
+
+use app\models\ChainClonesSteps;
 use app\models\Task;
 use yii\helpers\Html;
 use yii\helpers\Url;
+
+/* @var $tasks array */
 
 ?>
 <table class="table">
     <thead>
     <tr>
-        <th>В архиве</th>
         <th>На доработке</th>
         <th>В работе</th>
         <th>Принятые</th>
@@ -18,42 +21,33 @@ use yii\helpers\Url;
     <tr>
         <td>
             <?php
-            $count  = $tasks[Task::STATUS_ARCHIVE];
-            $url = Url::to(['task/list-status-user', 'status' => Task::STATUS_ARCHIVE, 'id_user' => $id_user]);
-            $a = Html::a($count, $url, ['style' => 'color:black']);
-            echo $a;
-            ?>
-        </td>
-        <td>
-            <?php
-            $count  = $tasks[Task::STATUS_REWORK];
-            $url = Url::to(['task/list-status-user', 'status' => Task::STATUS_REWORK, 'id_user' => $id_user]);
+            $count = $tasks[ChainClonesSteps::STATUS_REWORK];
+            $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => ChainClonesSteps::STATUS_REWORK]);
             $a = Html::a($count, $url, ['style' => 'color:red']);
             echo $a;
             ?>
         </td>
         <td>
             <?php
-            $count  = $tasks[Task::STATUS_WORK];
-            $url = Url::to(['task/list-status-user', 'status' => Task::STATUS_WORK, 'id_user' => $id_user]);
+            $count  = $tasks[ChainClonesSteps::STATUS_WORK];
+            $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => ChainClonesSteps::STATUS_WORK]);
             $a = Html::a($count, $url, ['style' => 'color:#f0ad4e;']);
-            echo $a;
+            echo  $a;
             ?>
         </td>
         <td>
             <?php
-            $count  = $tasks[Task::STATUS_DONE];
-            $url = Url::to(['task/list-status-user', 'status' => Task::STATUS_DONE, 'id_user' => $id_user]);
+            $count  = $tasks[ChainClonesSteps::STATUS_DONE];
+            $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => ChainClonesSteps::STATUS_DONE]);
             $a = Html::a($count, $url, ['style' => 'color:green']);
-            echo $a;
+            echo  $a;
             ?>
         </td>
         <td>
             <?php
-            $count  = $tasks['count'];
-            $url = Url::to(['task/list-status-user', 'status' => 'all', 'id_user' => $id_user]);
-            $a = Html::a($count, $url, ['style' => 'color:black']);
-            echo $a;
+            $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => 'all']);
+            $a = Html::a($tasks['count'], $url, ['style' => 'color:#000']);
+            echo  $a;
             ?>
         </td>
     </tr>
