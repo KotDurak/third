@@ -2,10 +2,8 @@
 
 namespace app\models;
 
-use Codeception\Step;
 use Yii;
 use yii\helpers\ArrayHelper;
-use yii\rbac\CheckAccessInterface;
 
 /**
  * This is the model class for table "chain_clones_steps".
@@ -21,7 +19,6 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
     const STATUS_WORK = 1;
     const STATUS_REWORK = 2;
     const STATUS_DONE = 3;
-
 
     public  function changeStatus($status)
     {
@@ -108,7 +105,8 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id_clone', 'id_step', 'status'], 'integer'],
+            [['id_clone', 'id_step'], 'integer'],
+            [['status'], 'default', 'value' => 0]
         ];
     }
 

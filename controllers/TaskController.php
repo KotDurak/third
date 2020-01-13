@@ -16,6 +16,7 @@ use app\models\TaskEdit;
 use app\models\TaskTable;
 use app\models\User;
 use app\services\TaskService;
+use app\services\TaskStatusService;
 use Codeception\Step\Comment;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -37,10 +38,17 @@ use yii\helpers\Json;
 class TaskController extends \yii\web\Controller
 {
     private $taskService;
+    private $taskStatusService;
 
-    public function __construct($id, $module, TaskService $taskService, array $config = [])
+    public function __construct(
+        $id,
+        $module,
+        TaskService $taskService,
+        TaskStatusService $taskStatusService,
+        array $config = [])
     {
         $this->taskService = $taskService;
+        $this->taskStatusService = $taskStatusService;
         parent::__construct($id, $module, $config);
     }
 
@@ -325,8 +333,13 @@ class TaskController extends \yii\web\Controller
 
     public function actionWorking($id_clone, $id_task)
     {
-        $step = ChainClonesSteps::findOne($id_clone);
-        $step->changeStatus(ChainClonesSteps::STATUS_WORK);
+        $step = ChainClonesSteps::find()
+            ->with('step')
+             ->where(['id' => $id_clone])
+             ->limit(1)
+            ->one();
+        $this->taskStatusService->setStatusWork($step);
+       // $step->changeStatus(ChainClonesSteps::STATUS_WORK);
         $task = Task::findOne($id_task);
         $this->taskService->setWorkStatus($task);
 
@@ -537,30 +550,30 @@ class TaskController extends \yii\web\Controller
 
     public function actionUsersTasks($id_user, $status, $id_project = null)
     {
-        if($status != 'all'){
+        if ($status != 'all') {
             $clone_steps = ChainClonesSteps::find()->where(['id_user' => $id_user])
                 ->andWhere(['status' => $status])->all();
         } else{
             $clone_steps = ChainClonesSteps::find()->where(['id_user' => $id_user])
-               ->all();
+                ->all();
         }
         $tasks = [];
-        foreach($clone_steps as $clone_step){
+        foreach ($clone_steps as $clone_step) {
             $tasks[] = $clone_step->task->id;
         }
 
         $taskSearch = new TaskSearch();
         $dataProvider = $taskSearch->search(Yii::$app->request->get());
         $statuses = TasksHelper::getTaskStatusByUser($id_user, $tasks);
-        $dataProvider->query->andFilterWhere(['in',Task::tableName().'.id', $tasks]);
-        if(!is_null($id_project)){
+        $dataProvider->query->andFilterWhere(['in', Task::tableName() . '.id', $tasks]);
+        if (!is_null($id_project)) {
             $dataProvider->query->andFilterWhere(['id_project' => $id_project]);
         }
 
         return $this->render('users-tasks', [
             'dataProvider' => $dataProvider,
-            'taskSearch'    => $taskSearch,
-            'statuses'      => $statuses
+            'taskSearch' => $taskSearch,
+            'statuses' => $statuses
         ]);
     }
 

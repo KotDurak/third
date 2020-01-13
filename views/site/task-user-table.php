@@ -1,12 +1,11 @@
 <?php
 
 use app\models\ChainClonesSteps;
-use app\models\Task;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
 /* @var $tasks array */
-
+/* @var $id_user int */
 ?>
 <table class="table">
     <thead>
@@ -22,7 +21,7 @@ use yii\helpers\Url;
         <td>
             <?php
             $count = $tasks[ChainClonesSteps::STATUS_REWORK];
-            $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => ChainClonesSteps::STATUS_REWORK]);
+            $url = Url::to(['task/users-tasks', 'id_user' => $id_user, 'status' => ChainClonesSteps::STATUS_REWORK]);
             $a = Html::a($count, $url, ['style' => 'color:red']);
             echo $a;
             ?>
@@ -30,7 +29,7 @@ use yii\helpers\Url;
         <td>
             <?php
             $count  = $tasks[ChainClonesSteps::STATUS_WORK];
-            $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => ChainClonesSteps::STATUS_WORK]);
+            $url = Url::to(['task/users-tasks', 'id_user' => $id_user, 'status' => ChainClonesSteps::STATUS_WORK]);
             $a = Html::a($count, $url, ['style' => 'color:#f0ad4e;']);
             echo  $a;
             ?>
@@ -38,14 +37,14 @@ use yii\helpers\Url;
         <td>
             <?php
             $count  = $tasks[ChainClonesSteps::STATUS_DONE];
-            $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => ChainClonesSteps::STATUS_DONE]);
+            $url = Url::to(['task/users-tasks', 'id_user' => $id_user, 'status' => ChainClonesSteps::STATUS_DONE]);
             $a = Html::a($count, $url, ['style' => 'color:green']);
             echo  $a;
             ?>
         </td>
         <td>
             <?php
-            $url = Url::to(['task/users-tasks', 'id_user' => Yii::$app->user->id, 'status' => 'all']);
+            $url = Url::to(['task/users-tasks', 'id_user' => $id_user, 'status' => 'all']);
             $a = Html::a($tasks['count'], $url, ['style' => 'color:#000']);
             echo  $a;
             ?>
