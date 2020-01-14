@@ -47,8 +47,12 @@ class ChainClonesSteps extends \yii\db\ActiveRecord
             $step = array_shift($step);
             $clone_step = ChainClonesSteps::find()->where(['id_step' => $step['id']])
             ->andWhere(['id_clone' => $this->id_clone])->one();
-            $clone_step->status = ChainClonesSteps::STATUS_WORK;
-            $clone_step->save();
+
+            if (!empty($clone_step)) {
+                $clone_step->status = ChainClonesSteps::STATUS_WORK;
+                $clone_step->save();
+            }
+
         }
         $this->status = $status;
         $this->save();

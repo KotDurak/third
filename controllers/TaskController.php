@@ -326,8 +326,10 @@ class TaskController extends \yii\web\Controller
 
     public function actionDone($id_clone, $id_task)
     {
+        $task = Task::findOne($id_task);
         $step = ChainClonesSteps::findOne($id_clone);
-        $step->changeStatus(ChainClonesSteps::STATUS_DONE);
+        $this->taskStatusService->setStatusDone($step);
+        $this->taskService->setWorkStatus($task);
         $this->redirect(['task/card', 'id' => $id_task]);
     }
 
