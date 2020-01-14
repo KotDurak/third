@@ -5,8 +5,10 @@ namespace app\helpers;
 
 
 use app\models\ChainClonesSteps;
+use app\models\Steps;
 use app\models\Task;
 use yii\db\ActiveQuery;
+use yii\helpers\ArrayHelper;
 
 class TasksHelper
 {
@@ -37,5 +39,14 @@ class TasksHelper
         }
 
         return $data;
+    }
+
+    public static function getTaskStages()
+    {
+        $steps = Steps::find()->select('name')->asArray()->indexBy('name')->all();
+        $steps = ArrayHelper::map($steps, 'name', 'name');
+        $stages = [];
+        $stages[Task::STAGE_DONE] = Task::STAGE_DONE;
+        return array_merge($stages, $steps);
     }
 }

@@ -79,4 +79,6 @@ if (YII_ENV_DEV) {
     ];
 }
 
+Yii::$container->set(\yii\data\Pagination::class, ['pageSizeLimit' => [1, 500]]);
+
 return $config;

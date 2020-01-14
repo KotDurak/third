@@ -20,6 +20,7 @@ use yii\helpers\ArrayHelper;
  * @property int $id_user
  * @property int $id_manager
  * @property int $is_archive
+ * @property string $stage
  *
  * @property User $manager
  * @property User $user
@@ -31,6 +32,8 @@ class Task extends \yii\db\ActiveRecord
     const STATUS_DONE = 2;
     const STATUS_ARCHIVE = 3;
     const STATUS_REWORK = 4;
+
+    const STAGE_DONE = 'Задача завершена';
 
     public function behaviors()
     {
@@ -61,7 +64,7 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description'], 'string'],
+            [['name', 'description', 'stage'], 'string'],
             [['status', 'id_user', 'id_manager', 'is_archive'], 'integer'],
             [['created'], 'required'],
             [['timestamp'], 'safe'],
@@ -83,7 +86,8 @@ class Task extends \yii\db\ActiveRecord
             'status' => 'Status',
             'id_user' => 'Id User',
             'id_manager' => 'Id Manager',
-            'is_archive'    => 'Is Archive'
+            'is_archive'    => 'Is Archive',
+            'stage' => 'Стадия задания'
         ];
     }
 
@@ -189,6 +193,7 @@ class Task extends \yii\db\ActiveRecord
    public function complete()
    {
        $this->status = self::STATUS_DONE;
+       $this->stage = self::STAGE_DONE;
        $clone_steps = $this->getCloneSteps();
        $files = $this->getFiles()->all();
        $zip = new \ZipArchive();

@@ -96,9 +96,7 @@ class TaskController extends \yii\web\Controller
     {
         $taskSearch = new TaskSearch();
         $dataProvider = $taskSearch->search(\Yii::$app->request->get());
-        $dataProvider->setPagination([
 
-        ]);
         if($status != 'all'){
             $dataProvider->query->andFilterWhere(['status' => $status]);
         }
@@ -328,21 +326,21 @@ class TaskController extends \yii\web\Controller
     {
         $task = Task::findOne($id_task);
         $step = ChainClonesSteps::findOne($id_clone);
-        $this->taskStatusService->setStatusDone($step);
+        $this->taskStatusService->setStatusDone($step, $task);
         $this->taskService->setWorkStatus($task);
         $this->redirect(['task/card', 'id' => $id_task]);
     }
 
     public function actionWorking($id_clone, $id_task)
     {
+        $task = Task::findOne($id_task);
         $step = ChainClonesSteps::find()
             ->with('step')
              ->where(['id' => $id_clone])
              ->limit(1)
             ->one();
-        $this->taskStatusService->setStatusWork($step);
+        $this->taskStatusService->setStatusWork($step, $task);
        // $step->changeStatus(ChainClonesSteps::STATUS_WORK);
-        $task = Task::findOne($id_task);
         $this->taskService->setWorkStatus($task);
 
         $this->redirect(['task/card', 'id' => $id_task]);

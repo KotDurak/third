@@ -19,7 +19,7 @@ class TaskSearch extends Task
     {
         return [
             [['id', 'status', 'id_user', 'id_manager', 'id_project'], 'integer'],
-            [['name', 'description', 'deadline', 'created', 'chain'], 'safe'],
+            [['name', 'description', 'deadline', 'created', 'chain', 'stage'], 'safe'],
         ];
     }
 
@@ -62,6 +62,8 @@ class TaskSearch extends Task
             'asc' => ['chain.name' => SORT_ASC],
             'desc' => ['chain.name' => SORT_DESC],
         ];
+
+        $query->andFilterWhere(['stage' => $this->stage]);
 
        $query->andFilterWhere(['like', 'chain.name', $this->chain]);
         // grid filtering conditions

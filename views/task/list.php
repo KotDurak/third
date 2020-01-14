@@ -42,7 +42,6 @@ $this->registerCssFile('@web/css/task.css');
     </div>
 </div>
 <?php
-
     echo GridView::widget([
         'options'      => [
             'class' => 'task-list'
@@ -96,16 +95,8 @@ $this->registerCssFile('@web/css/task.css');
                 }
             ],
             [
-                'attribute' => 'id',
-                'label'     => 'Стадния задаиня',
-                'content'    => function($data){
-                  //  $clone = Task::findOne($data['id'])->getChainClones()->one();
-                    $step = $data->getActualStep();
-                    if($step !== false){
-                        return $step;
-                    }
-                    return 'Не установлен';
-                }
+                'attribute' => 'stage',
+                'filter' => \app\helpers\TasksHelper::getTaskStages(),
             ],
             [
                 'attribute' => 'created',

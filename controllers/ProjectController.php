@@ -110,7 +110,7 @@ class ProjectController extends Controller
             $post = Yii::$app->request->post();
             ModelMultiple::loadMultiple($modelSteps, Yii::$app->request->post());
             $id_chain = $post['Import']['id_chain'];
-            $tmp_step = Steps::find()->where(['id_chain' => $id_chain])->orderBy(['id' => SORT_ASC])->one();
+            $tmp_step = Steps::find()->where(['id_chain' => $id_chain])->orderBy(['sort' => SORT_ASC])->one();
 
             $i = 1;
             foreach ($tasks as $task){
@@ -147,6 +147,7 @@ class ProjectController extends Controller
                 }
                 $task->deadline = $deadline;
                 $task->status = 1;
+                $task->stage = $tmp_step->name;
                 $task->save(false);
                 $i++;
             }

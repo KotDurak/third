@@ -1,7 +1,9 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+
+$global = require dirname(__DIR__)  . '/external_config.php';
+$db = $global['db'];
 
 $config = [
     'id' => 'basic-console',

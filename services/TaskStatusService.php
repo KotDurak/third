@@ -6,20 +6,23 @@ namespace app\services;
 use app\models\Chain;
 use app\models\ChainClonesSteps;
 use app\models\Steps;
+use app\models\Task;
 use yii\db\ActiveQuery;
 
 class TaskStatusService
 {
-    public function setStatusWork(ChainClonesSteps $clonesStep)
+    public function setStatusWork(ChainClonesSteps $clonesStep, Task $task)
     {
         $this->setNextStep($clonesStep);
         $clonesStep->status = ChainClonesSteps::STATUS_WORK;
+        $task->stage = $clonesStep->step->name;
         return $clonesStep->save();
     }
 
-    public function setStatusDone(ChainClonesSteps $clonesStep)
+    public function setStatusDone(ChainClonesSteps $clonesStep, Task $task)
     {
-        $this->setNextStep($clonesStep, ChainClonesSteps::STATUS_WORK);
+        $step = $this->setNextStep($clonesStep, ChainClonesSteps::STATUS_WORK);
+        $task->stage = !empty($step) ? $step->name : Task::STAGE_DONE;
         $clonesStep->status  = ChainClonesSteps::STATUS_DONE;
         return $clonesStep->save();
     }
@@ -31,7 +34,7 @@ class TaskStatusService
         $chain = $this->getChain($step->id_chain);
 
         if (empty($chain->steps)) {
-            return;
+            return null;
         }
 
         $nextStep = $this->getNextStep($chain->steps, $sort);
@@ -42,7 +45,10 @@ class TaskStatusService
                 ->one();
             $nextCloneStep->status = $status;
             $nextCloneStep->save();
+            return $nextStep;
         }
+
+        return null;
     }
 
     private function getChain(int $idChain): Chain
