@@ -228,7 +228,7 @@ $(function(){
                         url:new_url,
                         type:  'post',
                         success:function(data){
-                            $.pjax.reload({container: '#' + $.trim(pjax)});
+                            window.location.reload();
                         }
                     });
                 }

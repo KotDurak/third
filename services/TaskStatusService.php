@@ -43,6 +43,11 @@ class TaskStatusService
                 ->where(['id_clone' => $clonesStep->id_clone, 'id_step' => $nextStep->id])
                 ->limit(1)
                 ->one();
+            if (empty($nextCloneStep)) {
+                $nextCloneStep = new ChainClonesSteps(
+                    ['id_clone' => $clonesStep->id_clone, 'id_step' => $nextStep->id]
+                );
+            }
             $nextCloneStep->status = $status;
             $nextCloneStep->save();
             return $nextStep;
@@ -54,6 +59,7 @@ class TaskStatusService
     private function getChain(int $idChain): Chain
     {
         return Chain::find()
+            ->where(['id' => $idChain])
             ->with([
                 'steps' => function (ActiveQuery $query) {
                     $query->orderBy(['sort' => SORT_ASC]);
