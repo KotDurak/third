@@ -1,11 +1,12 @@
 <?php
-    use app\models\ChainClonesSteps;
-    use yii\helpers\Url;
-    use yii\helpers\Html;
-    use app\models\Project;
-    use yii\helpers\ArrayHelper;
-    use yii\jui\DatePicker;
-    use kartik\datetime\DateTimePicker;
+use app\models\ChainClonesSteps;
+use yii\helpers\Url;
+use yii\helpers\Html;
+use app\models\Project;
+use yii\helpers\ArrayHelper;
+use yii\jui\DatePicker;
+
+/* @var $this \yii\web\View */
 
 $this->registerJsFile('@web/js/site/workers.js',
     ['depends' => [\yii\web\JqueryAsset::className()]]);
@@ -15,7 +16,8 @@ $this->registerJsFile('@web/js/site/workers.js',
     $projects = ArrayHelper::map($projects, 'id', 'name');
     $projects[0] = 'Не выбрано';
     ksort($projects);
-
+    $idProject =  Yii::$app->request->queryParams['id_project'];
+    $isTask =  $this->context->id === 'task';
 ?>
 <div class="row">
     <div class="col-md-12 worker-block">
@@ -73,9 +75,13 @@ $this->registerJsFile('@web/js/site/workers.js',
        </div>
         <div class="col-md-4">
             <div class="form-group">
-                <?php echo Html::dropDownList('project', null, $projects, [
+                <?php
+                $urlOnChange = Url::current();
+                $jsOnChange = $isTask ? 'location =`' . $urlOnChange . '&id_project=' . '${this.value}`' : '';
+                echo Html::dropDownList('project', Yii::$app->request->queryParams['id_project'], $projects, [
                         'id'    => 'select-project',
-                        'class' => 'form-control'
+                        'class' => 'form-control',
+                        'onchange' => $jsOnChange
                 ]); ?>
             </div>
         </div>
@@ -83,7 +89,10 @@ $this->registerJsFile('@web/js/site/workers.js',
             <strong>Всего проектов</strong><br>
             <span><?php echo (count($projects) - 1); ?></span>
         </div>
-        <div class="col-md-12" id="project-container">
+        <?php
+        ?>
+        <div class="col-md-12" id="project-container" <?php if ($isTask && !empty($idProject)) echo 'data-url="' .
+            Url::to(['site/project-tasks', 'id_project' => $idProject]) . '"'?>>
 
         </div>
     </div>

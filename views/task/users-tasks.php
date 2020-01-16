@@ -11,8 +11,13 @@ use yii\jui\DatePicker;
 use yii\helpers\Html;
 
 /* @var $statuses array */
+/* @var $this \yii\web\View */
 
 ?>
+
+<?php if(!Yii::$app->user->identity->is_admin()): ?>
+    <?= $this->render('/site/workers'); ?>
+<?php endif; ?>
 <div class="row">
     <div class="col-md-12 text-right">
         <select onchange="location = this.value" name="" id="count-rows">

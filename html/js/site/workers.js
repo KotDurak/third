@@ -42,4 +42,11 @@ $(function(){
         });
 
     });
+
+    var projectContainer = $('#project-container');
+    var loadProjectUrl = projectContainer.data('url');
+    if (typeof loadProjectUrl !== 'undefined') {
+        projectContainer.load(loadProjectUrl);
+    }
+
 });
