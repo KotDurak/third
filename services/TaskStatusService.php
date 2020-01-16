@@ -27,6 +27,13 @@ class TaskStatusService
         return $clonesStep->save();
     }
 
+    public function setStatusRework(ChainClonesSteps $clonesStep, Task $task)
+    {
+        $task->stage = $clonesStep->step->name;
+        $task->status = Task::STATUS_REWORK;
+        $task->save();
+    }
+
     private function setNextStep(ChainClonesSteps $clonesStep, $status = null)
     {
         $step = $clonesStep->step;

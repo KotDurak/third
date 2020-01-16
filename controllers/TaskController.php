@@ -313,10 +313,9 @@ class TaskController extends \yii\web\Controller
 
     public function actionRework($id_clone, $id_task)
     {
-
         $step = ChainClonesSteps::findOne($id_clone);
         $task = Task::findOne($id_task);
-        $task->setRework();
+        $this->taskStatusService->setStatusRework($step, $task);
         $step->resetStatuses();
         $step->changeStatus(ChainClonesSteps::STATUS_REWORK);
         $this->redirect(['task/card', 'id' => $id_task]);
@@ -355,7 +354,7 @@ class TaskController extends \yii\web\Controller
             $step->changeStatus(ChainClonesSteps::STATUS_REWORK);
             $step->resetStatuses();
             $task = $step->clone->task;
-            $task->setRework();
+            $this->taskStatusService->setStatusRework($step, $task);
             return true;
         }
         return $this->renderAjax('comment', [

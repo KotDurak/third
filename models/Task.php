@@ -241,12 +241,6 @@ class Task extends \yii\db\ActiveRecord
        }
    }
 
-   public function setRework()
-   {
-       $this->status = self::STATUS_REWORK;
-       $this->save();
-   }
-
    public function getLastDoneStep()
    {
         $clone = $this->getChainClones()->one();
