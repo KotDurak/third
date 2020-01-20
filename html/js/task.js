@@ -117,6 +117,7 @@ $(function(){
                         url:new_url,
                         type:  'post',
                         success:function(data){
+                            location.reload();
                             $.pjax.reload({container: '#' + $.trim(pjax)});
                         }
                     });
@@ -154,6 +155,7 @@ $(function(){
                         url:new_url,
                         type:  'post',
                         success:function(data){
+                            location.reload();
                             $.pjax.reload({container: '#' + $.trim(pjax)});
                         }
                     });
@@ -191,6 +193,7 @@ $(function(){
                         url:new_url,
                         type:  'post',
                         success:function(data){
+                            location.reload();
                             $.pjax.reload({container: '#' + $.trim(pjax)});
                         }
                     });
