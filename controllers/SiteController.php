@@ -29,13 +29,13 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'except' => ['login'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                       // 'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
-                    ],
+                    ]
                 ],
             ],
             'verbs' => [
@@ -70,13 +70,14 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $user = Yii::$app->user;
 
-        if(Yii::$app->user->identity->is_ban){
+        if(!$user->isGuest && Yii::$app->user->identity->is_ban){
             $this->layout = false;
             Yii::$app->user->logout();
             return  $this->render('ban');
         }
-        if(!Yii::$app->user->isGuest){
+        if(!$user->isGuest){
             $user = User::findOne(Yii::$app->user->id);
             $user->last_visit = date('Y-m-d H:i:s');
             $user->save();
