@@ -15,4 +15,7 @@ function print_pre($arg){
     print '</pre>';
 }
 
+error_reporting(E_ALL & ~E_NOTICE);
+
+
 (new yii\web\Application($config))->run();
